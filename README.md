@@ -3,6 +3,10 @@
 </p>
 
 <p align="center">
+  <a href="https://abhishakec.github.io/archistry-site/"><img alt="Website" src=".github/website-badge.svg" height="52"></a>
+</p>
+
+<p align="center">
   <img alt="Built for Salesforce projects" src="https://img.shields.io/badge/Built%20for-Salesforce%20projects-00A1E0?style=for-the-badge&logo=salesforce&logoColor=white">
   <img alt="40 diagram types" src="https://img.shields.io/badge/Diagram%20types-40-6E5BD6?style=for-the-badge">
   <img alt="draw.io editable" src="https://img.shields.io/badge/draw.io-editable-F08705?style=for-the-badge&logo=diagramsdotnet&logoColor=white">
@@ -13,7 +17,6 @@
 </p>
 
 <p align="center">
-  <a href="https://abhishakec.github.io/archistry-site/"><strong>Website</strong></a> &nbsp;·&nbsp;
   <a href="#-quick-start"><strong>Quick start</strong></a> &nbsp;·&nbsp;
   <a href="#-diagram-types"><strong>Diagram types</strong></a> &nbsp;·&nbsp;
   <a href="https://abhishakec.github.io/archistry-site/examples/agent-interaction-map.html"><strong>Live example</strong></a> &nbsp;·&nbsp;
