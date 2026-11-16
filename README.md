@@ -93,12 +93,36 @@ No diagramming service, no upload, no account. Specs, diagrams and images stay o
 ### 1. Install
 
 ```bash
+npx skills add abhishakec/archistry
+```
+
+This finds the agents on your machine (Claude Code, GitHub Copilot, Cursor, Gemini CLI, Codex and more)
+and installs the skill for the ones you pick. It installs into the current project; add `-g` to
+install it for every project.
+
+Prefer no extra tool? Clone it instead:
+
+```bash
 git clone https://github.com/abhishakec/archistry.git ~/.claude/skills/archistry
+```
+
+Then check your setup:
+
+```bash
 node ~/.claude/skills/archistry/scripts/archistry.mjs doctor
 ```
 
 You only need **Node.js 18+**; there is nothing to `npm install`. PNG and JPG export also use a
 local Chrome, Edge or Chromium.
+
+### Update to a new release
+
+| Installed with | Update with |
+|---|---|
+| `npx skills add` | `npx skills update` (add `-g` for a global install) |
+| `git clone` | `git -C ~/.claude/skills/archistry pull` |
+
+See what changed on the [Releases](https://github.com/abhishakec/archistry/releases) page.
 
 <details>
 <summary><b>Using another agent?</b> Install notes for Claude desktop, Copilot, Cursor, Gemini CLI and Codex</summary>
