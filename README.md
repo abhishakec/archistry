@@ -13,9 +13,10 @@
 </p>
 
 <p align="center">
+  <a href="https://abhishakec.github.io/archistry-site/"><strong>Website</strong></a> &nbsp;·&nbsp;
   <a href="#-quick-start"><strong>Quick start</strong></a> &nbsp;·&nbsp;
   <a href="#-diagram-types"><strong>Diagram types</strong></a> &nbsp;·&nbsp;
-  <a href="examples/agent-interaction-map.html"><strong>Live example</strong></a> &nbsp;·&nbsp;
+  <a href="https://abhishakec.github.io/archistry-site/examples/agent-interaction-map.html"><strong>Live example</strong></a> &nbsp;·&nbsp;
   <a href="#-commands"><strong>Commands</strong></a> &nbsp;·&nbsp;
   <a href="SKILL.md"><strong>Skill instructions</strong></a> &nbsp;·&nbsp;
   <a href="#-credits"><strong>Credits</strong></a>
