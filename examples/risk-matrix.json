@@ -1,0 +1,17 @@
+{
+  "type": "risk-matrix",
+  "title": "Go-Live Risk Matrix",
+  "subtitle": "Programme risks plotted by likelihood and impact — review weekly in the steering committee",
+  "grid": 5,
+  "xAxis": { "label": "Likelihood", "labels": ["Rare", "Unlikely", "Possible", "Likely", "Almost certain"] },
+  "yAxis": { "label": "Impact", "labels": ["Negligible", "Minor", "Moderate", "Major", "Severe"] },
+  "items": [
+    { "label": "R1 Data migration quality", "x": 4, "y": 4, "note": "Duplicate accounts in legacy CRM" },
+    { "label": "R2 ERP API rate limits", "x": 3, "y": 4 },
+    { "label": "R3 UAT availability", "x": 4, "y": 3 },
+    { "label": "R4 Agent hallucination", "x": 2, "y": 5 },
+    { "label": "R5 SSO cutover", "x": 2, "y": 3 },
+    { "label": "R6 Training attendance", "x": 3, "y": 2 },
+    { "label": "R7 Sandbox refresh delay", "x": 1, "y": 2 }
+  ]
+}

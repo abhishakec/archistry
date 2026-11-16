@@ -1,0 +1,24 @@
+{
+  "type": "class-diagram",
+  "title": "Order Trigger Framework — Apex Class Diagram",
+  "subtitle": "Trigger handler pattern with a service layer and a mockable callout",
+  "classes": [
+    { "id": "OrderTrigger", "kind": "trigger", "methods": ["before insert, after update"] },
+    { "id": "TriggerHandler", "kind": "abstract", "methods": ["+ run() : void", "# beforeInsert() : void", "# afterUpdate() : void"] },
+    { "id": "OrderTriggerHandler", "methods": ["# beforeInsert() : void", "# afterUpdate() : void"] },
+    { "id": "OrderService", "fields": ["- erp : IErpGateway"], "methods": ["+ validate(orders) : void", "+ submitToErp(orderIds) : void"] },
+    { "id": "IErpGateway", "kind": "interface", "methods": ["+ createOrder(payload) : ErpResponse"] },
+    { "id": "MuleErpGateway", "methods": ["+ createOrder(payload) : ErpResponse"] },
+    { "id": "OrderSelector", "methods": ["+ byIds(ids) : List<Order>"] },
+    { "id": "OrderServiceTest", "kind": "test", "methods": ["+ submitsActivatedOrders()", "+ blocksOverCreditLimit()"] }
+  ],
+  "relationships": [
+    { "from": "OrderTrigger", "to": "OrderTriggerHandler", "type": "uses" },
+    { "from": "OrderTriggerHandler", "to": "TriggerHandler", "type": "extends" },
+    { "from": "OrderTriggerHandler", "to": "OrderService", "type": "uses" },
+    { "from": "OrderService", "to": "IErpGateway", "type": "association" },
+    { "from": "MuleErpGateway", "to": "IErpGateway", "type": "implements" },
+    { "from": "OrderService", "to": "OrderSelector", "type": "uses" },
+    { "from": "OrderServiceTest", "to": "OrderService", "type": "uses" }
+  ]
+}

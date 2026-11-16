@@ -1,0 +1,24 @@
+{
+  "type": "data-model",
+  "title": "Promotions — Data Model",
+  "subtitle": "Custom promotion objects and how they attach to the standard Sales Cloud model",
+  "entities": [
+    { "id": "Account", "label": "Account", "api": "Account", "icon": "standard/account", "fields": ["# Customer_Number__c : Text (Ext ID)", "Name : Text", "Type : Picklist", "Tier__c : Picklist"] },
+    { "id": "Contact", "label": "Contact", "api": "Contact", "icon": "standard/contact", "fields": ["Email : Email", "AccountId : Lookup(Account)"] },
+    { "id": "Opportunity", "label": "Opportunity", "api": "Opportunity", "icon": "standard/opportunity", "fields": ["StageName : Picklist", "Amount : Currency", "CloseDate : Date"] },
+    { "id": "Merchant__c", "label": "Merchant", "api": "Merchant__c", "fields": ["# Merchant_Code__c : Text (Ext ID)", "Account__c : Master-Detail(Account)", "Category__c : Picklist"] },
+    { "id": "Promotion__c", "label": "Promotion", "api": "Promotion__c", "fields": ["# Promo_Code__c : Text (Ext ID)", "Merchant__c : Lookup(Merchant)", "Status__c : Picklist", "Start_Date__c : Date", "End_Date__c : Date", "Budget__c : Currency"] },
+    { "id": "Promotion_Product__c", "label": "Promotion Product", "api": "Promotion_Product__c", "fields": ["Promotion__c : Master-Detail", "Product__c : Master-Detail", "Discount_Pct__c : Percent"] },
+    { "id": "Product2", "label": "Product", "api": "Product2", "icon": "standard/product", "fields": ["ProductCode : Text", "Family : Picklist"] },
+    { "id": "Redemption__x", "label": "Redemption", "api": "Redemption__x", "kind": "external", "fields": ["# ExternalId : Text", "Promo_Code__c : Indirect Lookup", "Redeemed_On__c : DateTime"] }
+  ],
+  "relationships": [
+    { "from": "Contact", "to": "Account", "type": "lookup", "label": "AccountId" },
+    { "from": "Opportunity", "to": "Account", "type": "required-lookup", "label": "AccountId" },
+    { "from": "Merchant__c", "to": "Account", "type": "master-detail", "label": "Account__c" },
+    { "from": "Promotion__c", "to": "Merchant__c", "type": "lookup", "label": "Merchant__c" },
+    { "from": "Promotion_Product__c", "to": "Promotion__c", "type": "master-detail", "label": "Promotion__c" },
+    { "from": "Promotion_Product__c", "to": "Product2", "type": "master-detail", "label": "Product__c" },
+    { "from": "Redemption__x", "to": "Promotion__c", "type": "external", "label": "Promo_Code__c" }
+  ]
+}

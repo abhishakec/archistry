@@ -1,0 +1,37 @@
+{
+  "type": "agent-instruction-diagram",
+  "title": "Order Status — Agent Instruction Diagram",
+  "subtitle": "How the service agent handles the \"Where is my order?\" job to be done",
+  "topic": {
+    "name": "Order Status & Delivery",
+    "classification": "Customer asks where an order is, when it will arrive, or wants to change a delivery slot.",
+    "scope": "Look up orders owned by the verified customer, share status and ETA, rebook delivery. Not in scope: refunds, returns, pricing."
+  },
+  "guardrails": [
+    "Always verify the customer's identity before sharing order details",
+    "Never promise a delivery date that the carrier has not confirmed",
+    "Never discuss another customer's order"
+  ],
+  "inputs": ["Verified Contact Id", "Order number", "Messaging channel"],
+  "data": ["Order & OrderItem", "Shipment (carrier API)", "Knowledge: delivery policy"],
+  "steps": [
+    { "id": "ask", "kind": "instruction", "label": "Ask for the order number or the email used at checkout" },
+    { "id": "verify", "kind": "action", "label": "Verify customer identity", "resource": "Flow: Verify_Customer" },
+    { "id": "lookup", "kind": "action", "label": "Retrieve order and shipment status", "resource": "Apex: OrderStatusService" },
+    { "id": "explain", "kind": "prompt", "label": "Summarise status and ETA in plain language", "resource": "Order Status Summary" },
+    { "id": "offer", "kind": "instruction", "label": "Offer to rebook delivery when the order is delayed" },
+    { "id": "rebook", "kind": "action", "label": "Rebook delivery slot", "resource": "API: Carrier Booking" },
+    { "id": "handoff", "kind": "handoff", "label": "Transfer to a service rep with the conversation summary", "resource": "Omni-Channel: Tier 2 queue" }
+  ],
+  "flows": [
+    { "from": "start", "to": "ask", "label": "Customer asks about an order" },
+    { "from": "ask", "to": "verify", "label": "Customer provides order number" },
+    { "from": "verify", "to": "lookup", "label": "Identity verified" },
+    { "from": "verify", "to": "handoff", "label": "Verification fails twice", "kind": "exception" },
+    { "from": "lookup", "to": "explain", "label": "Order found" },
+    { "from": "explain", "to": "offer", "label": "Order is delayed" },
+    { "from": "explain", "to": "end", "label": "Customer has what they need" },
+    { "from": "offer", "to": "rebook", "label": "Customer picks a new slot" },
+    { "from": "rebook", "to": "end", "label": "Slot confirmed" }
+  ]
+}

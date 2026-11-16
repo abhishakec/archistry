@@ -1,0 +1,34 @@
+{
+  "type": "project-plan",
+  "title": "Release 1 — Sprint Plan",
+  "subtitle": "Six two-week sprints from design to go-live, with dependencies and milestones",
+  "start": "2027-02-01",
+  "end": "2027-04-30",
+  "sprints": { "start": "2027-02-01", "lengthDays": 14, "count": 6, "prefix": "Sprint " },
+  "today": "2027-03-03",
+  "lanes": [
+    { "label": "Design", "kind": "purple", "bars": [
+      { "id": "hld", "label": "Solution design", "start": "2027-02-01", "end": "2027-02-12", "status": "done" },
+      { "id": "dd", "label": "Data model & sharing", "start": "2027-02-08", "end": "2027-02-19", "status": "done" }
+    ], "milestones": [ { "label": "Design sign-off", "date": "2027-02-22" } ] },
+    { "label": "Build", "kind": "salesforce", "bars": [
+      { "id": "cfg", "label": "Core configuration", "start": "2027-02-15", "end": "2027-03-12", "status": "in progress", "progress": 0.6 },
+      { "id": "int", "label": "ERP integration", "start": "2027-02-22", "end": "2027-03-26", "status": "at risk", "progress": 0.25 },
+      { "id": "agent", "label": "Agentforce topics", "start": "2027-03-08", "end": "2027-03-26", "status": "planned" }
+    ] },
+    { "label": "Data", "kind": "data", "bars": [
+      { "id": "map", "label": "Mapping", "start": "2027-02-15", "end": "2027-02-26", "status": "done" },
+      { "id": "mock1", "label": "Mock load 1", "start": "2027-03-08", "end": "2027-03-12", "status": "planned" },
+      { "id": "mock2", "label": "Mock load 2", "start": "2027-03-29", "end": "2027-04-02", "status": "planned" }
+    ] },
+    { "label": "Test", "kind": "warning", "bars": [
+      { "id": "sit", "label": "SIT", "start": "2027-03-22", "end": "2027-04-02", "status": "planned" },
+      { "id": "uat", "label": "UAT", "start": "2027-04-05", "end": "2027-04-16", "status": "planned" }
+    ], "milestones": [ { "label": "UAT sign-off", "date": "2027-04-19" } ] },
+    { "label": "Release", "kind": "success", "bars": [
+      { "id": "train", "label": "Training", "start": "2027-04-12", "end": "2027-04-23", "status": "planned" },
+      { "id": "cut", "label": "Cutover", "start": "2027-04-24", "end": "2027-04-25", "status": "planned" }
+    ], "milestones": [ { "label": "Go-live", "date": "2027-04-26" } ] }
+  ],
+  "dependencies": [ { "from": "hld", "to": "cfg" }, { "from": "map", "to": "mock1" }, { "from": "int", "to": "sit" }, { "from": "sit", "to": "uat" }, { "from": "uat", "to": "cut" } ]
+}

@@ -1,0 +1,38 @@
+{
+  "type": "data-flow",
+  "title": "How Archistry works",
+  "subtitle": "The agent describes the diagram; the engine lays it out, checks it and writes the files",
+  "layout": "row",
+  "children": [
+    { "zone": "You", "kind": "user", "children": [
+      { "id": "ask", "label": "Plain-language request", "sub": "\"Draw our order management architecture\"", "icon": "utility/chat" },
+      { "id": "meta", "label": "Optional real inputs", "sub": "SFDX project · CSV · Flow XML", "icon": "doctype/xml" }
+    ] },
+    { "zone": "AI agent", "kind": "ai", "children": [
+      { "id": "pick", "label": "Pick a diagram type", "sub": "1 of 40, by project stage", "icon": "utility/einstein" },
+      { "id": "spec", "label": "Write a short spec", "sub": "ids, labels, links: no coordinates", "icon": "doctype/txt" }
+    ] },
+    { "zone": "Archistry engine", "kind": "salesforce", "children": [
+      { "id": "layout", "label": "Lay out and route", "sub": "11 layout engines · orthogonal router", "icon": "utility/hierarchy" },
+      { "id": "notate", "label": "Apply notation and icons", "sub": "Salesforce ERD, BPMN, AIM / AID", "icon": "utility/settings" },
+      { "id": "lint", "label": "Validate", "sub": "overlaps · clipped labels · contrast", "icon": "utility/success", "kind": "success" }
+    ] },
+    { "zone": "Your files", "kind": "external", "children": [
+      { "id": "drawio", "label": "diagram.drawio", "sub": "edit in draw.io or VS Code", "icon": "doctype/xml" },
+      { "id": "html", "label": "diagram.html", "sub": "explore and edit in any browser", "icon": "doctype/html" },
+      { "id": "img", "label": "PNG · JPG · SVG", "sub": "for Word, Confluence, slides", "icon": "doctype/image" }
+    ] }
+  ],
+  "links": [
+    { "from": "ask", "to": "pick", "step": 1 },
+    { "from": "meta", "to": "spec", "label": "generators", "style": "async" },
+    { "from": "pick", "to": "spec", "step": 2 },
+    { "from": "spec", "to": "layout", "label": "archistry build", "step": 3 },
+    { "from": "layout", "to": "notate" },
+    { "from": "notate", "to": "lint", "step": 4 },
+    { "from": "lint", "to": "drawio", "step": 5 },
+    { "from": "lint", "to": "html" },
+    { "from": "drawio", "to": "html", "label": "lossless round trip", "style": "reference" },
+    { "from": "html", "to": "img", "label": "archistry export" }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "$comment": "Copy to brand.json in your working directory (or point the agent at any path). Missing keys fall back to the Salesforce palette. accents[] replaces the classification palette IN ORDER: [0] primary/core, [1] data, [2] integration, [3] engagement, [4] success, [5] warning. Each accent needs a light fill and a solid stroke of the same hue. Notation (ERD crow's feet, BPMN shapes) never changes with brand.",
+  "name": "Example Corp",
+  "fonts": {
+    "family": "Helvetica"
+  },
+  "colors": {
+    "text": "#1a1a2e",
+    "secondaryText": "#6b7280",
+    "background": "#ffffff",
+    "accents": [
+      { "fill": "#ffeceb", "stroke": "#e11900" },
+      { "fill": "#eef4ff", "stroke": "#2749c9" },
+      { "fill": "#e9f7f5", "stroke": "#0e7c6b" },
+      { "fill": "#fff4e5", "stroke": "#b45309" },
+      { "fill": "#ecfdf3", "stroke": "#15803d" },
+      { "fill": "#fef9c3", "stroke": "#a16207" }
+    ],
+    "neutral": { "fill": "#f4f4f5", "stroke": "#71717a" }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "type": "data-cloud-architecture",
+  "title": "Data Cloud — Reference Architecture",
+  "subtitle": "From ingestion to activation: how customer data becomes a unified, actionable profile",
+  "layout": "row",
+  "children": [
+    { "zone": "Connect", "sub": "Data sources", "kind": "external", "children": [
+      { "id": "crm", "label": "Salesforce CRM", "sub": "CRM connector", "icon": "product/sales_cloud", "kind": "salesforce" },
+      { "id": "mc", "label": "Marketing Cloud", "sub": "Engagement data", "icon": "product/marketing_cloud", "kind": "engagement" },
+      { "id": "web", "label": "Web & mobile", "sub": "Web SDK events", "icon": "platform/web" },
+      { "id": "lake", "label": "Snowflake", "sub": "Zero copy federation", "icon": "utility/database" }
+    ] },
+    { "zone": "Ingest", "sub": "Data streams", "kind": "data", "children": [
+      { "id": "streams", "label": "Data Streams", "sub": "Batch and streaming", "icon": "standard/data_streams" },
+      { "id": "dlo", "label": "Data Lake Objects", "sub": "Raw, as ingested", "icon": "standard/dataset" }
+    ] },
+    { "zone": "Harmonise & Unify", "kind": "data", "children": [
+      { "id": "dmo", "label": "Data Model Objects", "sub": "Customer 360 data model", "icon": "standard/entity" },
+      { "id": "ir", "label": "Identity Resolution", "sub": "Match and reconciliation rules", "icon": "standard/individual" },
+      { "id": "profile", "label": "Unified Profile", "sub": "Unified Individual", "icon": "standard/customer_360" }
+    ] },
+    { "zone": "Analyse & Predict", "kind": "ai", "children": [
+      { "id": "ci", "label": "Calculated Insights", "sub": "Lifetime value, RFM", "icon": "standard/report" },
+      { "id": "seg", "label": "Segments", "sub": "Audience builder", "icon": "standard/segments" },
+      { "id": "ai", "label": "Einstein & Agentforce", "sub": "Grounding via retrievers", "icon": "standard/agent_astro" }
+    ] },
+    { "zone": "Act", "sub": "Activation", "kind": "salesforce", "children": [
+      { "id": "act", "label": "Activation Targets", "sub": "Marketing, ads, files", "icon": "utility/sync" },
+      { "id": "da", "label": "Data Actions", "sub": "Platform events, webhooks", "icon": "standard/event" },
+      { "id": "crmout", "label": "CRM Enrichment", "sub": "Related lists, copy fields", "icon": "product/sales_cloud" }
+    ] }
+  ],
+  "links": [
+    { "from": "crm", "to": "streams", "label": "Hourly", "style": "batch" },
+    { "from": "mc", "to": "streams", "style": "batch" },
+    { "from": "web", "to": "streams", "label": "Streaming", "style": "async" },
+    { "from": "lake", "to": "dlo", "label": "Federated", "style": "reference" },
+    { "from": "streams", "to": "dlo" },
+    { "from": "dlo", "to": "dmo", "label": "Mapping" },
+    { "from": "dmo", "to": "ir" },
+    { "from": "ir", "to": "profile" },
+    { "from": "profile", "to": "ci" },
+    { "from": "profile", "to": "seg" },
+    { "from": "profile", "to": "ai", "style": "reference" },
+    { "from": "seg", "to": "act", "label": "Publish" },
+    { "from": "ci", "to": "da", "style": "async" },
+    { "from": "profile", "to": "crmout" }
+  ]
+}

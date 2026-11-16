@@ -1,0 +1,21 @@
+{
+  "type": "raci",
+  "title": "Service Cloud Rollout — RACI",
+  "subtitle": "Who is Responsible, Accountable, Consulted and Informed for each delivery activity",
+  "rowHeader": "Activity",
+  "roles": ["Sponsor", "Product Owner", "Solution Architect", "BA", "Dev Team", "QA Lead", "Change Lead"],
+  "rows": [
+    { "section": "Discover" },
+    { "label": "Define vision and success metrics", "values": ["A", "R", "C", "C", "I", "I", "C"] },
+    { "label": "Run process discovery workshops", "values": ["I", "A", "C", "R", "I", "I", "C"] },
+    { "section": "Design" },
+    { "label": "Solution and integration design", "values": ["I", "C", "A", "C", "R", "C", "I"] },
+    { "label": "Data model and sharing design", "values": ["", "C", "A", "C", "R", "I", ""] },
+    { "section": "Build & Test" },
+    { "label": "Configure, build and unit test", "values": ["", "C", "C", "C", "A", "I", ""] },
+    { "label": "System and UAT test execution", "values": ["I", "A", "C", "R", "C", "R", "C"] },
+    { "section": "Release" },
+    { "label": "Go / no-go decision", "values": ["A", "R", "C", "I", "C", "C", "C"] },
+    { "label": "Training and adoption", "values": ["I", "C", "", "C", "", "", "A"] }
+  ]
+}

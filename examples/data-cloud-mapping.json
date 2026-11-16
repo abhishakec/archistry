@@ -1,0 +1,42 @@
+{
+  "type": "data-cloud-mapping",
+  "title": "Customer Profile — Data Cloud Field Mapping",
+  "subtitle": "CRM Contact and e-commerce customer streams mapped to the Individual and Contact Point Email DMOs",
+  "stages": [
+    { "label": "Source", "sub": "Data streams", "kind": "salesforce", "tables": [
+      { "id": "crm", "label": "Contact", "api": "Sales Cloud", "icon": "standard/contact", "fields": [ { "name": "Id", "type": "Id", "key": true }, "FirstName", "LastName", "Email", "MobilePhone", "MailingCountry" ] },
+      { "id": "shop", "label": "Shop Customer", "api": "S3 CSV", "icon": "doctype/csv", "fields": [ { "name": "customer_id", "key": true }, "full_name", "email_address", "country_code", "loyalty_tier" ] }
+    ] },
+    { "label": "Data Lake Objects", "sub": "DLO — raw, as ingested", "kind": "data", "tables": [
+      { "id": "dlo_contact", "label": "Contact_Home", "api": "__dll", "fields": [ { "name": "Id__c", "key": true }, "FirstName__c", "LastName__c", "Email__c", "MobilePhone__c", "MailingCountry__c" ] },
+      { "id": "dlo_shop", "label": "Shop_Customer", "api": "__dll", "fields": [ { "name": "customer_id__c", "key": true }, "full_name__c", "email_address__c", "country_code__c", "loyalty_tier__c" ] }
+    ] },
+    { "label": "Data Model Objects", "sub": "DMO — harmonised Customer 360 model", "kind": "purple", "tables": [
+      { "id": "ind", "label": "Individual", "api": "ssot__Individual__dlm", "icon": "standard/individual", "fields": [ { "name": "Individual Id", "key": true }, "First Name", "Last Name", "Country", "Loyalty Tier" ] },
+      { "id": "cpe", "label": "Contact Point Email", "api": "ssot__ContactPointEmail__dlm", "icon": "standard/email", "fields": [ { "name": "Contact Point Email Id", "key": true }, "Email Address", "Party" ] }
+    ] }
+  ],
+  "maps": [
+    { "from": "crm.Id", "to": "dlo_contact.Id__c", "kind": "key" },
+    { "from": "crm.FirstName", "to": "dlo_contact.FirstName__c" },
+    { "from": "crm.LastName", "to": "dlo_contact.LastName__c" },
+    { "from": "crm.Email", "to": "dlo_contact.Email__c" },
+    { "from": "crm.MailingCountry", "to": "dlo_contact.MailingCountry__c" },
+    { "from": "shop.customer_id", "to": "dlo_shop.customer_id__c", "kind": "key" },
+    { "from": "shop.full_name", "to": "dlo_shop.full_name__c" },
+    { "from": "shop.email_address", "to": "dlo_shop.email_address__c" },
+    { "from": "shop.country_code", "to": "dlo_shop.country_code__c" },
+    { "from": "shop.loyalty_tier", "to": "dlo_shop.loyalty_tier__c" },
+    { "from": "dlo_contact.Id__c", "to": "ind.Individual Id", "kind": "key" },
+    { "from": "dlo_contact.FirstName__c", "to": "ind.First Name" },
+    { "from": "dlo_contact.LastName__c", "to": "ind.Last Name" },
+    { "from": "dlo_contact.MailingCountry__c", "to": "ind.Country" },
+    { "from": "dlo_contact.Email__c", "to": "cpe.Email Address", "label": "LOWER()", "kind": "transform" },
+    { "from": "dlo_contact.Id__c", "to": "cpe.Party", "kind": "lookup" },
+    { "from": "dlo_shop.customer_id__c", "to": "ind.Individual Id", "kind": "key" },
+    { "from": "dlo_shop.full_name__c", "to": "ind.First Name", "label": "SPLIT(' ')", "kind": "transform" },
+    { "from": "dlo_shop.country_code__c", "to": "ind.Country", "label": "ISO → name", "kind": "transform" },
+    { "from": "dlo_shop.loyalty_tier__c", "to": "ind.Loyalty Tier" },
+    { "from": "dlo_shop.email_address__c", "to": "cpe.Email Address", "label": "LOWER()", "kind": "transform" }
+  ]
+}

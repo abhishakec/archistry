@@ -1,0 +1,19 @@
+{
+  "type": "traceability-matrix",
+  "title": "Requirements Traceability Matrix",
+  "subtitle": "Every requirement traced to its user story, test case and current test status",
+  "rowHeader": "Requirement",
+  "columns": [ { "label": "User story" }, { "label": "Test case" }, { "label": "SIT" }, { "label": "UAT" }, { "label": "Regression" } ],
+  "rows": [
+    { "section": "Case management" },
+    { "label": "REQ-001  Skills-based routing", "cells": ["US-101", "TC-201, TC-202", "Pass", "Pass", "Pass"] },
+    { "label": "REQ-002  SLA milestones", "cells": ["US-102", "TC-203", "Pass", "In progress", "Not run"] },
+    { "label": "REQ-003  Duplicate case merge", "cells": ["US-103", "TC-204", "Fail", "Blocked", "Not run"] },
+    { "section": "Self-service" },
+    { "label": "REQ-010  Case tracking in portal", "cells": ["US-110", "TC-210", "Pass", "Pass", "Pass"] },
+    { "label": "REQ-011  Agentforce order status", "cells": ["US-111, US-112", "TC-211 to TC-218", "Pass", "In progress", "Not run"] },
+    { "section": "Reporting" },
+    { "label": "REQ-020  FCR dashboard", "cells": ["US-120", "TC-220", "Pass", "Pass", "Not run"] },
+    { "label": "REQ-021  Volume forecast", "cells": ["—", "—", "Not run", "Not run", "Not run"] }
+  ]
+}

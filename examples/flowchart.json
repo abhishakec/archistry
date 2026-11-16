@@ -1,0 +1,30 @@
+{
+  "type": "flowchart",
+  "title": "Which Automation Tool? — Decision Flow",
+  "subtitle": "Declarative first: pick the simplest tool that meets the requirement",
+  "direction": "TB",
+  "nodes": [
+    { "id": "start", "kind": "start", "label": "New automation requirement" },
+    { "id": "ui", "kind": "gateway", "label": "Needs user interaction?" },
+    { "id": "screen", "kind": "task", "label": "Screen Flow", "color": "success" },
+    { "id": "sameRec", "kind": "gateway", "label": "Only updates the triggering record?" },
+    { "id": "before", "kind": "task", "label": "Record-triggered Flow", "sub": "Fast field update (before save)", "color": "success" },
+    { "id": "complex", "kind": "gateway", "label": "Complex logic, bulk or callouts at scale?" },
+    { "id": "after", "kind": "task", "label": "Record-triggered Flow", "sub": "Actions and related records (after save)", "color": "success" },
+    { "id": "apex", "kind": "task", "label": "Apex trigger + handler", "sub": "Invocable actions for reuse", "color": "warning" },
+    { "id": "end", "kind": "end", "label": "Document and test" }
+  ],
+  "edges": [
+    { "from": "start", "to": "ui" },
+    { "from": "ui", "to": "screen", "label": "Yes" },
+    { "from": "ui", "to": "sameRec", "label": "No" },
+    { "from": "sameRec", "to": "before", "label": "Yes" },
+    { "from": "sameRec", "to": "complex", "label": "No" },
+    { "from": "complex", "to": "after", "label": "No" },
+    { "from": "complex", "to": "apex", "label": "Yes" },
+    { "from": "screen", "to": "end" },
+    { "from": "before", "to": "end" },
+    { "from": "after", "to": "end" },
+    { "from": "apex", "to": "end" }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "type": "environment-strategy",
+  "title": "Environment Strategy",
+  "subtitle": "Sandboxes, their purpose and the promotion path to production",
+  "layout": "row",
+  "children": [
+    { "zone": "Develop", "kind": "salesforce", "children": [
+      { "id": "dev", "label": "Developer sandboxes", "sub": "One per developer · source-tracked", "icon": "standard/apex" },
+      { "id": "scratch", "label": "Scratch orgs", "sub": "CI validation · 7-day lifespan", "icon": "utility/package" }
+    ] },
+    { "zone": "Integrate", "kind": "integration", "children": [
+      { "id": "sit", "label": "SIT", "sub": "Developer Pro · merged build", "icon": "utility/integration" }
+    ] },
+    { "zone": "Verify", "kind": "warning", "children": [
+      { "id": "uat", "label": "UAT", "sub": "Partial Copy · sampled data", "icon": "utility/groups" },
+      { "id": "train", "label": "Training", "sub": "Partial Copy · refreshed per release", "icon": "product/trailhead" }
+    ] },
+    { "zone": "Stage", "kind": "data", "children": [
+      { "id": "stage", "label": "Staging", "sub": "Full Copy · performance + cutover rehearsal", "icon": "utility/database" }
+    ] },
+    { "zone": "Run", "kind": "success", "children": [
+      { "id": "prod", "label": "Production", "sub": "Unlocked packages + metadata", "icon": "product/platform" },
+      { "id": "hotfix", "label": "Hotfix sandbox", "sub": "Developer · mirrors production", "icon": "utility/warning", "kind": "danger" }
+    ] }
+  ],
+  "links": [
+    { "from": "dev", "to": "sit", "label": "Pull request merge", "step": 1 },
+    { "from": "scratch", "to": "sit", "label": "CI checks", "style": "reference" },
+    { "from": "sit", "to": "uat", "label": "Release candidate", "step": 2 },
+    { "from": "uat", "to": "stage", "label": "UAT sign-off", "step": 3 },
+    { "from": "stage", "to": "prod", "label": "Go / no-go", "step": 4 },
+    { "from": "hotfix", "to": "prod", "label": "Emergency fix", "style": "batch" },
+    { "from": "prod", "to": "train", "label": "Refresh", "style": "batch" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "archistry",
+  "version": "2.0.0",
+  "description": "Agent skill: Salesforce architect-grade diagrams as draw.io and interactive HTML, with PNG/JPG/SVG export.",
+  "type": "module",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/abhishakec/archistry.git" },
+  "homepage": "https://github.com/abhishakec/archistry#readme",
+  "bugs": { "url": "https://github.com/abhishakec/archistry/issues" },
+  "bin": { "archistry": "scripts/archistry.mjs" },
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "types": "node scripts/archistry.mjs types",
+    "doctor": "node scripts/archistry.mjs doctor",
+    "examples": "node scripts/build-examples.mjs"
+  }
+}

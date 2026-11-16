@@ -1,0 +1,17 @@
+{
+  "type": "service-blueprint",
+  "title": "Appliance Repair — Service Blueprint (To-Be)",
+  "subtitle": "What the customer sees, what staff do, and which Salesforce capabilities support each step",
+  "phaseLabel": "Step",
+  "phases": ["Report fault", "Diagnose", "Book visit", "Repair", "Close"],
+  "rows": [
+    { "label": "Customer actions", "kind": "user", "cells": ["Describes the fault in the app", "Answers guided questions", "Picks a time slot", "Meets the technician", "Signs off and rates the visit"] },
+    { "label": "Evidence", "style": "chips", "cells": [["Mobile app"], ["Chat transcript"], ["SMS confirmation"], ["Technician ETA"], ["Service report", "Survey"]] },
+    { "divider": "Line of interaction" },
+    { "label": "Front stage", "sub": "Visible to customer", "kind": "salesforce", "cells": ["Agentforce greets and captures symptoms", "Agent runs troubleshooting flow", "Rep confirms the appointment", "Technician completes work steps", "Technician captures signature"] },
+    { "divider": "Line of visibility" },
+    { "label": "Back stage", "sub": "Not visible", "kind": "external", "cells": ["Case created and classified", "Entitlement and warranty checked", "Scheduling optimiser assigns technician", "Parts reserved from van stock", "Invoice or warranty claim raised"] },
+    { "divider": "Line of internal interaction" },
+    { "label": "Systems", "style": "chips", "chipKind": "data", "cells": [["Experience Cloud", "Agentforce"], ["Service Cloud", "Knowledge"], ["Field Service"], ["Field Service mobile", "ERP"], ["Flow", "ERP", "Data Cloud"]] }
+  ]
+}

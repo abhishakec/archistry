@@ -1,0 +1,41 @@
+{
+  "type": "roadmap",
+  "title": "Customer 360 Programme — Delivery Roadmap",
+  "subtitle": "Three releases across Sales, Service, Data Cloud and Agentforce workstreams",
+  "start": "2027-01-04",
+  "end": "2027-09-30",
+  "today": "2027-03-10",
+  "phases": [
+    { "label": "Discover", "start": "2027-01-04", "end": "2027-02-12", "kind": "purple" },
+    { "label": "Release 1 — Foundation", "start": "2027-02-15", "end": "2027-05-14", "kind": "salesforce" },
+    { "label": "Release 2 — Intelligence", "start": "2027-05-17", "end": "2027-09-30", "kind": "ai" }
+  ],
+  "lanes": [
+    { "label": "Sales Cloud", "kind": "salesforce", "bars": [
+      { "id": "s1", "label": "Lead-to-cash design", "start": "2027-01-11", "end": "2027-02-19", "status": "done" },
+      { "id": "s2", "label": "Build & config", "start": "2027-02-22", "end": "2027-04-16", "status": "in progress", "progress": 0.45 },
+      { "id": "s3", "label": "UAT", "start": "2027-04-19", "end": "2027-05-07", "status": "planned" }
+    ], "milestones": [ { "id": "gl1", "label": "Go-live R1", "date": "2027-05-14" } ] },
+    { "label": "Service Cloud", "kind": "salesforce", "bars": [
+      { "id": "v1", "label": "Case & omni design", "start": "2027-02-01", "end": "2027-03-05", "status": "done" },
+      { "id": "v2", "label": "Build", "start": "2027-03-08", "end": "2027-04-23", "status": "at risk", "progress": 0.2 },
+      { "id": "v3", "label": "Knowledge migration", "start": "2027-04-05", "end": "2027-05-07", "status": "planned" }
+    ] },
+    { "label": "Data Cloud", "kind": "data", "bars": [
+      { "id": "d1", "label": "Source mapping", "start": "2027-03-01", "end": "2027-04-09", "status": "in progress", "progress": 0.3 },
+      { "id": "d2", "label": "Identity resolution", "start": "2027-04-12", "end": "2027-06-11", "status": "planned" },
+      { "id": "d3", "label": "Segments & activation", "start": "2027-06-14", "end": "2027-08-13", "status": "planned" }
+    ] },
+    { "label": "Agentforce", "kind": "ai", "bars": [
+      { "id": "a1", "label": "Use-case prioritisation", "start": "2027-04-05", "end": "2027-04-30", "status": "planned" },
+      { "id": "a2", "label": "Service agent build", "start": "2027-06-14", "end": "2027-08-06", "status": "planned" },
+      { "id": "a3", "label": "Pilot", "start": "2027-08-09", "end": "2027-09-10", "status": "planned" }
+    ], "milestones": [ { "id": "gl2", "label": "Go-live R2", "date": "2027-09-17" } ] },
+    { "label": "Change & Training", "kind": "engagement", "bars": [
+      { "id": "c1", "label": "Stakeholder plan", "start": "2027-01-18", "end": "2027-02-26", "status": "done" },
+      { "id": "c2", "label": "Train-the-trainer", "start": "2027-04-19", "end": "2027-05-12", "status": "planned" },
+      { "id": "c3", "label": "Hypercare", "start": "2027-05-17", "end": "2027-06-11", "status": "planned" }
+    ] }
+  ],
+  "dependencies": [ { "from": "s1", "to": "s2" }, { "from": "s2", "to": "s3" }, { "from": "d1", "to": "d2" }, { "from": "d2", "to": "a2" }, { "from": "a2", "to": "a3" } ]
+}

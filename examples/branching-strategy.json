@@ -1,0 +1,33 @@
+{
+  "type": "branching-strategy",
+  "title": "Branching Strategy",
+  "subtitle": "Short-lived feature branches, a release branch per train, hotfixes from main",
+  "lanes": [
+    { "id": "feature", "label": "feature/*", "kind": "salesforce" },
+    { "id": "develop", "label": "develop", "kind": "integration" },
+    { "id": "release", "label": "release/*", "kind": "warning" },
+    { "id": "main", "label": "main", "kind": "success" },
+    { "id": "hotfix", "label": "hotfix/*", "kind": "danger" }
+  ],
+  "nodes": [
+    { "id": "d0", "kind": "state", "label": "Sprint start", "lane": "develop", "color": "integration" },
+    { "id": "f1", "kind": "state", "label": "feature/US-101", "lane": "feature" },
+    { "id": "d1", "kind": "state", "label": "Merge (PR)", "sub": "Deploys to SIT", "lane": "develop", "color": "integration" },
+    { "id": "r1", "kind": "state", "label": "release/2027.03", "sub": "Deploys to UAT", "lane": "release", "color": "warning" },
+    { "id": "r2", "kind": "state", "label": "UAT fixes", "lane": "release", "color": "warning" },
+    { "id": "m1", "kind": "state", "label": "Tag v2027.03", "sub": "Deploys to Prod", "lane": "main", "color": "success" },
+    { "id": "h1", "kind": "state", "label": "hotfix/INC-77", "lane": "hotfix", "color": "danger" },
+    { "id": "m2", "kind": "state", "label": "Tag v2027.03.1", "lane": "main", "color": "success" },
+    { "id": "d2", "kind": "state", "label": "Back-merge", "lane": "develop", "color": "integration" }
+  ],
+  "edges": [
+    { "from": "d0", "to": "f1", "label": "branch" },
+    { "from": "f1", "to": "d1", "label": "pull request" },
+    { "from": "d1", "to": "r1", "label": "cut release" },
+    { "from": "r1", "to": "r2" },
+    { "from": "r2", "to": "m1", "label": "sign-off" },
+    { "from": "m1", "to": "h1", "label": "branch" },
+    { "from": "h1", "to": "m2", "label": "merge" },
+    { "from": "m2", "to": "d2", "label": "back-merge", "kind": "optional" }
+  ]
+}

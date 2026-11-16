@@ -1,0 +1,30 @@
+{
+  "type": "oauth-flow",
+  "title": "OAuth 2.0 Web Server Flow with PKCE",
+  "subtitle": "External web app signs a user in to Salesforce and calls the REST API on their behalf",
+  "participants": [
+    { "id": "user", "label": "User", "sub": "Browser", "kind": "user", "icon": "utility/user" },
+    { "id": "app", "label": "Client App", "sub": "External Client App", "kind": "external", "icon": "utility/desktop" },
+    { "id": "auth", "label": "Salesforce", "sub": "Authorization server", "kind": "security", "icon": "utility/lock" },
+    { "id": "api", "label": "Salesforce", "sub": "REST API", "kind": "salesforce", "icon": "product/platform" }
+  ],
+  "messages": [
+    { "from": "user", "to": "app", "label": "Click \"Log in with Salesforce\"" },
+    { "from": "app", "to": "app", "label": "Generate code_verifier and code_challenge (S256)" },
+    { "from": "app", "to": "user", "label": "302 redirect to /services/oauth2/authorize", "kind": "reply" },
+    { "from": "user", "to": "auth", "label": "GET /authorize?response_type=code&client_id&code_challenge" },
+    { "from": "auth", "to": "user", "label": "Login page + consent", "kind": "reply" },
+    { "from": "user", "to": "auth", "label": "Authenticate (password + MFA) and approve scopes" },
+    { "from": "auth", "to": "user", "label": "302 redirect to callback with ?code", "kind": "reply" },
+    { "from": "user", "to": "app", "label": "GET /callback?code=..." },
+    { "from": "app", "to": "auth", "label": "POST /services/oauth2/token (code + code_verifier)" },
+    { "fragment": "alt", "label": "verifier matches challenge",
+      "messages": [ { "from": "auth", "to": "app", "label": "200 access_token, refresh_token, instance_url", "kind": "reply" } ],
+      "else": [ { "label": "invalid grant", "messages": [ { "from": "auth", "to": "app", "label": "400 invalid_grant", "kind": "error" } ] } ] },
+    { "divider": "Authenticated API access" },
+    { "from": "app", "to": "api", "label": "GET /services/data/v62.0/sobjects/Account (Bearer token)" },
+    { "from": "api", "to": "app", "label": "200 JSON", "kind": "reply" },
+    { "note": "Store the refresh token server-side only; rotate it with the refresh token flow.", "over": ["app"] },
+    { "from": "app", "to": "user", "label": "Render account data", "kind": "reply" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "type": "customer-journey",
+  "title": "Broadband Fault — Customer Journey (As-Is)",
+  "subtitle": "Where the experience breaks today and where Salesforce can help",
+  "persona": { "name": "Priya, home-working customer", "role": "Residential broadband", "goal": "Get my connection back today without repeating myself", "scenario": "Internet drops on a Monday morning before a client call" },
+  "phases": ["Notice the problem", "Seek help", "Diagnose", "Engineer visit", "Resolution", "After care"],
+  "rows": [
+    { "label": "Doing", "cells": ["Restarts router, checks status page", "Calls support, waits in queue", "Repeats details to a second agent", "Takes a day off for the visit", "Engineer replaces the line card", "Receives a generic survey"] },
+    { "label": "Thinking", "cells": ["Is it just me?", "Why can't I do this online?", "I already told you this", "Will they turn up on time?", "Finally sorted", "Did anyone learn from this?"] },
+    { "label": "Touchpoints", "style": "chips", "cells": [["Router app", "Status page"], ["IVR", "Phone"], ["Phone", "SMS"], ["SMS", "Engineer"], ["Engineer", "Email"], ["Email survey"]] },
+    { "emotion": true },
+    { "label": "Pain points", "kind": "danger", "cells": ["No proactive outage alert", "22 min average wait", "No shared case history", "4-hour arrival window", "", "No follow-up on root cause"] },
+    { "label": "Opportunities", "kind": "success", "cells": ["Proactive outage notification from network events", "Agentforce self-service diagnosis in the app", "Single case timeline in Service Cloud", "Field Service appointment tracking with ETA", "Automatic credit via Flow", "Targeted follow-up from Data Cloud segment"] },
+    { "label": "Systems", "style": "chips", "chipKind": "salesforce", "cells": [["Data Cloud", "Marketing Cloud"], ["Agentforce", "Experience Cloud"], ["Service Cloud", "Knowledge"], ["Field Service"], ["Flow", "Billing API"], ["Data Cloud", "Surveys"]] }
+  ],
+  "emotion": [ { "score": -1, "label": "Worried" }, { "score": -2, "label": "Frustrated" }, { "score": -2, "label": "Angry" }, { "score": -1, "label": "Anxious" }, { "score": 1, "label": "Relieved" }, { "score": 0, "label": "Indifferent" } ]
+}

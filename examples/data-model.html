@@ -1,0 +1,1751 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="archistry">
+<meta name="description" content="Custom promotion objects and how they attach to the standard Sales Cloud model">
+<title>Promotions — Data Model</title>
+<style>
+:root {
+  --bg: #f4f6f9; --panel: #ffffff; --ink: #032d60; --sub: #5c5c5c; --line: #d8dde6; --accent: #0176d3; --accent-ink: #ffffff;
+  --canvas: #ffffff; --dot: #dfe3ea; --hover: #eaf5fe; --danger: #ba0517; --shadow: 0 2px 10px rgba(3, 45, 96, .12);
+}
+:root[data-theme="dark"] {
+  --bg: #07101f; --panel: #0f1b30; --ink: #e6edf7; --sub: #9fb0c7; --line: #22324d; --accent: #4aa5ff; --accent-ink: #04162e;
+  --canvas: #0b1526; --dot: #1a2942; --hover: #16294a; --danger: #ff7a85; --shadow: 0 2px 14px rgba(0, 0, 0, .5);
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 13px/1.4 "Salesforce Sans", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif; overflow: hidden; }
+#app { display: grid; grid-template-rows: auto 1fr auto; grid-template-columns: 1fr auto; height: 100vh; }
+#bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: var(--panel); border-bottom: 1px solid var(--line); flex-wrap: wrap; z-index: 5; }
+#bar .title { font-weight: 700; font-size: 14px; margin-right: 6px; max-width: 30vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#bar .sep { width: 1px; align-self: stretch; background: var(--line); margin: 2px 4px; }
+#bar .grow { flex: 1; }
+button, select, input, textarea { font: inherit; color: inherit; }
+.btn { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; padding: 5px 9px; cursor: pointer; white-space: nowrap; line-height: 1.2; }
+.btn:hover { background: var(--hover); border-color: var(--accent); }
+.btn.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.icon { padding: 5px 8px; min-width: 30px; }
+.group { display: inline-flex; }
+.group .btn { border-radius: 0; margin-left: -1px; }
+.group .btn:first-child { border-radius: 6px 0 0 6px; margin-left: 0; }
+.group .btn:last-child { border-radius: 0 6px 6px 0; }
+.edit-only { display: none !important; }
+body.editing .edit-only { display: inline-flex !important; }
+body.editing #inspector .edit-only { display: block !important; }
+#tabs { display: inline-flex; gap: 2px; }
+#tabs .btn { border-radius: 6px 6px 0 0; border-bottom-color: transparent; }
+#search { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; padding: 5px 9px; width: 150px; }
+#search:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+#stage { position: relative; overflow: hidden; background-color: var(--canvas); background-image: radial-gradient(var(--dot) 1px, transparent 1px); background-size: 20px 20px; cursor: grab; touch-action: none; user-select: none; }
+#stage.panning { cursor: grabbing; }
+body.editing #stage { cursor: default; }
+#stage svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#stage text { pointer-events: none; }
+.sfd-cell[data-link] { cursor: pointer; }
+body:not(.editing) .sfd-v > .sfd-shape { transition: opacity .15s; }
+svg.dim .sfd-cell.sfd-leaf, svg.dim .sfd-e { opacity: .16; transition: opacity .15s; }
+svg.dim .sfd-cell.hl, svg.dim .sfd-e.hl, svg.dim .sfd-cell.hl .sfd-cell { opacity: 1; }
+svg.live .sfd-edge { stroke-dasharray: 7 6; animation: sfd-dash 1.1s linear infinite; }
+@keyframes sfd-dash { to { stroke-dashoffset: -26; } }
+.sel-box { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 5 3; vector-effect: non-scaling-stroke; pointer-events: none; }
+.sel-edge { fill: none; stroke: var(--accent); stroke-width: 4; opacity: .35; vector-effect: non-scaling-stroke; pointer-events: none; }
+.handle { fill: #fff; stroke: var(--accent); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.marquee { fill: rgba(1, 118, 211, .08); stroke: var(--accent); stroke-width: 1; vector-effect: non-scaling-stroke; }
+#inspector { width: 280px; background: var(--panel); border-left: 1px solid var(--line); padding: 12px; overflow: auto; display: none; }
+#inspector.open { display: block; }
+#inspector h3 { margin: 0 0 8px; font-size: 13px; }
+#inspector label { display: block; font-size: 11px; color: var(--sub); margin: 10px 0 3px; text-transform: uppercase; letter-spacing: .04em; }
+#inspector textarea, #inspector input[type=text], #inspector input[type=number], #inspector select { width: 100%; border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; background: var(--panel); }
+#inspector textarea { min-height: 84px; resize: vertical; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+#inspector .row { display: flex; gap: 8px; align-items: center; }
+#inspector .row > * { flex: 1; }
+#inspector input[type=color] { width: 100%; height: 30px; border: 1px solid var(--line); border-radius: 6px; padding: 2px; background: var(--panel); }
+#inspector .swatches { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+#inspector .sw { height: 24px; border-radius: 6px; border: 2px solid; cursor: pointer; }
+#inspector .info { color: var(--sub); font-size: 12px; }
+#inspector .info b { color: var(--ink); }
+#inspector ul { margin: 4px 0; padding-left: 16px; }
+#inspector li { cursor: pointer; }
+#inspector li:hover { color: var(--accent); }
+#status { grid-column: 1 / -1; display: flex; gap: 14px; padding: 4px 12px; font-size: 11px; color: var(--sub); background: var(--panel); border-top: 1px solid var(--line); }
+#status .dirty { color: var(--danger); font-weight: 600; }
+.menu { position: relative; display: inline-block; }
+.menu .pop { display: none; position: absolute; right: 0; top: calc(100% + 4px); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); min-width: 210px; padding: 4px; z-index: 20; }
+.menu.left .pop { right: auto; left: 0; }
+.menu.open .pop { display: block; }
+.menu .pop button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 7px 10px; border-radius: 6px; cursor: pointer; }
+.menu .pop button:hover { background: var(--hover); }
+.menu .pop .hint { float: right; color: var(--sub); font-size: 11px; margin-left: 12px; }
+.menu .pop hr { border: 0; border-top: 1px solid var(--line); margin: 4px 0; }
+#help { position: fixed; inset: 0; background: rgba(3, 20, 45, .45); display: none; align-items: center; justify-content: center; z-index: 50; }
+#help.open { display: flex; }
+#help .card { background: var(--panel); border-radius: 12px; box-shadow: var(--shadow); padding: 20px 24px; max-width: 640px; max-height: 84vh; overflow: auto; }
+#help h2 { margin: 0 0 10px; font-size: 16px; }
+#help table { border-collapse: collapse; width: 100%; }
+#help td { padding: 4px 10px 4px 0; vertical-align: top; }
+#help kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px; font: 11px ui-monospace, Consolas, monospace; background: var(--bg); }
+#toast { position: fixed; left: 50%; bottom: 44px; transform: translateX(-50%); background: var(--ink); color: var(--panel); padding: 8px 14px; border-radius: 8px; font-size: 12px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 60; }
+#toast.show { opacity: .95; }
+body.present #bar, body.present #status, body.present #inspector { display: none !important; }
+body.present #app { grid-template-rows: 1fr; }
+@media print { #bar, #status, #inspector, #help, #toast { display: none !important; } #app { display: block; } #stage { height: 100vh; background-image: none; } }
+@media (max-width: 760px) { #inspector { position: fixed; right: 0; top: 96px; bottom: 26px; box-shadow: var(--shadow); z-index: 10; } #bar .title { max-width: 60vw; } }
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<noscript>This diagram needs JavaScript to render. The draw.io source is embedded in this file and can be extracted with: node scripts/archistry.mjs convert this-file.html -o diagram.drawio</noscript>
+<script type="application/xml" id="sfd-model">
+<mxfile host="app.diagrams.net" agent="archistry" type="device">
+  <diagram id="page" name="Promotions — Data Model">
+    <mxGraphModel dx="1050" dy="1070" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1050" pageHeight="1070" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="Account" value="&lt;b&gt;Account&lt;/b&gt;" style="html=1;whiteSpace=wrap;swimlane;startSize=40;horizontal=1;rounded=1;arcSize=16;absoluteArcSize=1;fillColor=#eaf5fe;swimlaneFillColor=#ffffff;strokeColor=#0176d3;strokeWidth=1.5;fontColor=#032d60;fontSize=13;fontStyle=0;align=left;spacingLeft=44;collapsible=0;recursiveResize=0;container=1;" vertex="1" parent="1"><mxGeometry x="610" y="110" width="240" height="120" as="geometry"/></mxCell>
+        <mxCell id="ico" value="" style="html=1;shape=image;aspect=fixed;imageAspect=1;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjE1IiBmaWxsPSIjNTg2N2U4Ii8+PHN2ZyB4PSIxNCIgeT0iMTQiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9IiNmZmZmZmYiPjxwYXRoIGQ9Ik03OSA1MS4xYy4xLTIuMS0xLjQtMi43LTItMi43SDU1LjJjLTEuOSAwLTIuMiAyLTIuMiAyLjJWNzRoMjZ6TTY0IDY3LjlhMiAyIDAgMCAxLTIgMmgtMmEyIDIgMCAwIDEtMi0ydi0yYzAtMS4xLjktMiAyLTJoMmEyIDIgMCAwIDEgMiAyem0wLTEwLjJhMiAyIDAgMCAxLTIgMmgtMmEyIDIgMCAwIDEtMi0ydi0yYzAtMS4xLjktMiAyLTJoMmEyIDIgMCAwIDEgMiAyem0xMCAxMC4yYTIgMiAwIDAgMS0yIDJoLTJhMiAyIDAgMCAxLTItMnYtMmMwLTEuMS45LTIgMi0yaDJhMiAyIDAgMCAxIDIgMnptMC0xMC4yYTIgMiAwIDAgMS0yIDJoLTJhMiAyIDAgMCAxLTItMnYtMmMwLTEuMS45LTIgMi0yaDJhMiAyIDAgMCAxIDIgMnpNNTkgNDAuM1YyOC43Yy4xLTIuMS0xLjQtMi43LTItMi43SDIzLjJjLTEuOSAwLTIuMiAyLTIuMiAyLjJWNzRoMjZWNDQuN3MwLTIuNCAyLjItMi40aDcuOWMxLjEgMCAxLjktMS4yIDEuOS0yTTMyIDY2LjlhMiAyIDAgMCAxLTIgMmgtMmEyIDIgMCAwIDEtMi0ydi0yYzAtMS4xLjktMiAyLTJoMmEyIDIgMCAwIDEgMiAyem0wLTEwLjNhMiAyIDAgMCAxLTIgMmgtMmEyIDIgMCAwIDEtMi0ydi0yYzAtMS4xLjktMiAyLTJoMmEyIDIgMCAwIDEgMiAyem0wLTEwLjJhMiAyIDAgMCAxLTIgMmgtMmEyIDIgMCAwIDEtMi0ydi0yYzAtMS4xLjktMiAyLTJoMmEyIDIgMCAwIDEgMiAyem0wLTEwLjJhMiAyIDAgMCAxLTIgMmgtMmEyIDIgMCAwIDEtMi0ydi0yYzAtMS4xLjktMiAyLTJoMmEyIDIgMCAwIDEgMiAyem0xMSAzMC43YTIgMiAwIDAgMS0yIDJoLTJhMiAyIDAgMCAxLTItMnYtMmMwLTEuMS45LTIgMi0yaDJhMiAyIDAgMCAxIDIgMnptMC0xMC4zYTIgMiAwIDAgMS0yIDJoLTJhMiAyIDAgMCAxLTItMnYtMmMwLTEuMS45LTIgMi0yaDJhMiAyIDAgMCAxIDIgMnptMC0xMC4yYTIgMiAwIDAgMS0yIDJoLTJhMiAyIDAgMCAxLTItMnYtMmMwLTEuMS45LTIgMi0yaDJhMiAyIDAgMCAxIDIgMnptMC0xMC4yYTIgMiAwIDAgMS0yIDJoLTJhMiAyIDAgMCAxLTItMnYtMmMwLTEuMS45LTIgMi0yaDJhMiAyIDAgMCAxIDIgMnptMTEgMGEyIDIgMCAwIDEtMiAyaC0yYTIgMiAwIDAgMS0yLTJ2LTJjMC0xLjEuOS0yIDItMmgyYTIgMiAwIDAgMSAyIDJ6Ii8+PC9zdmc+PC9zdmc+;part=1;pointerEvents=0;" vertex="1" connectable="0" parent="Account"><mxGeometry x="10" y="7" width="26" height="26" as="geometry"/></mxCell>
+        <mxCell id="Account_fields" value="# Customer_Number__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Text (Ext ID)&lt;/font&gt;&lt;br&gt;+ Name&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Text&lt;/font&gt;&lt;br&gt;+ Type&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Picklist&lt;/font&gt;&lt;br&gt;+ Tier__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Picklist&lt;/font&gt;" style="html=1;text;fillColor=none;strokeColor=none;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=12;fontColor=#032d60;part=1;overflow=hidden;" vertex="1" connectable="0" parent="Account"><mxGeometry y="40" width="240" height="80" as="geometry"/></mxCell>
+        <mxCell id="Contact" value="&lt;b&gt;Contact&lt;/b&gt;" style="html=1;whiteSpace=wrap;swimlane;startSize=40;horizontal=1;rounded=1;arcSize=16;absoluteArcSize=1;fillColor=#eaf5fe;swimlaneFillColor=#ffffff;strokeColor=#0176d3;strokeWidth=1.5;fontColor=#032d60;fontSize=13;fontStyle=0;align=left;spacingLeft=44;collapsible=0;recursiveResize=0;container=1;" vertex="1" parent="1"><mxGeometry x="440" y="330" width="200" height="100" as="geometry"/></mxCell>
+        <mxCell id="ico_2" value="" style="html=1;shape=image;aspect=fixed;imageAspect=1;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjE1IiBmaWxsPSIjOTYwMmM3Ii8+PHN2ZyB4PSIxNCIgeT0iMTQiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgdmlld0JveD0iMCAwIDEwMDAgMTAwMCIgZmlsbD0iI2ZmZmZmZiI+PHBhdGggZD0iTTc0MCAyOTBIMjYwYy0zMyAwLTYwIDI3LTYwIDYwdjI5MGMwIDMzIDI3IDYwIDYwIDYwaDQ4MGMzMyAwIDYwLTI3IDYwLTYwVjM1MGMwLTMzLTI3LTYwLTYwLTYwTTQ4NiA2MzBIMzE0Yy0xOSAwLTM0LTIxLTM0LTQxIDEtMzAgMzItNDggNjUtNjMgMjMtMTAgMjYtMTkgMjYtMjlzLTYtMTktMTQtMjZhNjggNjggMCAwIDEtMjEtNTBjMC0zOCAyMy03MCA2My03MHM2MyAzMiA2MyA3MGMwIDIwLTcgMzgtMjEgNTAtOCA3LTE0IDE2LTE0IDI2czMgMTkgMjYgMjhjMzMgMTQgNjQgMzQgNjUgNjQgMiAyMC0xMyA0MS0zMiA0MW0yMzQtNzBjMCAxMS05IDIwLTIwIDIwaC05MGMtMTEgMC0yMC05LTIwLTIwdi0zMGMwLTExIDktMjAgMjAtMjBoOTBjMTEgMCAyMCA5IDIwIDIwem0wLTExMGMwIDExLTkgMjAtMjAgMjBINTUwYy0xMSAwLTIwLTktMjAtMjB2LTMwYzAtMTEgOS0yMCAyMC0yMGgxNTBjMTEgMCAyMCA5IDIwIDIweiIvPjwvc3ZnPjwvc3ZnPg==;part=1;pointerEvents=0;" vertex="1" connectable="0" parent="Contact"><mxGeometry x="10" y="7" width="26" height="26" as="geometry"/></mxCell>
+        <mxCell id="Contact_fields" value="+ Email&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Email&lt;/font&gt;&lt;br&gt;+ AccountId&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Lookup(Account)&lt;/font&gt;" style="html=1;text;fillColor=none;strokeColor=none;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=12;fontColor=#032d60;part=1;overflow=hidden;" vertex="1" connectable="0" parent="Contact"><mxGeometry y="40" width="200" height="60" as="geometry"/></mxCell>
+        <mxCell id="Opportunity" value="&lt;b&gt;Opportunity&lt;/b&gt;" style="html=1;whiteSpace=wrap;swimlane;startSize=40;horizontal=1;rounded=1;arcSize=16;absoluteArcSize=1;fillColor=#eaf5fe;swimlaneFillColor=#ffffff;strokeColor=#0176d3;strokeWidth=1.5;fontColor=#032d60;fontSize=13;fontStyle=0;align=left;spacingLeft=44;collapsible=0;recursiveResize=0;container=1;" vertex="1" parent="1"><mxGeometry x="830" y="330" width="180" height="100" as="geometry"/></mxCell>
+        <mxCell id="ico_3" value="" style="html=1;shape=image;aspect=fixed;imageAspect=1;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjE1IiBmaWxsPSIjZmY1ZDJkIi8+PHN2ZyB4PSIxNCIgeT0iMTQiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgdmlld0JveD0iMCAwIDEwMDAgMTAwMCIgZmlsbD0iI2ZmZmZmZiI+PHBhdGggZD0iTTcxMSA2OTBIMjg5Yy0xMCAwLTE5IDktMTkgMTl2MWMwIDMzIDI3IDYwIDYwIDYwaDM0MGMzMyAwIDYwLTI3IDYwLTYwdi0xYzAtMTAtOS0xOS0xOS0xOW00OS00MTBhNjAgNjAgMCAwIDAtMzkgMTA2Yy0xNyAzOS01NiA2Ni0xMDIgNjQtNTMtMy05Ni00Ni05OS05OSAwLTkgMC0xNyAyLTI1YTYwIDYwIDAgMCAwLTIyLTExNiA2MCA2MCAwIDAgMC0yMiAxMTZjMiA4IDIgMTYgMiAyNS0zIDUzLTQ2IDk2LTk5IDk5LTQ2IDMtODYtMjUtMTAyLTY0YTYwIDYwIDAgMCAwLTM5LTEwNmMtMzMgMC02MCAyNy02MCA2MHMyNyA2MCA2MCA2MGwyOCAyMTRjMSA5IDkgMTYgMTkgMTZoNDI2YzkgMCAxNy03IDE5LTE2bDI4LTIxNGMzMyAwIDYwLTI3IDYwLTYwcy0yNy02MC02MC02MCIvPjwvc3ZnPjwvc3ZnPg==;part=1;pointerEvents=0;" vertex="1" connectable="0" parent="Opportunity"><mxGeometry x="10" y="7" width="26" height="26" as="geometry"/></mxCell>
+        <mxCell id="Opportunity_fields" value="+ StageName&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Picklist&lt;/font&gt;&lt;br&gt;+ Amount&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Currency&lt;/font&gt;&lt;br&gt;+ CloseDate&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Date&lt;/font&gt;" style="html=1;text;fillColor=none;strokeColor=none;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=12;fontColor=#032d60;part=1;overflow=hidden;" vertex="1" connectable="0" parent="Opportunity"><mxGeometry y="40" width="180" height="60" as="geometry"/></mxCell>
+        <mxCell id="Merchant__c" value="&lt;b&gt;Merchant&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt;Merchant__c&lt;/font&gt;&lt;/i&gt;" style="html=1;whiteSpace=wrap;swimlane;startSize=60;horizontal=1;rounded=1;arcSize=16;absoluteArcSize=1;fillColor=#ffece3;swimlaneFillColor=#ffffff;strokeColor=#dd5a1b;strokeWidth=1.5;fontColor=#032d60;fontSize=13;fontStyle=0;align=center;spacingLeft=4;collapsible=0;recursiveResize=0;container=1;" vertex="1" parent="1"><mxGeometry x="40" y="330" width="240" height="120" as="geometry"/></mxCell>
+        <mxCell id="Merchant__c_fields" value="# Merchant_Code__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Text (Ext ID)&lt;/font&gt;&lt;br&gt;+ Account__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Master-Detail(Account)&lt;/font&gt;&lt;br&gt;+ Category__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Picklist&lt;/font&gt;" style="html=1;text;fillColor=none;strokeColor=none;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=12;fontColor=#032d60;part=1;overflow=hidden;" vertex="1" connectable="0" parent="Merchant__c"><mxGeometry y="60" width="240" height="60" as="geometry"/></mxCell>
+        <mxCell id="Promotion__c" value="&lt;b&gt;Promotion&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt;Promotion__c&lt;/font&gt;&lt;/i&gt;" style="html=1;whiteSpace=wrap;swimlane;startSize=60;horizontal=1;rounded=1;arcSize=16;absoluteArcSize=1;fillColor=#ffece3;swimlaneFillColor=#ffffff;strokeColor=#dd5a1b;strokeWidth=1.5;fontColor=#032d60;fontSize=13;fontStyle=0;align=center;spacingLeft=4;collapsible=0;recursiveResize=0;container=1;" vertex="1" parent="1"><mxGeometry x="430" y="550" width="220" height="180" as="geometry"/></mxCell>
+        <mxCell id="Promotion__c_fields" value="# Promo_Code__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Text (Ext ID)&lt;/font&gt;&lt;br&gt;+ Merchant__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Lookup(Merchant)&lt;/font&gt;&lt;br&gt;+ Status__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Picklist&lt;/font&gt;&lt;br&gt;+ Start_Date__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Date&lt;/font&gt;&lt;br&gt;+ End_Date__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Date&lt;/font&gt;&lt;br&gt;+ Budget__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Currency&lt;/font&gt;" style="html=1;text;fillColor=none;strokeColor=none;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=12;fontColor=#032d60;part=1;overflow=hidden;" vertex="1" connectable="0" parent="Promotion__c"><mxGeometry y="60" width="220" height="120" as="geometry"/></mxCell>
+        <mxCell id="Promotion_Product__c" value="&lt;b&gt;Promotion Product&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt;Promotion_Product__c&lt;/font&gt;&lt;/i&gt;" style="html=1;whiteSpace=wrap;swimlane;startSize=60;horizontal=1;rounded=1;arcSize=16;absoluteArcSize=1;fillColor=#ffece3;swimlaneFillColor=#ffffff;strokeColor=#dd5a1b;strokeWidth=1.5;fontColor=#032d60;fontSize=13;fontStyle=0;align=center;spacingLeft=4;collapsible=0;recursiveResize=0;container=1;" vertex="1" parent="1"><mxGeometry x="250" y="830" width="200" height="120" as="geometry"/></mxCell>
+        <mxCell id="Promotion_Product__c_fields" value="+ Promotion__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Master-Detail&lt;/font&gt;&lt;br&gt;+ Product__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Master-Detail&lt;/font&gt;&lt;br&gt;+ Discount_Pct__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Percent&lt;/font&gt;" style="html=1;text;fillColor=none;strokeColor=none;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=12;fontColor=#032d60;part=1;overflow=hidden;" vertex="1" connectable="0" parent="Promotion_Product__c"><mxGeometry y="60" width="200" height="60" as="geometry"/></mxCell>
+        <mxCell id="Product2" value="&lt;b&gt;Product&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt;Product2&lt;/font&gt;&lt;/i&gt;" style="html=1;whiteSpace=wrap;swimlane;startSize=60;horizontal=1;rounded=1;arcSize=16;absoluteArcSize=1;fillColor=#eaf5fe;swimlaneFillColor=#ffffff;strokeColor=#0176d3;strokeWidth=1.5;fontColor=#032d60;fontSize=13;fontStyle=0;align=left;spacingLeft=44;collapsible=0;recursiveResize=0;container=1;" vertex="1" parent="1"><mxGeometry x="260" y="110" width="180" height="120" as="geometry"/></mxCell>
+        <mxCell id="ico_4" value="" style="html=1;shape=image;aspect=fixed;imageAspect=1;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjE1IiBmaWxsPSIjOTA1MGU5Ii8+PHN2ZyB4PSIxNCIgeT0iMTQiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgdmlld0JveD0iMCAwIDEwMDAgMTAwMCIgZmlsbD0iI2ZmZmZmZiI+PHBhdGggZD0iTTIyMCA2NjBoNTBjMTEgMCAyMC05IDIwLTIwVjMzMGMwLTExLTktMjAtMjAtMjBoLTUwYy0xMSAwLTIwIDktMjAgMjB2MzEwYzAgMTEgOSAyMCAyMCAyMG01NjAtMzUwaC01MGMtMTEgMC0yMCA5LTIwIDIwdjMxMGMwIDExIDkgMjAgMjAgMjBoNTBjMTEgMCAyMC05IDIwLTIwVjMzMGMwLTExLTktMjAtMjAtMjBNNTMwIDY2MGMxMSAwIDIwLTkgMjAtMjBWMzMwYzAtMTEtOS0yMC0yMC0yMGgtNjBjLTExIDAtMjAgOS0yMCAyMHYzMTBjMCAxMSA5IDIwIDIwIDIwem0xMjAgMGMxMSAwIDIwLTkgMjAtMjBWMzMwYzAtMTEtOS0yMC0yMC0yMGgtMjBjLTExIDAtMjAgOS0yMCAyMHYzMTBjMCAxMSA5IDIwIDIwIDIwem0tMjYwIDBjMTEgMCAyMC05IDIwLTIwVjMzMGMwLTExLTktMjAtMjAtMjBoLTIwYy0xMSAwLTIwIDktMjAgMjB2MzEwYzAgMTEgOSAyMCAyMCAyMHptMzkwIDYwSDIyMGMtMTEgMC0yMCA5LTIwIDIwdjIwYzAgMTEgOSAyMCAyMCAyMGg1NjBjMTEgMCAyMC05IDIwLTIwdi0yMGMwLTExLTktMjAtMjAtMjBtMC01MjBIMjIwYy0xMSAwLTIwIDktMjAgMjB2MjBjMCAxMSA5IDIwIDIwIDIwaDU2MGMxMSAwIDIwLTkgMjAtMjB2LTIwYzAtMTEtOS0yMC0yMC0yMCIvPjwvc3ZnPjwvc3ZnPg==;part=1;pointerEvents=0;" vertex="1" connectable="0" parent="Product2"><mxGeometry x="10" y="17" width="26" height="26" as="geometry"/></mxCell>
+        <mxCell id="Product2_fields" value="+ ProductCode&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Text&lt;/font&gt;&lt;br&gt;+ Family&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Picklist&lt;/font&gt;" style="html=1;text;fillColor=none;strokeColor=none;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=12;fontColor=#032d60;part=1;overflow=hidden;" vertex="1" connectable="0" parent="Product2"><mxGeometry y="60" width="180" height="60" as="geometry"/></mxCell>
+        <mxCell id="Redemption__x" value="&lt;b&gt;Redemption&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt;Redemption__x&lt;/font&gt;&lt;/i&gt;" style="html=1;whiteSpace=wrap;swimlane;startSize=60;horizontal=1;rounded=1;arcSize=16;absoluteArcSize=1;fillColor=#f3f3f3;swimlaneFillColor=#ffffff;strokeColor=#747474;strokeWidth=1.5;fontColor=#032d60;fontSize=13;fontStyle=0;align=center;spacingLeft=4;collapsible=0;recursiveResize=0;container=1;" vertex="1" parent="1"><mxGeometry x="620" y="830" width="220" height="120" as="geometry"/></mxCell>
+        <mxCell id="Redemption__x_fields" value="# ExternalId&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Text&lt;/font&gt;&lt;br&gt;+ Promo_Code__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : Indirect Lookup&lt;/font&gt;&lt;br&gt;+ Redeemed_On__c&lt;font style=&quot;font-size:11px&quot; color=&quot;#5c5c5c&quot;&gt; : DateTime&lt;/font&gt;" style="html=1;text;fillColor=none;strokeColor=none;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontSize=12;fontColor=#032d60;part=1;overflow=hidden;" vertex="1" connectable="0" parent="Redemption__x"><mxGeometry y="60" width="220" height="60" as="geometry"/></mxCell>
+        <mxCell id="e_Contact_Account" value="AccountId" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=10;fontColor=#5c5c5c;endArrow=ERzeroToOne;endFill=0;endSize=10;edgeStyle=orthogonalEdgeStyle;startSize=10;startArrow=ERzeroToMany;startFill=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="Contact" target="Account"><mxGeometry x="0.7" relative="1" as="geometry"><Array as="points"><mxPoint x="540" y="170"/></Array></mxGeometry></mxCell>
+        <mxCell id="e_Opportunity_Account" value="AccountId" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=10;fontColor=#5c5c5c;endArrow=ERmandOne;endFill=0;endSize=10;edgeStyle=orthogonalEdgeStyle;startSize=10;startArrow=ERzeroToMany;startFill=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="Opportunity" target="Account"><mxGeometry x="0.7" relative="1" as="geometry"><Array as="points"><mxPoint x="920" y="170"/></Array></mxGeometry></mxCell>
+        <mxCell id="e_Merchant__c_Account" value="Account__c" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=10;fontColor=#5c5c5c;endArrow=diamond;endFill=0;endSize=10;edgeStyle=orthogonalEdgeStyle;startSize=10;startArrow=ERzeroToMany;startFill=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="Merchant__c" target="Account"><mxGeometry x="0.09" relative="1" as="geometry"><Array as="points"><mxPoint x="160" y="250"/><mxPoint x="730" y="250"/></Array></mxGeometry></mxCell>
+        <mxCell id="e_Promotion__c_Merchant__c" value="Merchant__c" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=10;fontColor=#5c5c5c;endArrow=ERzeroToOne;endFill=0;endSize=10;edgeStyle=orthogonalEdgeStyle;startSize=10;startArrow=ERzeroToMany;startFill=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="Promotion__c" target="Merchant__c"><mxGeometry x="-0.41" relative="1" as="geometry"><Array as="points"><mxPoint x="160" y="640"/></Array></mxGeometry></mxCell>
+        <mxCell id="e_Promotion_Product__c_Promotion__c" value="Promotion__c" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=10;fontColor=#5c5c5c;endArrow=diamond;endFill=0;endSize=10;edgeStyle=orthogonalEdgeStyle;startSize=10;startArrow=ERzeroToMany;startFill=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="Promotion_Product__c" target="Promotion__c"><mxGeometry x="-0.64" relative="1" as="geometry"><Array as="points"><mxPoint x="540" y="890"/></Array></mxGeometry></mxCell>
+        <mxCell id="e_Promotion_Product__c_Product2" value="Product__c" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=10;fontColor=#5c5c5c;endArrow=diamond;endFill=0;endSize=10;edgeStyle=orthogonalEdgeStyle;startSize=10;startArrow=ERzeroToMany;startFill=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="Promotion_Product__c" target="Product2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e_Redemption__x_Promotion__c" value="Promo_Code__c" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=10;fontColor=#5c5c5c;endArrow=ERzeroToOne;endFill=0;endSize=10;edgeStyle=orthogonalEdgeStyle;startSize=10;startArrow=ERzeroToMany;startFill=0;dashed=1;dashPattern=6 4;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=#ffffff;" edge="1" parent="1" source="Redemption__x" target="Promotion__c"><mxGeometry x="-0.3" relative="1" as="geometry"><Array as="points"><mxPoint x="730" y="640"/></Array></mxGeometry></mxCell>
+        <mxCell id="t" value="&lt;b&gt;&lt;font style=&quot;font-size:20px&quot;&gt;Promotions — Data Model&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot; color=&quot;#5c5c5c&quot;&gt;Custom promotion objects and how they attach to the standard Sales Cloud model&lt;/font&gt;" style="html=1;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#032d60;fontSize=12;" vertex="1" parent="1"><mxGeometry x="40" y="36" width="970" height="62" as="geometry"/></mxCell>
+        <mxCell id="t_2" value="&lt;b&gt;Key&lt;/b&gt;" style="html=1;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="40" y="977" width="44" height="18" as="geometry"/></mxCell>
+        <mxCell id="key_sw" value="" style="html=1;rounded=1;arcSize=6;absoluteArcSize=1;fontSize=9;fontStyle=1;fillColor=#eaf5fe;strokeColor=#0176d3;strokeWidth=1.5;" vertex="1" connectable="0" parent="1"><mxGeometry x="86" y="978" width="16" height="16" as="geometry"/></mxCell>
+        <mxCell id="t_3" value="Standard object" style="html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="108" y="977" width="90" height="18" as="geometry"/></mxCell>
+        <mxCell id="key_sw_2" value="" style="html=1;rounded=1;arcSize=6;absoluteArcSize=1;fontSize=9;fontStyle=1;fillColor=#ffece3;strokeColor=#dd5a1b;strokeWidth=1.5;" vertex="1" connectable="0" parent="1"><mxGeometry x="212" y="978" width="16" height="16" as="geometry"/></mxCell>
+        <mxCell id="t_4" value="Custom object" style="html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="234" y="977" width="90" height="18" as="geometry"/></mxCell>
+        <mxCell id="key_sw_3" value="" style="html=1;rounded=1;arcSize=6;absoluteArcSize=1;fontSize=9;fontStyle=1;fillColor=#f3f3f3;strokeColor=#747474;strokeWidth=1.5;" vertex="1" connectable="0" parent="1"><mxGeometry x="338" y="978" width="16" height="16" as="geometry"/></mxCell>
+        <mxCell id="t_5" value="External object / system" style="html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="360" y="977" width="130" height="18" as="geometry"/></mxCell>
+        <mxCell id="key_line" value="" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=11;fontColor=#032d60;endArrow=ERzeroToOne;endFill=0;endSize=8;startSize=8;startArrow=ERzeroToMany;startFill=0;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="504" y="986" as="sourcePoint"/><mxPoint x="538" y="986" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="t_6" value="Lookup (optional parent)" style="html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="544" y="977" width="140" height="18" as="geometry"/></mxCell>
+        <mxCell id="key_line_2" value="" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=11;fontColor=#032d60;endArrow=ERmandOne;endFill=0;endSize=8;startSize=8;startArrow=ERzeroToMany;startFill=0;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="698" y="986" as="sourcePoint"/><mxPoint x="732" y="986" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="t_7" value="Required lookup" style="html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="738" y="977" width="100" height="18" as="geometry"/></mxCell>
+        <mxCell id="key_line_3" value="" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=11;fontColor=#032d60;endArrow=diamond;endFill=0;endSize=8;startSize=8;startArrow=ERzeroToMany;startFill=0;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="86" y="1010" as="sourcePoint"/><mxPoint x="120" y="1010" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="t_8" value="Master-detail (parent-child)" style="html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="126" y="1001" width="150" height="18" as="geometry"/></mxCell>
+        <mxCell id="key_line_4" value="" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=11;fontColor=#032d60;endArrow=ERzeroToOne;endFill=0;endSize=8;startSize=8;startArrow=ERzeroToMany;startFill=0;dashed=1;dashPattern=6 4;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="290" y="1010" as="sourcePoint"/><mxPoint x="324" y="1010" as="targetPoint"/></mxGeometry></mxCell>
+        <mxCell id="t_9" value="External / indirect lookup" style="html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="330" y="1001" width="140" height="18" as="geometry"/></mxCell>
+        <mxCell id="key_sw_4" value="#" style="html=1;rounded=1;arcSize=6;absoluteArcSize=1;fontSize=9;fontStyle=1;fillColor=#ffffff;strokeColor=#969492;fontColor=#032d60;" vertex="1" connectable="0" parent="1"><mxGeometry x="484" y="1002" width="16" height="16" as="geometry"/></mxCell>
+        <mxCell id="t_10" value="Key / external ID field" style="html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="506" y="1001" width="120" height="18" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
+</script>
+<script>
+window.SFDMX = (function () {
+// mx.mjs — shared core: mxfile (draw.io) model, text metrics, SVG renderer.
+// Pure JavaScript with no imports so the same source runs in Node (CLI) and is
+// inlined into the standalone HTML viewer/editor. Keep it dependency-free.
+
+/* ------------------------------------------------------------------ XML -- */
+
+const ENT = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+function decodeEntities(s) {
+  return String(s).replace(/&(#x?[0-9a-fA-F]+|[a-zA-Z]+);/g, (m, e) => {
+    if (e[0] === '#') {
+      const c = e[1] === 'x' || e[1] === 'X' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+      return Number.isFinite(c) ? String.fromCodePoint(c) : m;
+    }
+    return e in ENT ? ENT[e] : m;
+  });
+}
+function escXml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/\n/g, '&#10;');
+}
+function escText(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function parseXml(src) {
+  const root = { tag: '#root', attrs: {}, children: [], text: '' };
+  const stack = [root];
+  const n = src.length;
+  let i = 0;
+  const top = () => stack[stack.length - 1];
+  while (i < n) {
+    const lt = src.indexOf('<', i);
+    if (lt < 0) { top().text += decodeEntities(src.slice(i)); break; }
+    if (lt > i) top().text += decodeEntities(src.slice(i, lt));
+    if (src.startsWith('<!--', lt)) { const e = src.indexOf('-->', lt); i = e < 0 ? n : e + 3; continue; }
+    if (src.startsWith('<![CDATA[', lt)) {
+      const e = src.indexOf(']]>', lt); top().text += src.slice(lt + 9, e < 0 ? n : e); i = e < 0 ? n : e + 3; continue;
+    }
+    if (src[lt + 1] === '?' || src[lt + 1] === '!') { const e = src.indexOf('>', lt); i = e < 0 ? n : e + 1; continue; }
+    if (src[lt + 1] === '/') { const e = src.indexOf('>', lt); if (stack.length > 1) stack.pop(); i = e < 0 ? n : e + 1; continue; }
+    let j = lt + 1, q = null;
+    while (j < n) { const c = src[j]; if (q) { if (c === q) q = null; } else if (c === '"' || c === "'") q = c; else if (c === '>') break; j++; }
+    let body = src.slice(lt + 1, j);
+    const selfClose = body.endsWith('/');
+    if (selfClose) body = body.slice(0, -1);
+    const m = body.match(/^[^\s]+/);
+    const node = { tag: m ? m[0] : '', attrs: {}, children: [], text: '' };
+    const re = /([^\s=]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
+    const rest = body.slice(node.tag.length);
+    let a;
+    while ((a = re.exec(rest))) node.attrs[a[1]] = decodeEntities(a[2] !== undefined ? a[2] : a[3]);
+    top().children.push(node);
+    if (!selfClose) stack.push(node);
+    i = j + 1;
+  }
+  return root;
+}
+function findTag(node, tag) {
+  if (node.tag === tag) return node;
+  for (const c of node.children) { const r = findTag(c, tag); if (r) return r; }
+  return null;
+}
+function findAll(node, tag, out = []) {
+  if (node.tag === tag) out.push(node);
+  for (const c of node.children) findAll(c, tag, out);
+  return out;
+}
+
+/* ---------------------------------------------------------------- style -- */
+
+function parseStyle(s) {
+  const o = {};
+  if (!s) return o;
+  let lastKey = null;
+  for (const part of String(s).split(';')) {
+    if (!part) continue;
+    // tolerate "image=data:image/png;base64,AAAA" (an unescaped ';' inside a data URI)
+    if (lastKey === 'image' && /^base64,/.test(part)) { o.image += ',' + part.slice(7); continue; }
+    const k = part.indexOf('=');
+    if (k < 0) { o[part] = ''; lastKey = part; } else { lastKey = part.slice(0, k); o[lastKey] = part.slice(k + 1); }
+  }
+  return o;
+}
+function styleStr(o) {
+  let s = '';
+  for (const k of Object.keys(o)) { const v = o[k]; if (v === undefined || v === null) continue; s += v === '' ? k + ';' : k + '=' + v + ';'; }
+  return s;
+}
+const num = (v, d) => { const x = parseFloat(v); return Number.isFinite(x) ? x : d; };
+
+/* ------------------------------------------------------------- mxfile IO -- */
+
+function readPoint(n) { return { x: num(n.attrs.x, 0), y: num(n.attrs.y, 0) }; }
+function readCell(node, wrapper) {
+  const a = node.attrs;
+  const c = {
+    id: wrapper ? wrapper.attrs.id : a.id,
+    value: wrapper ? (wrapper.attrs.label || '') : (a.value || ''),
+    style: parseStyle(a.style),
+    vertex: a.vertex === '1', edge: a.edge === '1',
+    parent: a.parent, source: a.source || null, target: a.target || null,
+    connectable: a.connectable, geo: null,
+  };
+  if (wrapper) {
+    c.wrapper = wrapper.tag;
+    c.data = {};
+    for (const k of Object.keys(wrapper.attrs)) if (k !== 'id' && k !== 'label') c.data[k] = wrapper.attrs[k];
+    if (c.data.link) c.link = c.data.link;
+    if (c.data.tooltip) c.tooltip = c.data.tooltip;
+  }
+  const g = node.children.find((x) => x.tag === 'mxGeometry');
+  if (g) {
+    const geo = { x: num(g.attrs.x, 0), y: num(g.attrs.y, 0), w: num(g.attrs.width, 0), h: num(g.attrs.height, 0), relative: g.attrs.relative === '1' };
+    for (const ch of g.children) {
+      if (ch.tag === 'mxPoint') { const as = ch.attrs.as; if (as === 'sourcePoint') geo.sourcePoint = readPoint(ch); else if (as === 'targetPoint') geo.targetPoint = readPoint(ch); else if (as === 'offset') geo.offset = readPoint(ch); }
+      else if (ch.tag === 'Array' && ch.attrs.as === 'points') geo.points = ch.children.filter((p) => p.tag === 'mxPoint').map(readPoint);
+    }
+    c.geo = geo;
+  }
+  return c;
+}
+function readModel(model, diagramNode, idx) {
+  const page = {
+    id: (diagramNode && diagramNode.attrs.id) || 'page-' + (idx + 1),
+    name: (diagramNode && diagramNode.attrs.name) || 'Page-' + (idx + 1),
+    attrs: Object.assign({}, model.attrs), cells: [],
+  };
+  const root = model.children.find((x) => x.tag === 'root');
+  if (!root) return page;
+  for (const n of root.children) {
+    if (n.tag === 'mxCell') page.cells.push(readCell(n, null));
+    else if (n.tag === 'UserObject' || n.tag === 'object') {
+      const inner = n.children.find((x) => x.tag === 'mxCell');
+      if (inner) page.cells.push(readCell(inner, n));
+    }
+  }
+  return page;
+}
+// opts.inflate(base64) -> xml string, needed only for compressed <diagram> payloads.
+function parseMxfile(xml, opts = {}) {
+  const doc = parseXml(xml);
+  const file = { attrs: {}, pages: [] };
+  const mxfile = findTag(doc, 'mxfile');
+  if (mxfile) {
+    file.attrs = Object.assign({}, mxfile.attrs);
+    const diagrams = mxfile.children.filter((x) => x.tag === 'diagram');
+    diagrams.forEach((d, i) => {
+      let model = d.children.find((x) => x.tag === 'mxGraphModel');
+      if (!model && d.text && d.text.trim()) {
+        if (!opts.inflate) throw new Error('compressed draw.io page "' + (d.attrs.name || i) + '" — re-save uncompressed or convert with the CLI');
+        model = findTag(parseXml(opts.inflate(d.text.trim())), 'mxGraphModel');
+      }
+      if (model) file.pages.push(readModel(model, d, i));
+    });
+  } else {
+    const model = findTag(doc, 'mxGraphModel');
+    if (!model) throw new Error('not a draw.io file: no <mxfile> or <mxGraphModel> element');
+    file.pages.push(readModel(model, null, 0));
+  }
+  return file;
+}
+
+const r2 = (v) => (Math.round(v * 100) / 100).toString();
+function geoXml(g, isEdge) {
+  let a = '';
+  if (!isEdge || g.relative === false) {
+    if (g.x) a += ` x="${r2(g.x)}"`;
+    if (g.y) a += ` y="${r2(g.y)}"`;
+    if (g.w || !isEdge) a += ` width="${r2(g.w || 0)}"`;
+    if (g.h || !isEdge) a += ` height="${r2(g.h || 0)}"`;
+  } else {
+    if (g.x) a += ` x="${r2(g.x)}"`;
+    if (g.y) a += ` y="${r2(g.y)}"`;
+  }
+  if (g.relative) a += ' relative="1"';
+  let inner = '';
+  if (g.sourcePoint) inner += `<mxPoint x="${r2(g.sourcePoint.x)}" y="${r2(g.sourcePoint.y)}" as="sourcePoint"/>`;
+  if (g.targetPoint) inner += `<mxPoint x="${r2(g.targetPoint.x)}" y="${r2(g.targetPoint.y)}" as="targetPoint"/>`;
+  if (g.points && g.points.length) inner += '<Array as="points">' + g.points.map((p) => `<mxPoint x="${r2(p.x)}" y="${r2(p.y)}"/>`).join('') + '</Array>';
+  if (g.offset) inner += `<mxPoint x="${r2(g.offset.x)}" y="${r2(g.offset.y)}" as="offset"/>`;
+  return inner ? `<mxGeometry${a} as="geometry">${inner}</mxGeometry>` : `<mxGeometry${a} as="geometry"/>`;
+}
+function cellXml(c) {
+  const isEdge = !!c.edge;
+  let a = '';
+  const hasData = c.link || c.tooltip || (c.data && Object.keys(c.data).length);
+  if (!hasData) { a += ` id="${escXml(c.id)}"`; if (c.value !== undefined && (c.vertex || c.edge)) a += ` value="${escXml(c.value || '')}"`; }
+  if (c.vertex || c.edge) a += ` style="${escXml(styleStr(c.style || {}))}"`;
+  if (c.vertex) a += ' vertex="1"';
+  if (c.edge) a += ' edge="1"';
+  if (c.connectable !== undefined && c.connectable !== null) a += ` connectable="${escXml(c.connectable)}"`;
+  if (c.parent !== undefined && c.parent !== null) a += ` parent="${escXml(c.parent)}"`;
+  if (c.source) a += ` source="${escXml(c.source)}"`;
+  if (c.target) a += ` target="${escXml(c.target)}"`;
+  const inner = c.geo ? geoXml(c.geo, isEdge) : '';
+  const cell = inner ? `<mxCell${a}>${inner}</mxCell>` : `<mxCell${a}/>`;
+  if (!hasData) return cell;
+  const data = Object.assign({}, c.data || {});
+  if (c.link) data.link = c.link;
+  if (c.tooltip) data.tooltip = c.tooltip;
+  let w = ` label="${escXml(c.value || '')}"`;
+  for (const k of Object.keys(data)) w += ` ${k}="${escXml(data[k])}"`;
+  const tag = c.wrapper || 'UserObject';
+  return `<${tag}${w} id="${escXml(c.id)}">${cell}</${tag}>`;
+}
+function serializeMxfile(file) {
+  const out = ['<mxfile host="app.diagrams.net" agent="archistry" type="device">'];
+  for (const p of file.pages) {
+    const m = Object.assign({ dx: '1000', dy: '700', grid: '1', gridSize: '10', guides: '1', tooltips: '1', connect: '1', arrows: '1', fold: '1', page: '1', pageScale: '1', pageWidth: '1600', pageHeight: '1000', math: '0', shadow: '0' }, p.attrs || {});
+    let ma = '';
+    for (const k of Object.keys(m)) ma += ` ${k}="${escXml(m[k])}"`;
+    out.push(`  <diagram id="${escXml(p.id)}" name="${escXml(p.name)}">`);
+    out.push(`    <mxGraphModel${ma}>`);
+    out.push('      <root>');
+    const hasRoot = p.cells.some((c) => c.id === '0');
+    if (!hasRoot) { out.push('        <mxCell id="0"/>'); out.push('        <mxCell id="1" parent="0"/>'); }
+    for (const c of p.cells) out.push('        ' + cellXml(c));
+    out.push('      </root>');
+    out.push('    </mxGraphModel>');
+    out.push('  </diagram>');
+  }
+  out.push('</mxfile>');
+  return out.join('\n') + '\n';
+}
+
+/* ----------------------------------------------------------------- text -- */
+
+const W_REG = '278 278 355 556 556 889 667 191 333 333 389 584 278 333 278 278 556 556 556 556 556 556 556 556 556 556 278 278 584 584 584 556 1015 667 667 722 722 667 611 778 722 278 500 667 556 833 722 778 667 778 722 667 611 722 667 944 667 667 611 278 278 278 469 556 333 556 556 500 556 556 278 556 556 222 222 500 222 833 556 556 556 556 333 500 278 556 500 722 500 500 500 334 260 334 584'.split(' ').map(Number);
+const W_BOLD = '278 333 474 556 556 889 722 238 333 333 389 584 278 333 278 278 556 556 556 556 556 556 556 556 556 556 333 333 584 584 584 611 975 722 722 722 722 667 611 778 722 278 556 722 611 833 722 778 667 778 722 667 611 722 667 944 667 667 611 333 278 333 584 556 333 556 611 556 611 556 333 611 611 278 278 556 278 889 611 611 611 611 389 556 333 611 556 778 556 556 500 389 280 389 584'.split(' ').map(Number);
+function charW(code, bold) {
+  if (code >= 32 && code <= 126) return (bold ? W_BOLD : W_REG)[code - 32];
+  if (code === 0xa0) return 278;
+  if (code === 0x2022 || code === 0xb7) return 350;
+  if (code === 0x2192 || code === 0x2190 || code === 0x2194 || code === 0x2014) return 1000;
+  if (code === 0x2013) return 556;
+  if (code === 0x2026) return 1000;
+  if (code >= 0x2460 && code <= 0x24ff) return 1000;
+  if (code >= 0x2e80) return 1000;
+  if (code >= 0x2190 && code <= 0x2bff) return 900;
+  return bold ? 600 : 560;
+}
+function textWidth(str, size = 12, bold = false) {
+  let w = 0;
+  for (const ch of String(str)) w += charW(ch.codePointAt(0), bold);
+  return (w * size) / 1000;
+}
+
+function styleFromCss(css, fmt) {
+  const f = Object.assign({}, fmt);
+  for (const decl of String(css || '').split(';')) {
+    const k = decl.indexOf(':');
+    if (k < 0) continue;
+    const prop = decl.slice(0, k).trim().toLowerCase();
+    const val = decl.slice(k + 1).trim();
+    if (prop === 'font-size') { const px = parseFloat(val); if (px) f.size = /pt$/.test(val) ? px * 1.333 : px; }
+    else if (prop === 'color') f.color = normColor(val) || f.color;
+    else if (prop === 'font-weight') f.bold = /bold|[6-9]00/.test(val);
+    else if (prop === 'font-style') f.italic = /italic/.test(val);
+    else if (prop === 'text-decoration') f.underline = /underline/.test(val);
+  }
+  return f;
+}
+function normColor(c) {
+  if (!c) return null;
+  c = String(c).trim();
+  if (c === 'none' || c === 'default' || c === 'initial' || c === 'inherit') return null;
+  let m = c.match(/^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i);
+  if (m) return '#' + [m[1], m[2], m[3]].map((v) => (+v).toString(16).padStart(2, '0')).join('');
+  m = c.match(/^#([0-9a-f]{3})$/i);
+  if (m) return '#' + m[1].split('').map((x) => x + x).join('').toLowerCase();
+  if (/^#[0-9a-f]{6}$/i.test(c)) return c.toLowerCase();
+  if (/^#[0-9a-f]{8}$/i.test(c)) return c.slice(0, 7).toLowerCase();
+  const named = { white: '#ffffff', black: '#000000', red: '#ff0000', gray: '#808080', grey: '#808080', blue: '#0000ff', green: '#008000' };
+  return named[c.toLowerCase()] || null;
+}
+
+// Parse the HTML subset draw.io labels use into paragraphs of formatted runs.
+function parseMarkup(html, base) {
+  const paras = [{ runs: [] }];
+  const stack = [Object.assign({}, base)];
+  const cur = () => stack[stack.length - 1];
+  const para = () => paras[paras.length - 1];
+  const newPara = (force) => { if (force || para().runs.length || para().rule) paras.push({ runs: [] }); };
+  const re = /<(\/?)([a-zA-Z][a-zA-Z0-9]*)([^>]*)>|([^<]+)/g;
+  let m;
+  const src = String(html);
+  const tagStack = [];
+  while ((m = re.exec(src))) {
+    if (m[4] !== undefined) {
+      const t = decodeEntities(m[4]).replace(/[\t\n\r ]+/g, ' ');
+      if (t === ' ' && !para().runs.length) continue;
+      para().runs.push(Object.assign({}, cur(), { text: t }));
+      continue;
+    }
+    const close = m[1] === '/', tag = m[2].toLowerCase(), attrs = m[3] || '';
+    if (tag === 'br') { newPara(true); continue; }
+    if (tag === 'hr') { newPara(false); para().rule = true; paras.push({ runs: [] }); continue; }
+    const block = tag === 'div' || tag === 'p' || tag === 'li' || tag === 'blockquote' || /^h[1-6]$/.test(tag) || tag === 'ul' || tag === 'ol';
+    if (close) {
+      for (let k = tagStack.length - 1; k >= 0; k--) if (tagStack[k] === tag) { tagStack.length = k; stack.length = k + 1; break; }
+      if (block) newPara(false);
+      continue;
+    }
+    if (block) newPara(false);
+    let f = Object.assign({}, cur());
+    if (tag === 'b' || tag === 'strong' || /^h[1-6]$/.test(tag)) f.bold = true;
+    else if (tag === 'i' || tag === 'em') f.italic = true;
+    else if (tag === 'u') f.underline = true;
+    const sm = attrs.match(/style\s*=\s*(?:"([^"]*)"|'([^']*)')/i);
+    if (sm) f = styleFromCss(sm[1] !== undefined ? sm[1] : sm[2], f);
+    const cm = attrs.match(/(?:^|\s)color\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i);
+    if (cm) f.color = normColor(cm[1] || cm[2] || cm[3]) || f.color;
+    if (tag === 'li') para().runs.push(Object.assign({}, f, { text: '• ' }));
+    if (!/\/\s*$/.test(attrs)) { tagStack.push(tag); stack.push(f); }
+  }
+  while (paras.length > 1 && !paras[paras.length - 1].runs.length && !paras[paras.length - 1].rule) paras.pop();
+  return paras;
+}
+
+function mkLine(runs) {
+  let w = 0, size = 0;
+  const out = [];
+  for (const r of runs) {
+    if (!r.text) continue;
+    const rw = textWidth(r.text, r.size, r.bold);
+    w += rw; size = Math.max(size, r.size);
+    const last = out[out.length - 1];
+    if (last && last.bold === r.bold && last.italic === r.italic && last.underline === r.underline && last.size === r.size && last.color === r.color) { last.text += r.text; last.w += rw; }
+    else out.push(Object.assign({}, r, { w: rw }));
+  }
+  return { runs: out, w, size };
+}
+function wrapRuns(runs, maxW) {
+  const lines = [];
+  let cur = [], curW = 0;
+  const flush = () => {
+    while (cur.length && cur[cur.length - 1].text === ' ') cur.pop();
+    lines.push(mkLine(cur)); cur = []; curW = 0;
+  };
+  for (const r of runs) {
+    const parts = r.text.split(/( +)/).filter((p) => p !== '');
+    for (let part of parts) {
+      const isSpace = /^ +$/.test(part);
+      if (isSpace) part = ' ';
+      let pw = textWidth(part, r.size, r.bold);
+      if (isSpace) { if (cur.length) { cur.push(Object.assign({}, r, { text: ' ' })); curW += pw; } continue; }
+      if (curW + pw > maxW + 0.5 && cur.length) flush();
+      // hard-break words longer than the line
+      while (pw > maxW + 0.5 && part.length > 1) {
+        let k = 1, acc = 0;
+        const chars = Array.from(part);
+        while (k < chars.length) { const cw = textWidth(chars[k - 1], r.size, r.bold); if (acc + cw > maxW) break; acc += cw; k++; }
+        k = Math.max(1, k - 1);
+        cur.push(Object.assign({}, r, { text: chars.slice(0, k).join('') }));
+        flush();
+        part = chars.slice(k).join('');
+        pw = textWidth(part, r.size, r.bold);
+      }
+      cur.push(Object.assign({}, r, { text: part })); curW += pw;
+    }
+  }
+  if (cur.length || !lines.length) flush();
+  return lines;
+}
+// Returns { lines:[{runs,w,size,rule?}], w, h, lineHeights[] } for a cell label.
+function layoutLabel(value, st, wrapWidth) {
+  const size = num(st.fontSize, 12);
+  const fs = num(st.fontStyle, 0);
+  const base = { bold: !!(fs & 1), italic: !!(fs & 2), underline: !!(fs & 4), size, color: null };
+  let paras;
+  if (st.html === '1') paras = parseMarkup(value, base);
+  else paras = String(value).split('\n').map((t) => ({ runs: [Object.assign({}, base, { text: t })] }));
+  const wrap = st.whiteSpace === 'wrap' && wrapWidth > 0;
+  const lines = [];
+  for (const p of paras) {
+    if (p.rule) { lines.push({ rule: true, runs: [], w: 0, size: 0, h: 9 }); continue; }
+    const ls = wrap ? wrapRuns(p.runs, wrapWidth) : [mkLine(p.runs)];
+    for (const l of ls) { l.h = Math.round((l.size || size) * 1.2 * 100) / 100; lines.push(l); }
+  }
+  let w = 0, h = 0;
+  for (const l of lines) { w = Math.max(w, l.w); h += l.h; }
+  return { lines, w, h };
+}
+function measureLabel(value, st, wrapWidth) {
+  const l = layoutLabel(value, st, wrapWidth);
+  return { w: l.w, h: l.h, lines: l.lines.length };
+}
+
+/* --------------------------------------------------------------- colors -- */
+
+function hexToHsl(hex) {
+  const r = parseInt(hex.slice(1, 3), 16) / 255, g = parseInt(hex.slice(3, 5), 16) / 255, b = parseInt(hex.slice(5, 7), 16) / 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+  let h = 0, s = 0;
+  const l = (mx + mn) / 2;
+  if (mx !== mn) {
+    const d = mx - mn;
+    s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+    if (mx === r) h = (g - b) / d + (g < b ? 6 : 0); else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4;
+    h /= 6;
+  }
+  return [h, s, l];
+}
+function hslToHex(h, s, l) {
+  const f = (p, q, t) => { if (t < 0) t += 1; if (t > 1) t -= 1; if (t < 1 / 6) return p + (q - p) * 6 * t; if (t < 1 / 2) return q; if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6; return p; };
+  let r, g, b;
+  if (s === 0) r = g = b = l;
+  else { const q = l < 0.5 ? l * (1 + s) : l + s - l * s; const p = 2 * l - q; r = f(p, q, h + 1 / 3); g = f(p, q, h); b = f(p, q, h - 1 / 3); }
+  return '#' + [r, g, b].map((v) => Math.round(Math.max(0, Math.min(1, v)) * 255).toString(16).padStart(2, '0')).join('');
+}
+const THEMES = {
+  light: { name: 'light', canvas: '#ffffff', ink: '#000000' },
+  dark: { name: 'dark', canvas: '#0b1526', ink: '#e6edf7' },
+};
+// Dark theme: mirror lightness so light tints become deep tints and dark ink becomes light.
+function themeColor(c, theme, role) {
+  const hex = normColor(c);
+  if (!hex) return hex;
+  if (!theme || theme === 'light') return hex;
+  const [h, s, l] = hexToHsl(hex);
+  let nl;
+  if (role === 'fill') nl = l > 0.5 ? 0.11 + (1 - l) * 0.62 : Math.min(0.9, 1 - l * 0.55);
+  else if (role === 'font') nl = l < 0.6 ? 0.93 - l * 0.38 : 1 - l * 0.8;
+  else nl = l < 0.5 ? 0.82 - l * 0.5 : 0.36 + (1 - l) * 0.5; // stroke
+  if (role === 'fill' && s < 0.08) return hslToHex(0.6, 0.3, Math.max(0.09, Math.min(0.9, nl + 0.02)));
+  const ns = role === 'fill' ? Math.min(s, 0.55) : Math.min(s, 0.85);
+  return hslToHex(h, ns, Math.max(0.06, Math.min(0.96, nl)));
+}
+// Solid, saturated fills (chips, banners, headers) keep their colour and their light text in dark mode.
+function isSolidFill(c) {
+  const hex = normColor(c);
+  if (!hex) return false;
+  const [, s, l] = hexToHsl(hex);
+  return l < 0.3 || (l < 0.62 && s > 0.3);
+}
+
+/* ------------------------------------------------------------- geometry -- */
+
+function indexPage(page) {
+  const byId = new Map();
+  const kids = new Map();
+  for (const c of page.cells) { byId.set(c.id, c); }
+  for (const c of page.cells) {
+    const p = c.parent;
+    if (p === undefined || p === null) continue;
+    if (!kids.has(p)) kids.set(p, []);
+    kids.get(p).push(c);
+  }
+  return { byId, kids };
+}
+// Absolute bounds of every vertex (children are relative to their parent vertex).
+function absBounds(page, idx) {
+  idx = idx || indexPage(page);
+  const out = new Map();
+  const origin = (id, guard = 0) => {
+    const c = idx.byId.get(id);
+    if (!c || guard > 50 || !c.vertex || !c.geo) return { x: 0, y: 0 };
+    const b = get(c, guard + 1);
+    return b ? { x: b.x, y: b.y } : { x: 0, y: 0 };
+  };
+  function get(c, guard = 0) {
+    if (out.has(c.id)) return out.get(c.id);
+    if (!c.vertex || !c.geo) return null;
+    const parent = idx.byId.get(c.parent);
+    if (parent && parent.edge) return null; // edge label child — resolved later
+    const o = parent && parent.vertex ? origin(parent.id, guard) : { x: 0, y: 0 };
+    let b;
+    if (c.geo.relative && parent && parent.vertex) {
+      const pb = get(parent, guard + 1) || { x: 0, y: 0, w: 0, h: 0 };
+      const off = c.geo.offset || { x: 0, y: 0 };
+      b = { x: pb.x + c.geo.x * pb.w + off.x, y: pb.y + c.geo.y * pb.h + off.y, w: c.geo.w, h: c.geo.h };
+    } else b = { x: o.x + c.geo.x, y: o.y + c.geo.y, w: c.geo.w, h: c.geo.h };
+    out.set(c.id, b);
+    return b;
+  }
+  for (const c of page.cells) if (c.vertex) get(c);
+  return out;
+}
+
+function shapeOf(st) {
+  if (st.shape) return st.shape;
+  for (const k of ['swimlane', 'ellipse', 'rhombus', 'text', 'image', 'triangle', 'line', 'group', 'hexagon', 'cylinder', 'label', 'icon']) if (k in st && st[k] === '') return k;
+  return 'rectangle';
+}
+function perimeterPoint(b, st, toward, ortho) {
+  const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+  const shape = shapeOf(st);
+  if (ortho) {
+    // orthogonal projection when the other point is within the box span
+    if (toward.x >= b.x && toward.x <= b.x + b.w) return { x: toward.x, y: toward.y < cy ? b.y : b.y + b.h };
+    if (toward.y >= b.y && toward.y <= b.y + b.h) return { x: toward.x < cx ? b.x : b.x + b.w, y: toward.y };
+  }
+  const dx = toward.x - cx, dy = toward.y - cy;
+  if (!dx && !dy) return { x: cx, y: cy };
+  if (shape === 'ellipse' || shape === 'doubleEllipse') {
+    const a = b.w / 2, bb = b.h / 2;
+    const t = 1 / Math.sqrt((dx * dx) / (a * a) + (dy * dy) / (bb * bb));
+    return { x: cx + dx * t, y: cy + dy * t };
+  }
+  if (shape === 'rhombus') {
+    const t = 1 / (Math.abs(dx) / (b.w / 2) + Math.abs(dy) / (b.h / 2));
+    return { x: cx + dx * t, y: cy + dy * t };
+  }
+  const tx = dx ? (b.w / 2) / Math.abs(dx) : Infinity, ty = dy ? (b.h / 2) / Math.abs(dy) : Infinity;
+  const t = Math.min(tx, ty);
+  return { x: cx + dx * t, y: cy + dy * t };
+}
+function sideOf(b, p) {
+  const e = 0.5;
+  if (Math.abs(p.x - b.x) < e) return 'W';
+  if (Math.abs(p.x - (b.x + b.w)) < e) return 'E';
+  if (Math.abs(p.y - b.y) < e) return 'N';
+  if (Math.abs(p.y - (b.y + b.h)) < e) return 'S';
+  const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+  const dx = (p.x - cx) / (b.w / 2 || 1), dy = (p.y - cy) / (b.h / 2 || 1);
+  return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'E' : 'W') : (dy > 0 ? 'S' : 'N');
+}
+const DIRV = { N: { x: 0, y: -1 }, S: { x: 0, y: 1 }, E: { x: 1, y: 0 }, W: { x: -1, y: 0 } };
+function simplify(pts) {
+  const out = [];
+  for (const p of pts) {
+    const a = out[out.length - 1];
+    if (a && Math.abs(a.x - p.x) < 0.01 && Math.abs(a.y - p.y) < 0.01) continue;
+    out.push({ x: p.x, y: p.y });
+    while (out.length >= 3) {
+      const [p1, p2, p3] = out.slice(-3);
+      const col = (Math.abs(p1.x - p2.x) < 0.01 && Math.abs(p2.x - p3.x) < 0.01) || (Math.abs(p1.y - p2.y) < 0.01 && Math.abs(p2.y - p3.y) < 0.01);
+      if (col) out.splice(out.length - 2, 1); else break;
+    }
+  }
+  return out;
+}
+// Simple orthogonal connection between two ports leaving along d0 and arriving against d1 (both outward normals).
+function orthoRoute(p0, s0, p1, s1, stub = 20) {
+  const d0 = DIRV[s0], d1 = DIRV[s1];
+  const a = { x: p0.x + d0.x * stub, y: p0.y + d0.y * stub };
+  const b = { x: p1.x + d1.x * stub, y: p1.y + d1.y * stub };
+  const h0 = d0.x !== 0, h1 = d1.x !== 0;
+  let mid;
+  if (h0 && h1) {
+    if (s0 !== s1 && (b.x - a.x) * d0.x >= 0) { const mx = (a.x + b.x) / 2; mid = [{ x: mx, y: a.y }, { x: mx, y: b.y }]; }
+    else if (s0 === s1) { const ex = d0.x > 0 ? Math.max(a.x, b.x) : Math.min(a.x, b.x); mid = [{ x: ex, y: a.y }, { x: ex, y: b.y }]; }
+    else { const my = (a.y + b.y) / 2; mid = [{ x: a.x, y: my }, { x: b.x, y: my }]; }
+  } else if (!h0 && !h1) {
+    if (s0 !== s1 && (b.y - a.y) * d0.y >= 0) { const my = (a.y + b.y) / 2; mid = [{ x: a.x, y: my }, { x: b.x, y: my }]; }
+    else if (s0 === s1) { const ey = d0.y > 0 ? Math.max(a.y, b.y) : Math.min(a.y, b.y); mid = [{ x: a.x, y: ey }, { x: b.x, y: ey }]; }
+    else { const mx = (a.x + b.x) / 2; mid = [{ x: mx, y: a.y }, { x: mx, y: b.y }]; }
+  } else if (h0) mid = [{ x: b.x, y: a.y }];
+  else mid = [{ x: a.x, y: b.y }];
+  return simplify([p0, a, ...mid, b, p1]);
+}
+function fixedPoint(b, fx, fy, dx, dy) { return { x: b.x + b.w * fx + (dx || 0), y: b.y + b.h * fy + (dy || 0) }; }
+
+// Resolve the drawn polyline of an edge. Returns { pts, curved } or null.
+function edgePath(c, idx, bounds) {
+  const st = c.style, g = c.geo || {};
+  const parent = idx.byId.get(c.parent);
+  const po = parent && parent.vertex && bounds.get(parent.id) ? bounds.get(parent.id) : { x: 0, y: 0 };
+  const way = (g.points || []).map((p) => ({ x: p.x + po.x, y: p.y + po.y }));
+  const sb = c.source && bounds.get(c.source), tb = c.target && bounds.get(c.target);
+  const sCell = c.source && idx.byId.get(c.source), tCell = c.target && idx.byId.get(c.target);
+  const es = st.edgeStyle || '';
+  const ortho = /orthogonal|elbow|entityRelation|segment/.test(es);
+  let p0 = null, p1 = null, s0 = null, s1 = null;
+  if (sb) { if (st.exitX !== undefined) { p0 = fixedPoint(sb, num(st.exitX, 0.5), num(st.exitY, 0.5), num(st.exitDx, 0), num(st.exitDy, 0)); s0 = sideOf(sb, { x: p0.x - num(st.exitDx, 0), y: p0.y - num(st.exitDy, 0) }); } }
+  else if (g.sourcePoint) p0 = { x: g.sourcePoint.x + po.x, y: g.sourcePoint.y + po.y };
+  if (tb) { if (st.entryX !== undefined) { p1 = fixedPoint(tb, num(st.entryX, 0.5), num(st.entryY, 0.5), num(st.entryDx, 0), num(st.entryDy, 0)); s1 = sideOf(tb, { x: p1.x - num(st.entryDx, 0), y: p1.y - num(st.entryDy, 0) }); } }
+  else if (g.targetPoint) p1 = { x: g.targetPoint.x + po.x, y: g.targetPoint.y + po.y };
+  if (!p0 && !sb) return null;
+  if (!p1 && !tb) return null;
+  const sc = sb ? { x: sb.x + sb.w / 2, y: sb.y + sb.h / 2 } : p0;
+  const tc = tb ? { x: tb.x + tb.w / 2, y: tb.y + tb.h / 2 } : p1;
+  if (sb && tb && c.source === c.target && !way.length) {
+    // self loop on the right side
+    const x = sb.x + sb.w, y = sb.y + sb.h / 2;
+    return { pts: [{ x, y: y - 10 }, { x: x + 30, y: y - 10 }, { x: x + 30, y: y + 14 }, { x, y: y + 14 }], curved: false };
+  }
+  if (!way.length && ortho) {
+    // automatic orthogonal route
+    if (!p0 || !p1) {
+      let a0 = s0, a1 = s1;
+      if (!a0 || !a1) {
+        const dx = tc.x - sc.x, dy = tc.y - sc.y;
+        let horiz = Math.abs(dx) >= Math.abs(dy);
+        if (sb && tb) {
+          const gapX = Math.max(tb.x - (sb.x + sb.w), sb.x - (tb.x + tb.w));
+          const gapY = Math.max(tb.y - (sb.y + sb.h), sb.y - (tb.y + tb.h));
+          horiz = gapX >= gapY;
+          if (es === 'entityRelationEdgeStyle') horiz = true;
+        }
+        if (!a0) a0 = horiz ? (dx >= 0 ? 'E' : 'W') : (dy >= 0 ? 'S' : 'N');
+        if (!a1) a1 = horiz ? (dx >= 0 ? 'W' : 'E') : (dy >= 0 ? 'N' : 'S');
+      }
+      const mid = (b, s) => ({ x: s === 'E' ? b.x + b.w : s === 'W' ? b.x : b.x + b.w / 2, y: s === 'S' ? b.y + b.h : s === 'N' ? b.y : b.y + b.h / 2 });
+      if (!p0) p0 = sb ? mid(sb, a0) : sc;
+      if (!p1) p1 = tb ? mid(tb, a1) : tc;
+      s0 = a0; s1 = a1;
+    }
+    if (!s0) s0 = Math.abs(p1.x - p0.x) >= Math.abs(p1.y - p0.y) ? (p1.x >= p0.x ? 'E' : 'W') : (p1.y >= p0.y ? 'S' : 'N');
+    if (!s1) s1 = Math.abs(p1.x - p0.x) >= Math.abs(p1.y - p0.y) ? (p1.x >= p0.x ? 'W' : 'E') : (p1.y >= p0.y ? 'N' : 'S');
+    if (Math.abs(p0.x - p1.x) < 0.5 || Math.abs(p0.y - p1.y) < 0.5) {
+      const straightOk = (Math.abs(p0.y - p1.y) < 0.5 && ((s0 === 'E' && p1.x > p0.x) || (s0 === 'W' && p1.x < p0.x))) || (Math.abs(p0.x - p1.x) < 0.5 && ((s0 === 'S' && p1.y > p0.y) || (s0 === 'N' && p1.y < p0.y)));
+      if (straightOk) return { pts: [p0, p1], curved: false };
+    }
+    const span = Math.min(20, Math.max(8, Math.min(Math.abs(p1.x - p0.x), Math.abs(p1.y - p0.y)) / 2 || 20));
+    return { pts: orthoRoute(p0, s0, p1, s1, span), curved: false };
+  }
+  // waypoints given (or straight edge): floating ends use the perimeter
+  const first = way.length ? way[0] : (p1 || tc);
+  const last = way.length ? way[way.length - 1] : (p0 || sc);
+  if (!p0) p0 = perimeterPoint(sb, sCell.style, first, ortho || way.length > 0);
+  if (!p1) p1 = perimeterPoint(tb, tCell.style, way.length ? last : p0, ortho || way.length > 0);
+  let pts = [p0, ...way, p1];
+  if (ortho) {
+    // keep segments axis-aligned: insert elbows where consecutive points are diagonal
+    const o = [pts[0]];
+    for (let i = 1; i < pts.length; i++) {
+      const a = o[o.length - 1], b = pts[i];
+      if (Math.abs(a.x - b.x) > 0.5 && Math.abs(a.y - b.y) > 0.5) {
+        const prev = o[o.length - 2];
+        const cameHoriz = prev ? Math.abs(prev.y - a.y) < 0.5 : (s0 ? s0 === 'E' || s0 === 'W' : Math.abs(b.x - a.x) > Math.abs(b.y - a.y));
+        const lastSeg = i === pts.length - 1;
+        if (lastSeg && s1) o.push(s1 === 'E' || s1 === 'W' ? { x: a.x, y: b.y } : { x: b.x, y: a.y });
+        else o.push(cameHoriz ? { x: b.x, y: a.y } : { x: a.x, y: b.y });
+      }
+      o.push(b);
+    }
+    pts = simplify(o);
+  }
+  return { pts, curved: st.curved === '1' };
+}
+function pathLen(pts) { let L = 0; for (let i = 1; i < pts.length; i++) L += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y); return L; }
+function pointAlong(pts, t) {
+  const L = pathLen(pts);
+  let d = Math.max(0, Math.min(1, t)) * L;
+  for (let i = 1; i < pts.length; i++) {
+    const seg = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+    if (d <= seg || i === pts.length - 1) {
+      const f = seg ? Math.min(1, d / seg) : 0;
+      return { x: pts[i - 1].x + (pts[i].x - pts[i - 1].x) * f, y: pts[i - 1].y + (pts[i].y - pts[i - 1].y) * f, dx: seg ? (pts[i].x - pts[i - 1].x) / seg : 1, dy: seg ? (pts[i].y - pts[i - 1].y) / seg : 0 };
+    }
+    d -= seg;
+  }
+  return { x: pts[0].x, y: pts[0].y, dx: 1, dy: 0 };
+}
+
+/* ------------------------------------------------------------- renderer -- */
+
+const f1 = (v) => (Math.round(v * 10) / 10).toString();
+function rrPath(x, y, w, h, r, corners = [1, 1, 1, 1]) {
+  r = Math.max(0, Math.min(r, w / 2, h / 2));
+  const [tl, tr, br, bl] = corners.map((c) => (c ? r : 0));
+  return `M${f1(x + tl)},${f1(y)}H${f1(x + w - tr)}${tr ? `A${f1(tr)},${f1(tr)} 0 0 1 ${f1(x + w)},${f1(y + tr)}` : ''}V${f1(y + h - br)}${br ? `A${f1(br)},${f1(br)} 0 0 1 ${f1(x + w - br)},${f1(y + h)}` : ''}H${f1(x + bl)}${bl ? `A${f1(bl)},${f1(bl)} 0 0 1 ${f1(x)},${f1(y + h - bl)}` : ''}V${f1(y + tl)}${tl ? `A${f1(tl)},${f1(tl)} 0 0 1 ${f1(x + tl)},${f1(y)}` : ''}Z`;
+}
+function arcRadius(st, w, h) {
+  if (st.rounded !== '1') return 0;
+  const a = num(st.arcSize, 15);
+  return st.absoluteArcSize === '1' ? Math.min(w / 2, h / 2, a / 2) : Math.min(w, h) * Math.min(50, a) / 100;
+}
+function imageUri(v) {
+  if (!v) return null;
+  if (/^data:image\/[a-z+.-]+,/.test(v)) return v.replace(/^(data:image\/[a-z+.-]+),/, '$1;base64,'); // draw.io drops ";base64"
+  return v;
+}
+
+function renderSvg(page, opts = {}) {
+  const theme = opts.theme === 'dark' ? 'dark' : 'light';
+  const T = THEMES[theme];
+  const pad = opts.padding === undefined ? 24 : opts.padding;
+  const idx = indexPage(page);
+  const bounds = absBounds(page, idx);
+  const C = (c, role, dflt) => { const v = c === undefined ? dflt : c; if (v === 'none' || v === null || v === undefined) return 'none'; if (v === 'default') return role === 'font' ? T.ink : role === 'fill' ? T.canvas : T.ink; return themeColor(v, theme, role) || 'none'; };
+  const defs = [];
+  const imgIds = new Map();
+  let uid = 0;
+  const bb = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
+  const grow = (x, y, w = 0, h = 0) => { if (!Number.isFinite(x + y + w + h)) return; bb.x0 = Math.min(bb.x0, x); bb.y0 = Math.min(bb.y0, y); bb.x1 = Math.max(bb.x1, x + w); bb.y1 = Math.max(bb.y1, y + h); };
+  const fontFamily = (st) => (st.fontFamily ? st.fontFamily.replace(/"/g, '') + ', ' : '') + 'Helvetica, Arial, sans-serif';
+
+  function strokeAttrs(st, dfltStroke) {
+    const sc = C(st.strokeColor, 'stroke', dfltStroke);
+    const sw = num(st.strokeWidth, 1);
+    let a = ` stroke="${sc}"`;
+    if (sc !== 'none') {
+      a += ` stroke-width="${f1(sw)}"`;
+      if (st.dashed === '1') a += ` stroke-dasharray="${(st.dashPattern || '3 3').split(/[ ,]+/).map((v) => f1(num(v, 3) * Math.max(1, sw))).join(' ')}"`;
+      if (st.strokeOpacity !== undefined) a += ` stroke-opacity="${num(st.strokeOpacity, 100) / 100}"`;
+    }
+    return a;
+  }
+  function fillAttr(st, dflt, b) {
+    let fc = theme === 'dark' && isSolidFill(st.fillColor) ? normColor(st.fillColor) : C(st.fillColor, 'fill', dflt);
+    if (fc !== 'none' && st.gradientColor && st.gradientColor !== 'none') {
+      const id = 'g' + (++uid);
+      const dir = st.gradientDirection || 'south';
+      const v = dir === 'east' ? 'x1="0" y1="0" x2="1" y2="0"' : dir === 'west' ? 'x1="1" y1="0" x2="0" y2="0"' : dir === 'north' ? 'x1="0" y1="1" x2="0" y2="0"' : 'x1="0" y1="0" x2="0" y2="1"';
+      defs.push(`<linearGradient id="${id}" ${v}><stop offset="0" stop-color="${fc}"/><stop offset="1" stop-color="${C(st.gradientColor, 'fill')}"/></linearGradient>`);
+      fc = `url(#${id})`;
+    }
+    let a = ` fill="${fc}"`;
+    if (st.fillOpacity !== undefined && fc !== 'none') a += ` fill-opacity="${num(st.fillOpacity, 100) / 100}"`;
+    return a;
+  }
+
+  function drawShape(c, b) {
+    const st = c.style;
+    const shape = shapeOf(st);
+    const { x, y, w, h } = b;
+    const isText = shape === 'text';
+    const dFill = isText || shape === 'image' || shape === 'label' && false ? 'none' : '#ffffff';
+    const dStroke = isText || shape === 'image' ? 'none' : '#000000';
+    const F = (d) => fillAttr(st, d === undefined ? dFill : d, b);
+    const S = (d) => strokeAttrs(st, d === undefined ? dStroke : d);
+    const r = arcRadius(st, w, h);
+    let s = '';
+    switch (shape) {
+      case 'group': return '';
+      case 'image': {
+        if (st.fillColor && st.fillColor !== 'none' || (st.strokeColor && st.strokeColor !== 'none')) s += `<rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}"${F('none')}${S('none')}/>`;
+        const uri = imageUri(st.image);
+        if (uri) {
+          const stretch = st.imageAspect === '0' && false;
+          let id = imgIds.get(uri);
+          if (!id) { id = 'i' + (imgIds.size + 1); imgIds.set(uri, id); defs.push(`<image id="${id}" width="100" height="100" href="${escXml(uri)}"${stretch ? ' preserveAspectRatio="none"' : ''}/>`); }
+          const k = Math.min(w, h) / 100;
+          s += `<use href="#${id}" transform="translate(${f1(x + (w - 100 * k) / 2)},${f1(y + (h - 100 * k) / 2)}) scale(${k.toFixed(4)})"/>`;
+        }
+        return s;
+      }
+      case 'doubleEllipse': return `<ellipse cx="${f1(x + w / 2)}" cy="${f1(y + h / 2)}" rx="${f1(w / 2)}" ry="${f1(h / 2)}"${F()}${S()}/><ellipse cx="${f1(x + w / 2)}" cy="${f1(y + h / 2)}" rx="${f1(Math.max(0, w / 2 - 4))}" ry="${f1(Math.max(0, h / 2 - 4))}" fill="none"${S()}/>`;
+      case 'ellipse': return `<ellipse cx="${f1(x + w / 2)}" cy="${f1(y + h / 2)}" rx="${f1(w / 2)}" ry="${f1(h / 2)}"${F()}${S()}/>` + (st.double === '1' ? `<ellipse cx="${f1(x + w / 2)}" cy="${f1(y + h / 2)}" rx="${f1(Math.max(0, w / 2 - 3))}" ry="${f1(Math.max(0, h / 2 - 3))}" fill="none"${S()}/>` : '');
+      case 'rhombus': return `<path d="M${f1(x + w / 2)},${f1(y)}L${f1(x + w)},${f1(y + h / 2)}L${f1(x + w / 2)},${f1(y + h)}L${f1(x)},${f1(y + h / 2)}Z" stroke-linejoin="round"${F()}${S()}/>`;
+      case 'triangle': return `<path d="M${f1(x)},${f1(y)}L${f1(x + w)},${f1(y + h / 2)}L${f1(x)},${f1(y + h)}Z"${F()}${S()}/>`;
+      case 'hexagon': { const k = Math.min(w / 2, num(st.size, 0.25) <= 1 ? w * num(st.size, 0.25) : num(st.size, 20)); return `<path d="M${f1(x + k)},${f1(y)}H${f1(x + w - k)}L${f1(x + w)},${f1(y + h / 2)}L${f1(x + w - k)},${f1(y + h)}H${f1(x + k)}L${f1(x)},${f1(y + h / 2)}Z" stroke-linejoin="round"${F()}${S()}/>`; }
+      case 'parallelogram': { const k = Math.min(w / 2, num(st.size, 0.2) <= 1 ? w * num(st.size, 0.2) : num(st.size, 20)); return `<path d="M${f1(x + k)},${f1(y)}H${f1(x + w)}L${f1(x + w - k)},${f1(y + h)}H${f1(x)}Z" stroke-linejoin="round"${F()}${S()}/>`; }
+      case 'step': { const k = Math.min(w / 2, num(st.size, 0.2) <= 1 ? w * num(st.size, 0.2) : num(st.size, 20)); return `<path d="M${f1(x)},${f1(y)}H${f1(x + w - k)}L${f1(x + w)},${f1(y + h / 2)}L${f1(x + w - k)},${f1(y + h)}H${f1(x)}L${f1(x + k)},${f1(y + h / 2)}Z" stroke-linejoin="round"${F()}${S()}/>`; }
+      case 'cylinder': case 'cylinder3': case 'datastore': {
+        const e = Math.min(h / 2, num(st.size, 12));
+        return `<path d="M${f1(x)},${f1(y + e)}A${f1(w / 2)},${f1(e)} 0 0 1 ${f1(x + w)},${f1(y + e)}V${f1(y + h - e)}A${f1(w / 2)},${f1(e)} 0 0 1 ${f1(x)},${f1(y + h - e)}Z"${F()}${S()}/><path d="M${f1(x)},${f1(y + e)}A${f1(w / 2)},${f1(e)} 0 0 0 ${f1(x + w)},${f1(y + e)}" fill="none"${S()}/>`;
+      }
+      case 'document': { const k = h * num(st.size, 0.3) / 2; return `<path d="M${f1(x)},${f1(y)}H${f1(x + w)}V${f1(y + h - k)}Q${f1(x + w * 0.75)},${f1(y + h - k * 3)} ${f1(x + w / 2)},${f1(y + h - k)}T${f1(x)},${f1(y + h - k)}Z"${F()}${S()}/>`; }
+      case 'note': { const k = Math.min(w, h, num(st.size, 14)); return `<path d="M${f1(x)},${f1(y)}H${f1(x + w - k)}L${f1(x + w)},${f1(y + k)}V${f1(y + h)}H${f1(x)}Z" stroke-linejoin="round"${F()}${S()}/><path d="M${f1(x + w - k)},${f1(y)}V${f1(y + k)}H${f1(x + w)}" fill="none"${S()}/>`; }
+      case 'process': { const k = w * num(st.size, 0.1); return `<path d="${rrPath(x, y, w, h, r)}"${F()}${S()}/><path d="M${f1(x + k)},${f1(y)}V${f1(y + h)}M${f1(x + w - k)},${f1(y)}V${f1(y + h)}" fill="none"${S()}/>`; }
+      case 'line': return st.direction === 'south' || st.direction === 'north' ? `<path d="M${f1(x + w / 2)},${f1(y)}V${f1(y + h)}" fill="none"${S()}/>` : `<path d="M${f1(x)},${f1(y + h / 2)}H${f1(x + w)}" fill="none"${S()}/>`;
+      case 'umlActor': {
+        const cx = x + w / 2, hr = Math.min(w / 4, h / 8);
+        return `<g fill="none"${S()}><circle cx="${f1(cx)}" cy="${f1(y + hr)}" r="${f1(hr)}"${F('#ffffff')}/><path d="M${f1(cx)},${f1(y + hr * 2)}V${f1(y + h * 0.66)}M${f1(x)},${f1(y + h * 0.36)}H${f1(x + w)}M${f1(cx)},${f1(y + h * 0.66)}L${f1(x)},${f1(y + h)}M${f1(cx)},${f1(y + h * 0.66)}L${f1(x + w)},${f1(y + h)}"/></g>`;
+      }
+      case 'umlLifeline': {
+        const hs = num(st.size, 40);
+        const sw = num(st.strokeWidth, 1);
+        return `<path d="${rrPath(x, y, w, Math.min(h, hs), r)}"${F()}${S()}/><path d="M${f1(x + w / 2)},${f1(y + hs)}V${f1(y + h)}" fill="none" stroke="${C(st.strokeColor, 'stroke', '#000000')}" stroke-width="${f1(sw)}" stroke-dasharray="6 5"/>`;
+      }
+      case 'partialRectangle': {
+        s = `<rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}"${F()} stroke="none"/>`;
+        let d = '';
+        if (st.top !== '0') d += `M${f1(x)},${f1(y)}H${f1(x + w)}`;
+        if (st.right !== '0') d += `M${f1(x + w)},${f1(y)}V${f1(y + h)}`;
+        if (st.bottom !== '0') d += `M${f1(x)},${f1(y + h)}H${f1(x + w)}`;
+        if (st.left !== '0') d += `M${f1(x)},${f1(y)}V${f1(y + h)}`;
+        return d ? s + `<path d="${d}" fill="none"${S()}/>` : s;
+      }
+      case 'swimlane': {
+        const ss = num(st.startSize, 23);
+        const horiz = st.horizontal !== '0';
+        const bodyFill = C(st.swimlaneFillColor, 'fill', 'none');
+        s = `<path d="${rrPath(x, y, w, h, r)}" fill="${bodyFill}"${S()}/>`;
+        if (ss > 0) {
+          if (horiz) s += `<path d="${rrPath(x, y, w, Math.min(ss, h), r, ss >= h ? [1, 1, 1, 1] : [1, 1, 0, 0])}"${F()}${st.swimlaneLine === '0' ? ' stroke="none"' : S()}/>`;
+          else s += `<path d="${rrPath(x, y, Math.min(ss, w), h, r, ss >= w ? [1, 1, 1, 1] : [1, 0, 0, 1])}"${F()}${st.swimlaneLine === '0' ? ' stroke="none"' : S()}/>`;
+          if (st.swimlaneLine === '0') s += `<path d="${rrPath(x, y, w, h, r)}" fill="none"${S()}/>`;
+        }
+        return s;
+      }
+      default: {
+        if (/^mxgraph\.bootstrap\.rrect/.test(shape)) return `<path d="${rrPath(x, y, w, h, num(st.rSize, 5))}"${F()}${S()}/>`;
+        if (r > 0) return `<path d="${rrPath(x, y, w, h, r)}"${F()}${S()}/>`;
+        return `<rect x="${f1(x)}" y="${f1(y)}" width="${f1(w)}" height="${f1(h)}"${F()}${S()}/>`;
+      }
+    }
+  }
+
+  // Draws a laid-out label inside rect (bx,by,bw,bh) with alignment; returns svg.
+  function drawText(value, st, box, extra = {}) {
+    if (value === undefined || value === null || value === '' || st.noLabel === '1') return '';
+    const sp = num(st.spacing, 2);
+    const padL = sp + num(st.spacingLeft, 0), padR = sp + num(st.spacingRight, 0), padT = sp + num(st.spacingTop, 0), padB = sp + num(st.spacingBottom, 0);
+    const rot = extra.rotate;
+    let bw = rot ? box.h : box.w, bh = rot ? box.w : box.h;
+    const align = extra.align || st.align || 'center';
+    const valign = extra.valign || st.verticalAlign || 'middle';
+    const lay = layoutLabel(value, st, Math.max(8, bw - padL - padR));
+    if (!lay.lines.length) return '';
+    const keep = theme === 'dark' && (isSolidFill(st.fillColor) || ctxKeep);
+    const fc = keep ? (normColor(st.fontColor) || '#000000') : C(st.fontColor, 'font', '#000000');
+    const fam = fontFamily(st);
+    // local coordinates: origin at top-left of the (possibly rotated) box
+    let ty = valign === 'top' ? padT : valign === 'bottom' ? bh - padB - lay.h : padT + (bh - padT - padB - lay.h) / 2;
+    const ax = align === 'left' ? padL : align === 'right' ? bw - padR : padL + (bw - padL - padR) / 2;
+    const anchor = align === 'left' ? 'start' : align === 'right' ? 'end' : 'middle';
+    let s = '';
+    const bg = st.labelBackgroundColor && st.labelBackgroundColor !== 'none' ? C(st.labelBackgroundColor, 'fill') : null;
+    const bd = st.labelBorderColor && st.labelBorderColor !== 'none' ? C(st.labelBorderColor, 'stroke') : null;
+    if (bg || bd) {
+      const x0 = align === 'left' ? ax : align === 'right' ? ax - lay.w : ax - lay.w / 2;
+      s += `<rect x="${f1(x0 - 3)}" y="${f1(ty - 1)}" width="${f1(lay.w + 6)}" height="${f1(lay.h + 2)}" rx="2" fill="${bg || 'none'}" stroke="${bd || 'none'}"/>`;
+    }
+    const op = st.textOpacity !== undefined ? ` opacity="${num(st.textOpacity, 100) / 100}"` : '';
+    for (const l of lay.lines) {
+      if (l.rule) { s += `<path d="M${f1(padL)},${f1(ty + 4.5)}H${f1(bw - padR)}" stroke="${C(st.strokeColor, 'stroke', '#999999')}" stroke-width="1" fill="none" opacity="0.6"/>`; ty += l.h; continue; }
+      if (l.runs.length) {
+        const base = ty + l.h / 2 + (l.size || 12) * 0.355;
+        let t = `<text x="${f1(ax)}" y="${f1(base)}" text-anchor="${anchor}" font-family="${fam}" font-size="${f1(l.size)}" fill="${fc}"${op} xml:space="preserve">`;
+        const single = l.runs.length === 1 && !l.runs[0].bold && !l.runs[0].italic && !l.runs[0].underline && !l.runs[0].color && l.runs[0].size === l.size;
+        if (single) t += escText(l.runs[0].text);
+        else for (const r of l.runs) {
+          let a = '';
+          if (r.bold) a += ' font-weight="bold"';
+          if (r.italic) a += ' font-style="italic"';
+          if (r.underline) a += ' text-decoration="underline"';
+          if (r.size !== l.size) a += ` font-size="${f1(r.size)}"`;
+          if (r.color) a += ` fill="${keep ? r.color : C(r.color, 'font')}"`;
+          t += `<tspan${a}>${escText(r.text)}</tspan>`;
+        }
+        s += t + '</text>';
+      }
+      ty += l.h;
+    }
+    extra.out = { w: lay.w, h: lay.h };
+    if (rot) return `<g transform="translate(${f1(box.x)},${f1(box.y + box.h)}) rotate(-90)">${s}</g>`;
+    return `<g transform="translate(${f1(box.x)},${f1(box.y)})">${s}</g>`;
+  }
+
+  function vertexLabel(c, b) {
+    const st = c.style;
+    if (!c.value) return '';
+    const shape = shapeOf(st);
+    if (shape === 'swimlane') {
+      const ss = num(st.startSize, 23);
+      if (st.horizontal === '0') return drawText(c.value, st, { x: b.x, y: b.y, w: Math.min(ss, b.w), h: b.h }, { rotate: true, valign: 'middle' });
+      return drawText(c.value, st, { x: b.x, y: b.y, w: b.w, h: Math.min(ss, b.h) }, { valign: st.verticalAlign === 'top' && ss >= b.h ? 'top' : 'middle' });
+    }
+    if (shape === 'umlLifeline') return drawText(c.value, st, { x: b.x, y: b.y, w: b.w, h: Math.min(b.h, num(st.size, 40)) });
+    let box = { x: b.x, y: b.y, w: b.w, h: b.h };
+    let align = st.align, valign = st.verticalAlign;
+    const lp = st.labelPosition || 'center', vlp = st.verticalLabelPosition || (shape === 'umlActor' ? 'bottom' : 'middle');
+    const lay = (lp !== 'center' || vlp !== 'middle') ? layoutLabel(c.value, st, st.whiteSpace === 'wrap' ? Math.max(b.w, 120) : 0) : null;
+    if (lp === 'left') { const W = lay.w + 12; box.x = b.x - W; box.w = W; align = align || 'right'; }
+    else if (lp === 'right') { const W = lay.w + 12; box.x = b.x + b.w; box.w = W; align = align || 'left'; }
+    else if (vlp !== 'middle') { const W = Math.max(b.w, lay.w + 12); box.x = b.x + b.w / 2 - W / 2; box.w = W; }
+    if (vlp === 'top') { const H = lay.h + 8; box.y = b.y - H; box.h = H; valign = valign || 'bottom'; }
+    else if (vlp === 'bottom') { const H = lay.h + 8; box.y = b.y + b.h; box.h = H; valign = valign || 'top'; }
+    if (lay) grow(box.x, box.y, box.w, box.h);
+    if (st.horizontal === '0') return drawText(c.value, st, box, { rotate: true, align, valign });
+    if (shape === 'rhombus') { const iw = b.w * 0.66; box = { x: b.x + (b.w - iw) / 2, y: b.y, w: iw, h: b.h }; }
+    return drawText(c.value, st, box, { align, valign });
+  }
+
+  function marker(type, tip, ux, uy, size, sw, filled, color, bgFill) {
+    // tip = end point; (ux,uy) unit vector pointing from the line toward the tip. Returns {svg, shorten}
+    if (!type || type === 'none') return { svg: '', shorten: 0 };
+    const nx = -uy, ny = ux;
+    const P = (along, perp) => `${f1(tip.x - ux * along + nx * perp)},${f1(tip.y - uy * along + ny * perp)}`;
+    const stroke = ` stroke="${color}" stroke-width="${f1(sw)}" stroke-linejoin="round" stroke-linecap="round"`;
+    const fill = filled ? color : bgFill;
+    const L = size + sw;
+    switch (type) {
+      case 'classic': case 'classicThin': { const hw = L / (type === 'classicThin' ? 3 : 2); return { svg: `<path d="M${P(0, 0)}L${P(L, hw)}L${P(L * 0.75, 0)}L${P(L, -hw)}Z" fill="${fill}"${stroke}/>`, shorten: L * 0.75 }; }
+      case 'block': case 'blockThin': case 'triangle': { const hw = L / (type === 'blockThin' ? 3 : 2); return { svg: `<path d="M${P(0, 0)}L${P(L, hw)}L${P(L, -hw)}Z" fill="${fill}"${stroke}/>`, shorten: L }; }
+      case 'open': case 'openThin': { const hw = L / (type === 'openThin' ? 3 : 2); return { svg: `<path d="M${P(L, hw)}L${P(0, 0)}L${P(L, -hw)}" fill="none"${stroke}/>`, shorten: 0 }; }
+      case 'async': case 'openAsync': return { svg: `<path d="M${P(0, 0)}L${P(L, L / 2)}${type === 'async' ? `L${P(L, 0)}Z` : ''}" fill="${type === 'async' ? fill : 'none'}"${stroke}/>`, shorten: 0 };
+      case 'oval': case 'circle': { const rr = size / 2; return { svg: `<circle cx="${f1(tip.x)}" cy="${f1(tip.y)}" r="${f1(rr)}" fill="${fill}"${stroke}/>`, shorten: rr }; }
+      case 'diamond': case 'diamondThin': { const hw = L / (type === 'diamondThin' ? 3.2 : 2); return { svg: `<path d="M${P(0, 0)}L${P(L, hw)}L${P(2 * L, 0)}L${P(L, -hw)}Z" fill="${fill}"${stroke}/>`, shorten: 2 * L }; }
+      case 'dash': return { svg: `<path d="M${P(size, size / 2)}L${P(0, -size / 2)}" fill="none"${stroke}/>`, shorten: 0 };
+      case 'cross': return { svg: `<path d="M${P(size, size / 2)}L${P(0, -size / 2)}M${P(size, -size / 2)}L${P(0, size / 2)}" fill="none"${stroke}/>`, shorten: 0 };
+      case 'ERone': return { svg: `<path d="M${P(size / 2, size / 2)}L${P(size / 2, -size / 2)}" fill="none"${stroke}/>`, shorten: 0 };
+      case 'ERmandOne': return { svg: `<path d="M${P(size / 2, size / 2)}L${P(size / 2, -size / 2)}M${P(size, size / 2)}L${P(size, -size / 2)}" fill="none"${stroke}/>`, shorten: 0 };
+      case 'ERmany': return { svg: `<path d="M${P(0, size / 2)}L${P(size, 0)}L${P(0, -size / 2)}" fill="none"${stroke}/>`, shorten: 0 };
+      case 'ERoneToMany': return { svg: `<path d="M${P(0, size / 2)}L${P(size, 0)}L${P(0, -size / 2)}M${P(size, size / 2)}L${P(size, -size / 2)}" fill="none"${stroke}/>`, shorten: 0 };
+      case 'ERzeroToOne': return { svg: `<circle cx="${f1(tip.x - ux * size * 1.5)}" cy="${f1(tip.y - uy * size * 1.5)}" r="${f1(size / 2)}" fill="${bgFill}"${stroke}/><path d="M${P(size / 2, size / 2)}L${P(size / 2, -size / 2)}" fill="none"${stroke}/>`, shorten: 0 };
+      case 'ERzeroToMany': return { svg: `<circle cx="${f1(tip.x - ux * size * 1.5)}" cy="${f1(tip.y - uy * size * 1.5)}" r="${f1(size / 2)}" fill="${bgFill}"${stroke}/><path d="M${P(0, size / 2)}L${P(size, 0)}L${P(0, -size / 2)}" fill="none"${stroke}/>`, shorten: 0 };
+      default: { const hw = L / 2; return { svg: `<path d="M${P(0, 0)}L${P(L, hw)}L${P(L, -hw)}Z" fill="${fill}"${stroke}/>`, shorten: L }; }
+    }
+  }
+
+  let ctxKeep = false;
+  const edgeGeom = new Map();
+  function drawEdge(c) {
+    const st = c.style;
+    const ep = edgePath(c, idx, bounds);
+    if (!ep || ep.pts.length < 2) return '';
+    let pts = ep.pts.map((p) => ({ x: p.x, y: p.y }));
+    edgeGeom.set(c.id, ep.pts);
+    for (const p of pts) grow(p.x - 6, p.y - 6, 12, 12);
+    const color = C(st.strokeColor, 'stroke', '#000000');
+    const sw = num(st.strokeWidth, 1);
+    const n = pts.length;
+    const unit = (a, b) => { const d = Math.hypot(b.x - a.x, b.y - a.y) || 1; return [(b.x - a.x) / d, (b.y - a.y) / d]; };
+    const endT = st.endArrow === undefined ? 'classic' : st.endArrow;
+    const startT = st.startArrow || 'none';
+    const [eux, euy] = unit(pts[n - 2], pts[n - 1]);
+    const [sux, suy] = unit(pts[1], pts[0]);
+    const em = marker(endT, pts[n - 1], eux, euy, num(st.endSize, 6), sw, st.endFill !== '0', color, T.canvas);
+    const sm = marker(startT, pts[0], sux, suy, num(st.startSize, 6), sw, st.startFill !== '0', color, T.canvas);
+    const segLenE = Math.hypot(pts[n - 1].x - pts[n - 2].x, pts[n - 1].y - pts[n - 2].y);
+    const segLenS = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+    if (em.shorten && segLenE > em.shorten) pts[n - 1] = { x: pts[n - 1].x - eux * em.shorten, y: pts[n - 1].y - euy * em.shorten };
+    if (sm.shorten && segLenS > sm.shorten) pts[0] = { x: pts[0].x - sux * sm.shorten, y: pts[0].y - suy * sm.shorten };
+    let d = `M${f1(pts[0].x)},${f1(pts[0].y)}`;
+    if (ep.curved && n > 2) {
+      for (let i = 1; i < n - 2; i++) d += `Q${f1(pts[i].x)},${f1(pts[i].y)} ${f1((pts[i].x + pts[i + 1].x) / 2)},${f1((pts[i].y + pts[i + 1].y) / 2)}`;
+      d += `Q${f1(pts[n - 2].x)},${f1(pts[n - 2].y)} ${f1(pts[n - 1].x)},${f1(pts[n - 1].y)}`;
+    } else if (st.rounded === '1' && n > 2) {
+      const R = num(st.arcSize, 20) / 2;
+      for (let i = 1; i < n - 1; i++) {
+        const a = pts[i - 1], b = pts[i], cc = pts[i + 1];
+        const l1 = Math.hypot(b.x - a.x, b.y - a.y), l2 = Math.hypot(cc.x - b.x, cc.y - b.y);
+        const rr = Math.min(R, l1 / 2, l2 / 2);
+        if (rr < 0.5) { d += `L${f1(b.x)},${f1(b.y)}`; continue; }
+        d += `L${f1(b.x - ((b.x - a.x) / l1) * rr)},${f1(b.y - ((b.y - a.y) / l1) * rr)}Q${f1(b.x)},${f1(b.y)} ${f1(b.x + ((cc.x - b.x) / l2) * rr)},${f1(b.y + ((cc.y - b.y) / l2) * rr)}`;
+      }
+      d += `L${f1(pts[n - 1].x)},${f1(pts[n - 1].y)}`;
+    } else for (let i = 1; i < n; i++) d += `L${f1(pts[i].x)},${f1(pts[i].y)}`;
+    let a = ` stroke="${color}" stroke-width="${f1(sw)}" fill="none" stroke-linejoin="round"`;
+    const dashed = st.dashed === '1';
+    if (dashed) a += ` stroke-dasharray="${(st.dashPattern || '3 3').split(/[ ,]+/).map((v) => f1(num(v, 3) * Math.max(1, sw))).join(' ')}"`;
+    if (st.opacity !== undefined) a += ` opacity="${num(st.opacity, 100) / 100}"`;
+    let s = `<path class="sfd-hit" d="${d}" stroke="transparent" stroke-width="${f1(Math.max(12, sw + 10))}" fill="none"/>`;
+    s += `<path class="sfd-edge${dashed ? ' sfd-dashed' : ''}${st.flowAnimation === '1' ? ' sfd-flow' : ''}" d="${d}"${a}/>` + sm.svg + em.svg;
+    if (c.value) {
+      const t = (num(c.geo && c.geo.relative ? c.geo.x : 0, 0) + 1) / 2;
+      const p = pointAlong(ep.pts, t);
+      const off = (c.geo && c.geo.offset) || { x: 0, y: 0 };
+      const perp = c.geo && c.geo.relative ? num(c.geo.y, 0) : 0;
+      const cx = p.x + off.x + -p.dy * perp, cy = p.y + off.y + p.dx * perp;
+      const lst = Object.assign({ fontSize: '11' }, st, { whiteSpace: undefined, spacing: '0', spacingLeft: undefined, spacingRight: undefined, spacingTop: undefined, spacingBottom: undefined });
+      const lay = layoutLabel(c.value, lst, 0);
+      const box = { x: cx - lay.w / 2, y: cy - lay.h / 2, w: lay.w, h: lay.h };
+      grow(box.x - 4, box.y - 2, box.w + 8, box.h + 4);
+      s += `<g class="sfd-elabel">${drawText(c.value, lst, box, { align: 'center', valign: 'middle' })}</g>`;
+    }
+    return s;
+  }
+
+  function edgeChildLabel(c, parentEdge) {
+    // vertex whose parent is an edge: relative position along the edge path
+    const pts = edgeGeom.get(parentEdge.id);
+    if (!pts || !c.geo) return null;
+    const p = pointAlong(pts, (num(c.geo.x, 0) + 1) / 2);
+    const off = c.geo.offset || { x: 0, y: 0 };
+    const st = c.style;
+    let w = c.geo.w, h = c.geo.h;
+    if (!w || !h) { const lay = layoutLabel(c.value || '', st, 0); w = w || lay.w + 12; h = h || lay.h + 6; }
+    return { x: p.x + off.x - w / 2, y: p.y + off.y - h / 2 + -p.dx * 0 + num(c.geo.y, 0) * 0, w, h };
+  }
+
+  const body = [];
+  function emitCell(c) {
+    let inner = '';
+    let b = null;
+    ctxKeep = false;
+    if (c.vertex) {
+      b = bounds.get(c.id);
+      const parent = idx.byId.get(c.parent);
+      ctxKeep = !!(parent && parent.vertex && isSolidFill(parent.style.fillColor) && (!c.style.fillColor || c.style.fillColor === 'none'));
+      if (!b && parent && parent.edge) { b = edgeChildLabel(c, parent); if (b) bounds.set(c.id, b); }
+      if (b) {
+        grow(b.x - 1, b.y - 1, b.w + 2, b.h + 2);
+        const st = c.style;
+        let sh = drawShape(c, b);
+        if (st.shadow === '1' && sh) { sh = `<g filter="url(#sfd-shadow)">${sh}</g>`; needShadow = true; }
+        let op = '';
+        if (st.opacity !== undefined) op = ` opacity="${num(st.opacity, 100) / 100}"`;
+        inner = `<g class="sfd-shape"${op}>${sh}</g>` + vertexLabel(c, b);
+        const rot = num(st.rotation, 0);
+        if (rot) inner = `<g transform="rotate(${rot} ${f1(b.x + b.w / 2)} ${f1(b.y + b.h / 2)})">${inner}</g>`;
+      }
+    } else if (c.edge) inner = drawEdge(c);
+    const kids = idx.kids.get(c.id) || [];
+    let attrs = ` data-id="${escXml(c.id)}" class="sfd-cell ${c.edge ? 'sfd-e' : 'sfd-v'}"`;
+    if (c.link) attrs += ` data-link="${escXml(c.link)}"`;
+    if (c.edge) attrs += ` data-src="${escXml(c.source || '')}" data-tgt="${escXml(c.target || '')}"`;
+    const tip = c.tooltip ? `<title>${escText(c.tooltip)}</title>` : '';
+    if (inner || kids.length) {
+      body.push(`<g${attrs}>${tip}${inner}`);
+      for (const k of kids) emitCell(k);
+      body.push('</g>');
+    }
+  }
+  let needShadow = false;
+  // edges are resolved lazily inside emitCell; draw order = document tree order
+  const roots = page.cells.filter((c) => !c.vertex && !c.edge);
+  const seen = new Set();
+  for (const layer of roots) { seen.add(layer.id); for (const k of (idx.kids.get(layer.id) || [])) if (k.vertex || k.edge) emitCell(k); }
+  for (const c of page.cells) if ((c.vertex || c.edge) && (c.parent === undefined || c.parent === null || !idx.byId.has(c.parent))) emitCell(c);
+
+  if (!Number.isFinite(bb.x0)) { bb.x0 = 0; bb.y0 = 0; bb.x1 = 200; bb.y1 = 100; }
+  const vx = Math.floor(bb.x0 - pad), vy = Math.floor(bb.y0 - pad);
+  const vw = Math.ceil(bb.x1 - bb.x0 + pad * 2), vh = Math.ceil(bb.y1 - bb.y0 + pad * 2);
+  if (needShadow) defs.push('<filter id="sfd-shadow" x="-10%" y="-10%" width="130%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#032d60" flood-opacity="0.18"/></filter>');
+  const bgc = opts.background === 'transparent' ? null : (opts.background || (theme === 'dark' ? T.canvas : themeColor(page.attrs && page.attrs.background, theme, 'fill') || T.canvas));
+  const scale = opts.scale || 1;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${Math.round(vw * scale)}" height="${Math.round(vh * scale)}" viewBox="${vx} ${vy} ${vw} ${vh}" data-theme="${theme}">` +
+    (defs.length ? `<defs>${defs.join('')}</defs>` : '') +
+    (bgc ? `<rect class="sfd-bg" x="${vx}" y="${vy}" width="${vw}" height="${vh}" fill="${bgc}"/>` : '') +
+    `<g class="sfd-root">${body.join('')}</g></svg>`;
+  return { svg, width: vw, height: vh, viewBox: [vx, vy, vw, vh], bounds, edges: edgeGeom };
+}
+
+return { decodeEntities, escXml, parseXml, parseStyle, styleStr, parseMxfile, serializeMxfile, textWidth, normColor, parseMarkup, layoutLabel, measureLabel, THEMES, themeColor, isSolidFill, indexPage, absBounds, orthoRoute, edgePath, pointAlong, renderSvg };
+})();
+</script>
+<script>
+/* archistry — standalone HTML viewer + editor.
+   The diagram model is the draw.io XML embedded in <script id="sfd-model">; everything here reads and writes that
+   model through the shared SFDMX core, so "Download .drawio" always round-trips to draw.io. */
+(function () {
+  'use strict';
+  var MX = window.SFDMX;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var modelEl = $('#sfd-model');
+  var app = $('#app');
+  var file;
+  try { file = MX.parseMxfile(modelEl.textContent); } catch (e) { app.textContent = 'Could not read the embedded diagram: ' + e.message; return; }
+  var S = { page: 0, sel: new Set(), editing: false, tool: 'select', view: { x: 0, y: 0, k: 1 }, theme: document.documentElement.getAttribute('data-theme') || 'light', live: false, dirty: false, undo: [], redo: [], last: null, focus: null, hover: null, query: '', matches: [], matchAt: 0, connectFrom: null };
+  var KINDS = [['#eaf5fe', '#0176d3', 'Salesforce'], ['#f6f2fb', '#5a1ba9', 'Data Cloud'], ['#eef1ff', '#3a49da', 'AI / Agentforce'], ['#def9f3', '#0b827c', 'Integration'], ['#ffece3', '#dd5a1b', 'Engagement'], ['#ebf7e6', '#2e844a', 'Success'], ['#fbf3e0', '#ca8501', 'Warning'], ['#fef1ee', '#ba0517', 'Danger'], ['#f3f3f3', '#747474', 'External'], ['#ffffff', '#969492', 'Neutral'], ['#ffffff', '#032d60', 'People'], ['#fdf0f7', '#b60554', 'Security'], ['#e7f8fb', '#0b6d8a', 'Analytics'], ['#fff8dc', '#ca8501', 'Note']];
+
+  /* ------------------------------------------------------------ shell -- */
+  app.innerHTML =
+    '<div id="bar">' +
+    '<span class="title" id="title"></span><span id="tabs"></span><span class="grow"></span>' +
+    '<input id="search" type="search" placeholder="Find a box…  ( / )" aria-label="Find">' +
+    '<span class="group"><button class="btn icon" id="zout" title="Zoom out (−)">−</button><button class="btn" id="zlabel" title="Actual size (1)">100%</button><button class="btn icon" id="zin" title="Zoom in (+)">+</button><button class="btn" id="fit" title="Fit to window (0)">Fit</button></span>' +
+    '<button class="btn" id="live" title="Animate the direction of every connector (L)">Live</button>' +
+    '<button class="btn" id="theme" title="Light / dark (T)">Dark</button>' +
+    '<button class="btn" id="present" title="Full-screen presentation (P)">Present</button>' +
+    '<span class="sep"></span>' +
+    '<button class="btn" id="edit" title="Switch between exploring and editing (E)">Edit</button>' +
+    '<span class="group edit-only"><button class="btn" id="undo" title="Undo (Ctrl+Z)">Undo</button><button class="btn" id="redo" title="Redo (Ctrl+Y)">Redo</button></span>' +
+    '<div class="menu left edit-only" id="addmenu"><button class="btn" data-menu>Add ▾</button><div class="pop">' +
+    '<button data-add="card">Card (rounded box)</button><button data-add="box">Rectangle</button><button data-add="ellipse">Ellipse</button><button data-add="diamond">Decision diamond</button><button data-add="pill">Pill / state</button><button data-add="data">Data store</button><button data-add="note">Note</button><button data-add="text">Text</button><button data-add="zone">Zone (container)</button><hr><div id="iconlist"></div></div></div>' +
+    '<button class="btn edit-only" id="connect" title="Click a source box, then a target box (C)">Connect</button>' +
+    '<div class="menu" id="exportmenu"><button class="btn primary" data-menu>Export ▾</button><div class="pop">' +
+    '<button data-x="png">PNG image<span class="hint">2× sharp</span></button><button data-x="jpg">JPG image<span class="hint">white background</span></button><button data-x="svg">SVG vector<span class="hint">scales forever</span></button><button data-x="copy">Copy PNG to clipboard</button><hr>' +
+    '<button data-x="drawio">Download .drawio<span class="hint">edit in draw.io</span></button><button data-x="html">Save HTML<span class="hint">keeps your edits</span></button><hr><button data-x="print">Print / save as PDF</button></div></div>' +
+    '<button class="btn icon" id="helpbtn" title="Shortcuts (?)">?</button>' +
+    '</div><div id="stage"></div><aside id="inspector"></aside>' +
+    '<div id="status"><span id="st-mode"></span><span id="st-count"></span><span id="st-zoom"></span><span class="grow" style="flex:1"></span><span id="st-dirty"></span><span>archistry</span></div>' +
+    '<div id="help"><div class="card"><h2>Explore, edit, export</h2><table>' +
+    '<tr><td><b>Explore</b></td><td>Drag to pan · <kbd>Ctrl</kbd>+wheel or <kbd>+</kbd>/<kbd>−</kbd> to zoom · <kbd>0</kbd> fit · click a box to trace its connections · <kbd>/</kbd> find · <kbd>L</kbd> live flow · <kbd>T</kbd> theme · <kbd>P</kbd> present</td></tr>' +
+    '<tr><td><b>Edit</b></td><td><kbd>E</kbd> toggles edit mode · drag boxes to move, corner handles to resize · double-click to edit text · <kbd>Shift</kbd>+click or <kbd>Shift</kbd>+drag to multi-select · arrows nudge · <kbd>Del</kbd> delete · <kbd>Ctrl</kbd>+<kbd>D</kbd> duplicate · <kbd>C</kbd> connect two boxes · <kbd>Ctrl</kbd>+<kbd>Z</kbd>/<kbd>Y</kbd> undo/redo</td></tr>' +
+    '<tr><td><b>Keep</b></td><td><b>Save HTML</b> stores your edits in a new copy of this file (<kbd>Ctrl</kbd>+<kbd>S</kbd>). <b>Download .drawio</b> gives the same diagram for draw.io, diagrams.net or the VS Code draw.io extension. PNG, JPG and SVG go straight into documents and slides.</td></tr>' +
+    '<tr><td><b>Pages</b></td><td>Tabs at the top switch pages. Boxes with a link (for example a topic on an Agent Interaction Map) open their drill-down page; in edit mode use <kbd>Ctrl</kbd>+click.</td></tr>' +
+    '</table><p style="text-align:right;margin:14px 0 0"><button class="btn primary" id="helpclose">Got it</button></p></div></div><div id="toast"></div>';
+  var stage = $('#stage'), inspector = $('#inspector'), svg = null;
+
+  /* ------------------------------------------------------------ model -- */
+  function page() { return file.pages[S.page]; }
+  function cellById(id) { var cs = page().cells; for (var i = 0; i < cs.length; i++) if (cs[i].id === id) return cs[i]; return null; }
+  function resolveUnit(id) {
+    var c = cellById(id), guard = 0;
+    while (c && c.vertex && c.style.part === '1' && guard++ < 10) { var p = cellById(c.parent); if (!p || !p.vertex) break; c = p; }
+    return c;
+  }
+  function descendants(id, out) { out = out || []; page().cells.forEach(function (c) { if (c.parent === id) { out.push(c); descendants(c.id, out); } }); return out; }
+  function plain(v) { var d = document.createElement('div'); d.innerHTML = String(v || '').replace(/<br\s*\/?>/gi, ' '); return (d.textContent || '').replace(/\s+/g, ' ').trim(); }
+  function isUnit(c, kids) {
+    if (!c.vertex || c.style.part === '1') return false;
+    var ks = kids.get(c.id) || [];
+    for (var i = 0; i < ks.length; i++) if (ks[i].vertex && ks[i].style.part !== '1' && ks[i].connectable !== '0') return false;
+    return true;
+  }
+  var uidN = 0;
+  function newId(prefix) { var id; do { id = (prefix || 'u') + '_' + Date.now().toString(36) + (uidN++).toString(36); } while (cellById(id)); return id; }
+  function pushUndo() { S.undo.push(MX.serializeMxfile(file)); if (S.undo.length > 80) S.undo.shift(); S.redo = []; S.dirty = true; }
+  function restore(xml) { file = MX.parseMxfile(xml); if (S.page >= file.pages.length) S.page = 0; S.sel.clear(); render(); }
+  function undo() { if (!S.undo.length) return; S.redo.push(MX.serializeMxfile(file)); restore(S.undo.pop()); S.dirty = true; }
+  function redo() { if (!S.redo.length) return; S.undo.push(MX.serializeMxfile(file)); restore(S.redo.pop()); S.dirty = true; }
+
+  /* ----------------------------------------------------------- render -- */
+  function render() {
+    var r = MX.renderSvg(page(), { theme: S.theme, background: 'transparent', padding: 0 });
+    S.last = r;
+    stage.innerHTML = r.svg;
+    svg = stage.firstElementChild;
+    svg.removeAttribute('width'); svg.removeAttribute('height');
+    var idx = MX.indexPage(page());
+    page().cells.forEach(function (c) { if (isUnit(c, idx.kids)) { var g = svg.querySelector('[data-id="' + cssEsc(c.id) + '"]'); if (g) g.classList.add('sfd-leaf'); } });
+    if (S.live) svg.classList.add('live');
+    var ov = document.createElementNS('http://www.w3.org/2000/svg', 'g'); ov.setAttribute('id', 'ov'); svg.appendChild(ov);
+    applyView(); drawOverlay(); applyHighlight(); updateChrome();
+  }
+  function cssEsc(s) { return String(s).replace(/["\\]/g, '\\$&'); }
+  function applyView() {
+    if (!svg) return;
+    var w = stage.clientWidth || 800, h = stage.clientHeight || 600;
+    svg.setAttribute('viewBox', S.view.x + ' ' + S.view.y + ' ' + w / S.view.k + ' ' + h / S.view.k);
+    $('#zlabel').textContent = Math.round(S.view.k * 100) + '%';
+    $('#st-zoom').textContent = 'Zoom ' + Math.round(S.view.k * 100) + '%';
+  }
+  function fit() {
+    var vb = S.last.viewBox, w = stage.clientWidth || 800, h = stage.clientHeight || 600;
+    var k = Math.min((w - 60) / vb[2], (h - 60) / vb[3], 1.6);
+    if (!(k > 0)) k = 1;
+    S.view.k = k; S.view.x = vb[0] - (w / k - vb[2]) / 2; S.view.y = vb[1] - (h / k - vb[3]) / 2;
+    applyView(); drawOverlay();
+  }
+  function zoomAt(f, cx, cy) {
+    var rect = stage.getBoundingClientRect();
+    if (cx === undefined) { cx = rect.left + rect.width / 2; cy = rect.top + rect.height / 2; }
+    var px = S.view.x + (cx - rect.left) / S.view.k, py = S.view.y + (cy - rect.top) / S.view.k;
+    var k = Math.max(0.08, Math.min(6, S.view.k * f));
+    S.view.x = px - (cx - rect.left) / k; S.view.y = py - (cy - rect.top) / k; S.view.k = k;
+    applyView(); drawOverlay();
+  }
+  function centerOn(id) {
+    var b = S.last.bounds.get(id); if (!b) return;
+    var w = stage.clientWidth, h = stage.clientHeight;
+    S.view.x = b.x + b.w / 2 - w / S.view.k / 2; S.view.y = b.y + b.h / 2 - h / S.view.k / 2; applyView(); drawOverlay();
+  }
+  function toDiagram(e) { var rect = stage.getBoundingClientRect(); return { x: S.view.x + (e.clientX - rect.left) / S.view.k, y: S.view.y + (e.clientY - rect.top) / S.view.k }; }
+  function drawOverlay() {
+    var ov = svg && svg.querySelector('#ov'); if (!ov) return;
+    var s = '';
+    if (S.editing) {
+      S.sel.forEach(function (id) {
+        var c = cellById(id); if (!c) return;
+        if (c.vertex) { var b = S.last.bounds.get(id); if (b) s += '<rect class="sel-box" x="' + (b.x - 3) + '" y="' + (b.y - 3) + '" width="' + (b.w + 6) + '" height="' + (b.h + 6) + '" rx="3"/>'; }
+        else { var pts = S.last.edges.get(id); if (pts) s += '<polyline class="sel-edge" points="' + pts.map(function (p) { return p.x + ',' + p.y; }).join(' ') + '"/>'; }
+      });
+      if (S.sel.size === 1) {
+        var only = cellById(Array.from(S.sel)[0]);
+        if (only && only.vertex) { var bb = S.last.bounds.get(only.id), hs = 9 / S.view.k; if (bb) [['nw', bb.x, bb.y], ['ne', bb.x + bb.w, bb.y], ['se', bb.x + bb.w, bb.y + bb.h], ['sw', bb.x, bb.y + bb.h]].forEach(function (hd) { s += '<rect class="handle" data-handle="' + hd[0] + '" x="' + (hd[1] - hs / 2) + '" y="' + (hd[2] - hs / 2) + '" width="' + hs + '" height="' + hs + '" style="cursor:' + hd[0] + '-resize"/>'; }); }
+      }
+      if (S.connectFrom) { var cb = S.last.bounds.get(S.connectFrom); if (cb) s += '<rect class="sel-box" style="stroke-dasharray:none;stroke-width:3" x="' + (cb.x - 5) + '" y="' + (cb.y - 5) + '" width="' + (cb.w + 10) + '" height="' + (cb.h + 10) + '" rx="5"/>'; }
+    }
+    if (drag && drag.type === 'marquee' && drag.rect) s += '<rect class="marquee" x="' + drag.rect.x + '" y="' + drag.rect.y + '" width="' + drag.rect.w + '" height="' + drag.rect.h + '"/>';
+    ov.innerHTML = s;
+  }
+  function neighbours(id) {
+    var ids = new Set([id]);
+    var family = new Set([id]); descendants(id).forEach(function (c) { family.add(c.id); });
+    page().cells.forEach(function (c) { if (c.edge && (family.has(c.source) || family.has(c.target))) { ids.add(c.id); if (c.source) ids.add(c.source); if (c.target) ids.add(c.target); } });
+    return ids;
+  }
+  function applyHighlight() {
+    if (!svg) return;
+    svg.querySelectorAll('.hl').forEach(function (g) { g.classList.remove('hl'); });
+    var ids = null;
+    if (S.query && S.matches.length) ids = new Set(S.matches);
+    else if (!S.editing && (S.focus || S.hover)) ids = neighbours(S.focus || S.hover);
+    svg.classList.toggle('dim', !!ids);
+    if (ids) ids.forEach(function (id) { var g = svg.querySelector('[data-id="' + cssEsc(id) + '"]'); if (g) g.classList.add('hl'); });
+  }
+  function updateChrome() {
+    var p = page();
+    $('#title').textContent = document.title;
+    var tabs = $('#tabs');
+    if (file.pages.length > 1) tabs.innerHTML = file.pages.map(function (pg, i) { return '<button class="btn' + (i === S.page ? ' on' : '') + '" data-page="' + i + '">' + esc(pg.name) + '</button>'; }).join(''); else tabs.innerHTML = '';
+    var idx = MX.indexPage(p), nodes = 0, edges = 0;
+    p.cells.forEach(function (c) { if (c.edge && (c.source || c.target)) edges++; else if (c.connectable !== '0' && isUnit(c, idx.kids) && !('text' in c.style)) nodes++; });
+    $('#st-count').textContent = nodes + ' boxes · ' + edges + ' connectors' + (file.pages.length > 1 ? ' · page ' + (S.page + 1) + ' of ' + file.pages.length : '');
+    $('#st-mode').textContent = S.editing ? (S.tool === 'connect' ? 'Connect: click the source box, then the target' : 'Editing — drag to move, double-click to edit text') : 'Exploring — click a box to trace its connections';
+    $('#st-dirty').textContent = S.dirty ? 'Unsaved edits — Export ▸ Save HTML or Download .drawio' : '';
+    $('#st-dirty').className = S.dirty ? 'dirty' : '';
+    $('#edit').classList.toggle('on', S.editing); $('#edit').textContent = S.editing ? 'Done editing' : 'Edit';
+    $('#live').classList.toggle('on', S.live); $('#theme').textContent = S.theme === 'dark' ? 'Light' : 'Dark';
+    $('#connect').classList.toggle('on', S.tool === 'connect');
+    $('#undo').disabled = !S.undo.length; $('#redo').disabled = !S.redo.length;
+    document.body.classList.toggle('editing', S.editing);
+    renderInspector();
+  }
+  function esc(s) { return String(s === undefined || s === null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function toast(msg) { var t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('show'); }, 2400); }
+
+  /* -------------------------------------------------------- inspector -- */
+  function hex(v, d) { var c = MX.normColor(v); return c || d; }
+  function renderInspector() {
+    var h = '';
+    if (S.editing && S.sel.size) {
+      var cells = Array.from(S.sel).map(cellById).filter(Boolean);
+      var c = cells[0]; if (!c) { inspector.classList.remove('open'); return; }
+      var st = c.style, isEdge = !!c.edge;
+      h += '<h3>' + (cells.length > 1 ? cells.length + ' items selected' : (isEdge ? 'Connector' : 'Shape')) + '</h3>';
+      h += '<label>Text (use &lt;br&gt; for a new line, &lt;b&gt;bold&lt;/b&gt;)</label><textarea id="i-label">' + esc(c.value) + '</textarea>';
+      if (!isEdge) { h += '<label>Salesforce palette</label><div class="swatches">' + KINDS.map(function (k, i) { return '<div class="sw" data-kind="' + i + '" title="' + k[2] + '" style="background:' + k[0] + ';border-color:' + k[1] + '"></div>'; }).join('') + '</div>'; }
+      h += '<div class="row">' + (isEdge ? '' : '<div><label>Fill</label><input type="color" id="i-fill" value="' + hex(st.fillColor, '#ffffff') + '"></div>') + '<div><label>Line</label><input type="color" id="i-stroke" value="' + hex(st.strokeColor, '#000000') + '"></div><div><label>Text</label><input type="color" id="i-font" value="' + hex(st.fontColor, '#000000') + '"></div></div>';
+      h += '<div class="row"><div><label>Font size</label><input type="number" id="i-fs" min="6" max="72" value="' + (parseFloat(st.fontSize) || 12) + '"></div><div><label>Line width</label><input type="number" id="i-sw" min="0" max="12" step="0.5" value="' + (parseFloat(st.strokeWidth) || 1) + '"></div></div>';
+      h += '<label>Line style</label><select id="i-dash"><option value="">Solid</option><option value="6 4"' + (st.dashed === '1' && st.dashPattern !== '1 3' ? ' selected' : '') + '>Dashed</option><option value="1 3"' + (st.dashed === '1' && st.dashPattern === '1 3' ? ' selected' : '') + '>Dotted</option></select>';
+      if (isEdge) {
+        var arrows = ['none', 'block', 'open', 'classic', 'diamond', 'oval', 'ERzeroToMany', 'ERzeroToOne', 'ERmandOne', 'ERmany', 'ERone'];
+        var opt = function (v) { return arrows.map(function (a) { return '<option' + (a === v ? ' selected' : '') + '>' + a + '</option>'; }).join(''); };
+        h += '<div class="row"><div><label>Start</label><select id="i-sa">' + opt(st.startArrow || 'none') + '</select></div><div><label>End</label><select id="i-ea">' + opt(st.endArrow === undefined ? 'classic' : st.endArrow) + '</select></div></div>';
+        h += '<label>Route</label><div class="row"><button class="btn" id="i-reroute">Straighten / re-route</button><button class="btn" id="i-flip">Reverse</button></div>';
+      } else if (c.geo) {
+        h += '<div class="row"><div><label>Width</label><input type="number" id="i-w" step="10" value="' + Math.round(c.geo.w) + '"></div><div><label>Height</label><input type="number" id="i-h" step="10" value="' + Math.round(c.geo.h) + '"></div></div>';
+        h += '<label>Link (URL or data:page/id,…)</label><input type="text" id="i-link" value="' + esc(c.link || '') + '">';
+      }
+      h += '<label>Arrange</label><div class="row"><button class="btn" id="i-front">To front</button><button class="btn" id="i-back">To back</button></div><div class="row" style="margin-top:8px"><button class="btn" id="i-dup">Duplicate</button><button class="btn" id="i-del" style="color:var(--danger)">Delete</button></div>';
+      inspector.innerHTML = h; inspector.classList.add('open');
+      bindInspector(cells);
+      return;
+    }
+    if (!S.editing && S.focus) {
+      var f = cellById(S.focus);
+      if (f) {
+        var ins = [], outs = [];
+        var family = new Set([f.id]); descendants(f.id).forEach(function (x) { family.add(x.id); });
+        page().cells.forEach(function (e) {
+          if (!e.edge) return;
+          if (family.has(e.source) && e.target) outs.push([e.target, plain(e.value)]);
+          else if (family.has(e.target) && e.source) ins.push([e.source, plain(e.value)]);
+        });
+        var item = function (x) { var o = cellById(x[0]); return '<li data-go="' + esc(x[0]) + '">' + esc(plain(o && o.value) || x[0]) + (x[1] ? ' <span class="info">— ' + esc(x[1]) + '</span>' : '') + '</li>'; };
+        h += '<h3>' + esc(plain(f.value) || f.id) + '</h3>';
+        if (f.tooltip) h += '<p class="info">' + esc(f.tooltip) + '</p>';
+        if (f.link) h += '<p><button class="btn primary" id="i-open">' + (/^data:page/.test(f.link) ? 'Open drill-down page' : 'Open link') + '</button></p>';
+        h += '<p class="info"><b>' + ins.length + '</b> incoming · <b>' + outs.length + '</b> outgoing</p>';
+        if (ins.length) h += '<label>Comes from</label><ul>' + ins.map(item).join('') + '</ul>';
+        if (outs.length) h += '<label>Goes to</label><ul>' + outs.map(item).join('') + '</ul>';
+        h += '<p class="info" style="margin-top:14px">Click the canvas to clear · press <b>E</b> to edit this diagram.</p>';
+        inspector.innerHTML = h; inspector.classList.add('open');
+        inspector.querySelectorAll('[data-go]').forEach(function (li) { li.onclick = function () { var u = resolveUnit(li.getAttribute('data-go')); if (u) { S.focus = u.id; centerOn(u.id); applyHighlight(); renderInspector(); } }; });
+        var ob = $('#i-open'); if (ob) ob.onclick = function () { openLink(f.link); };
+        return;
+      }
+    }
+    inspector.classList.remove('open'); inspector.innerHTML = '';
+  }
+  function bindInspector(cells) {
+    var once = false;
+    var change = function (fn) { return function (ev) { if (!once) { pushUndo(); once = true; } cells.forEach(function (c) { fn(c, ev.target.value, ev); }); softRender(); }; };
+    var on = function (id, evn, fn) { var el = $('#' + id); if (el) el.addEventListener(evn, fn); };
+    on('i-label', 'input', change(function (c, v) { c.value = c.style.html === '1' ? v.replace(/\n/g, '<br>') : v; }));
+    on('i-fill', 'input', change(function (c, v) { if (c.vertex) c.style.fillColor = v; }));
+    on('i-stroke', 'input', change(function (c, v) { c.style.strokeColor = v; }));
+    on('i-font', 'input', change(function (c, v) { c.style.fontColor = v; }));
+    on('i-fs', 'input', change(function (c, v) { if (+v > 0) c.style.fontSize = String(+v); }));
+    on('i-sw', 'input', change(function (c, v) { c.style.strokeWidth = String(+v); }));
+    on('i-dash', 'change', change(function (c, v) { if (v) { c.style.dashed = '1'; c.style.dashPattern = v; } else { delete c.style.dashed; delete c.style.dashPattern; } }));
+    on('i-sa', 'change', change(function (c, v) { if (c.edge) { c.style.startArrow = v; c.style.startFill = /^ER/.test(v) ? '0' : '1'; if (/^ER/.test(v)) c.style.startSize = '10'; } }));
+    on('i-ea', 'change', change(function (c, v) { if (c.edge) { c.style.endArrow = v; c.style.endFill = /^ER/.test(v) ? '0' : '1'; if (/^ER/.test(v)) c.style.endSize = '10'; } }));
+    on('i-w', 'change', change(function (c, v) { if (c.vertex && +v >= 10) c.geo.w = +v; }));
+    on('i-h', 'change', change(function (c, v) { if (c.vertex && +v >= 10) c.geo.h = +v; }));
+    on('i-link', 'change', change(function (c, v) { if (v) c.link = v; else delete c.link; }));
+    inspector.querySelectorAll('.sw').forEach(function (sw) { sw.onclick = function () { var k = KINDS[+sw.getAttribute('data-kind')]; pushUndo(); cells.forEach(function (c) { if (c.vertex) { c.style.fillColor = k[0]; c.style.strokeColor = k[1]; } }); render(); }; });
+    on('i-reroute', 'click', function () { pushUndo(); cells.forEach(function (c) { if (c.edge) { c.geo.points = []; ['exitX', 'exitY', 'exitDx', 'exitDy', 'entryX', 'entryY', 'entryDx', 'entryDy'].forEach(function (k) { delete c.style[k]; }); if (!c.style.edgeStyle || c.style.edgeStyle === 'none') c.style.edgeStyle = 'orthogonalEdgeStyle'; } }); render(); });
+    on('i-flip', 'click', function () { pushUndo(); cells.forEach(function (c) { if (c.edge) { var t = c.source; c.source = c.target; c.target = t; c.geo.points = (c.geo.points || []).slice().reverse(); var s = c.style, ex = [s.exitX, s.exitY], en = [s.entryX, s.entryY]; if (en[0] !== undefined) { s.exitX = en[0]; s.exitY = en[1]; } else { delete s.exitX; delete s.exitY; } if (ex[0] !== undefined) { s.entryX = ex[0]; s.entryY = ex[1]; } else { delete s.entryX; delete s.entryY; } } }); render(); });
+    on('i-front', 'click', function () { arrange(true); });
+    on('i-back', 'click', function () { arrange(false); });
+    on('i-dup', 'click', duplicate);
+    on('i-del', 'click', removeSelected);
+  }
+  var softT = null;
+  function softRender() { clearTimeout(softT); softT = setTimeout(function () { var a = document.activeElement, id = a && a.id, pos = a && a.selectionStart; var r = MX.renderSvg(page(), { theme: S.theme, background: 'transparent', padding: 0 }); S.last = r; var old = svg; stage.innerHTML = r.svg; svg = stage.firstElementChild; svg.removeAttribute('width'); svg.removeAttribute('height'); var ov = document.createElementNS('http://www.w3.org/2000/svg', 'g'); ov.setAttribute('id', 'ov'); svg.appendChild(ov); applyView(); drawOverlay(); $('#st-dirty').textContent = 'Unsaved edits — Export ▸ Save HTML or Download .drawio'; $('#st-dirty').className = 'dirty'; $('#undo').disabled = false; void old; void id; void pos; }, 60); }
+
+  /* ---------------------------------------------------------- editing -- */
+  function topSelected() {
+    var ids = Array.from(S.sel);
+    return ids.filter(function (id) { var c = cellById(id), guard = 0; while (c && c.parent && guard++ < 30) { if (S.sel.has(c.parent)) return false; c = cellById(c.parent); } return true; }).map(cellById).filter(Boolean);
+  }
+  function removeSelected() {
+    if (!S.sel.size) return;
+    pushUndo();
+    var gone = new Set();
+    S.sel.forEach(function (id) { gone.add(id); descendants(id).forEach(function (c) { gone.add(c.id); }); });
+    var p = page();
+    p.cells.forEach(function (c) { if (c.edge && ((c.source && gone.has(c.source)) || (c.target && gone.has(c.target)))) { gone.add(c.id); descendants(c.id).forEach(function (k) { gone.add(k.id); }); } });
+    p.cells = p.cells.filter(function (c) { return !gone.has(c.id); });
+    S.sel.clear(); render();
+  }
+  function duplicate() {
+    var tops = topSelected().filter(function (c) { return c.vertex || (c.edge && !c.source && !c.target); });
+    if (!tops.length) return;
+    pushUndo();
+    var p = page(), fresh = [];
+    tops.forEach(function (c) {
+      var map = new Map(), group = [c].concat(descendants(c.id));
+      group.forEach(function (g) { map.set(g.id, newId('dup')); });
+      group.forEach(function (g) {
+        var n = JSON.parse(JSON.stringify(g)); n.id = map.get(g.id);
+        if (map.has(n.parent)) n.parent = map.get(n.parent);
+        if (g === c && n.geo) { n.geo.x += 20; n.geo.y += 20; if (n.geo.points) n.geo.points.forEach(function (q) { q.x += 20; q.y += 20; }); if (n.geo.sourcePoint) { n.geo.sourcePoint.x += 20; n.geo.sourcePoint.y += 20; } if (n.geo.targetPoint) { n.geo.targetPoint.x += 20; n.geo.targetPoint.y += 20; } }
+        p.cells.push(n);
+      });
+      fresh.push(map.get(c.id));
+    });
+    S.sel = new Set(fresh); render();
+  }
+  function arrange(front) {
+    var tops = topSelected(); if (!tops.length) return;
+    pushUndo();
+    var p = page();
+    tops.forEach(function (c) {
+      var group = [c].concat(descendants(c.id)), ids = new Set(group.map(function (g) { return g.id; }));
+      var rest = p.cells.filter(function (x) { return !ids.has(x.id); });
+      if (front) p.cells = rest.concat(group);
+      else { var at = 0; for (var i = 0; i < rest.length; i++) { if (rest[i].id === c.parent || (!rest[i].vertex && !rest[i].edge)) at = i + 1; } p.cells = rest.slice(0, at).concat(group, rest.slice(at)); }
+    });
+    render();
+  }
+  function addShape(kind, iconUri) {
+    pushUndo();
+    var w = stage.clientWidth, h = stage.clientHeight;
+    var cx = Math.round((S.view.x + w / S.view.k / 2) / 10) * 10, cy = Math.round((S.view.y + h / S.view.k / 2) / 10) * 10;
+    var base = { html: '1', whiteSpace: 'wrap', fontColor: '#032d60', fontSize: '13', strokeWidth: '1.5' };
+    var defs = {
+      card: [180, 60, '<b>New card</b>', { rounded: '1', arcSize: '16', absoluteArcSize: '1', fillColor: '#eaf5fe', strokeColor: '#0176d3' }],
+      box: [160, 60, 'Text', { fillColor: '#ffffff', strokeColor: '#969492' }],
+      ellipse: [120, 80, 'Text', { ellipse: '', fillColor: '#ffffff', strokeColor: '#032d60' }],
+      diamond: [140, 80, 'Decision?', { rhombus: '', fillColor: '#fbf3e0', strokeColor: '#ca8501', fontSize: '12' }],
+      pill: [140, 40, '<b>State</b>', { rounded: '1', arcSize: '100', absoluteArcSize: '1', fillColor: '#eaf5fe', strokeColor: '#0176d3' }],
+      data: [120, 80, 'Data', { shape: 'cylinder3', size: '12', boundedLbl: '1', fillColor: '#f6f2fb', strokeColor: '#5a1ba9', spacingTop: '14' }],
+      note: [180, 80, 'Note', { shape: 'note', size: '14', fillColor: '#fff8dc', strokeColor: '#ca8501', fontSize: '11', align: 'left', spacingLeft: '8' }],
+      text: [160, 30, 'Text', { text: '', fillColor: 'none', strokeColor: 'none', align: 'left' }],
+      zone: [320, 220, '<b>Zone</b>', { rounded: '1', arcSize: '20', absoluteArcSize: '1', fillColor: '#eaf5fe', strokeColor: '#0176d3', align: 'left', verticalAlign: 'top', spacingLeft: '14', spacingTop: '9', container: '1', collapsible: '0' }],
+      icon: [48, 48, '', { shape: 'image', html: '1', aspect: 'fixed', imageAspect: '1', image: iconUri }],
+    };
+    var d = defs[kind] || defs.box;
+    var st = kind === 'icon' ? d[3] : Object.assign({}, base, d[3]);
+    var c = { id: newId(kind), value: d[2], style: st, vertex: true, parent: '1', geo: { x: cx - d[0] / 2, y: cy - d[1] / 2, w: d[0], h: d[1] } };
+    var p = page();
+    if (kind === 'zone') { var at = 0; for (var i = 0; i < p.cells.length; i++) if (!p.cells[i].vertex && !p.cells[i].edge) at = i + 1; p.cells.splice(at, 0, c); } else p.cells.push(c);
+    S.sel = new Set([c.id]); render();
+  }
+  function connect(a, b) {
+    if (a === b) return;
+    pushUndo();
+    var c = { id: newId('edge'), value: '', style: { html: '1', edgeStyle: 'orthogonalEdgeStyle', rounded: '1', strokeColor: '#514f4d', strokeWidth: '1.5', endArrow: 'block', endFill: '1', endSize: '6', fontSize: '11', fontColor: '#032d60', labelBackgroundColor: '#ffffff' }, edge: true, parent: '1', source: a, target: b, geo: { x: 0, y: 0, w: 0, h: 0, relative: true } };
+    page().cells.push(c);
+    S.sel = new Set([c.id]); render();
+  }
+  function iconChoices() {
+    var seen = new Map();
+    file.pages.forEach(function (p) { p.cells.forEach(function (c) { if (c.vertex && c.style.image && !seen.has(c.style.image)) seen.set(c.style.image, c.style.image); }); });
+    var list = $('#iconlist');
+    if (!seen.size) { list.innerHTML = ''; return; }
+    var i = 0, h = '<div style="padding:6px 10px 2px;font-size:11px;color:var(--sub)">ICONS USED IN THIS DIAGRAM</div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:4px 8px 8px">';
+    seen.forEach(function (uri) { if (i++ > 35) return; var src = uri.replace(/^(data:image\/[a-z+.-]+),/, '$1;base64,'); h += '<img data-icon="' + (i - 1) + '" src="' + src + '" style="width:28px;height:28px;object-fit:contain;cursor:pointer;border-radius:4px" title="Add icon">'; });
+    list.innerHTML = h + '</div>';
+    var uris = Array.from(seen.keys());
+    list.querySelectorAll('img').forEach(function (img) { img.onclick = function () { addShape('icon', uris[+img.getAttribute('data-icon')]); closeMenus(); }; });
+  }
+  function openLink(link) {
+    var m = /^data:page\/id,(.+)$/.exec(link || '');
+    if (m) { var i = file.pages.findIndex(function (p) { return p.id === m[1]; }); if (i >= 0) { gotoPage(i); return; } toast('Linked page not found'); return; }
+    if (/^https?:/i.test(link)) window.open(link, '_blank', 'noopener');
+  }
+  function gotoPage(i) { S.page = i; S.sel.clear(); S.focus = null; S.query = ''; $('#search').value = ''; S.matches = []; render(); fit(); }
+
+  /* ---------------------------------------------------------- pointer -- */
+  var drag = null;
+  function hitCell(e) {
+    var g = e.target.closest ? e.target.closest('.sfd-cell') : null;
+    if (!g) return null;
+    return resolveUnit(g.getAttribute('data-id'));
+  }
+  stage.addEventListener('pointerdown', function (e) {
+    if (e.button === 2) return;
+    closeMenus();
+    var pt = toDiagram(e);
+    var handle = e.target.getAttribute && e.target.getAttribute('data-handle');
+    var c = hitCell(e);
+    try { stage.setPointerCapture(e.pointerId); } catch (err) { /* synthetic or already captured */ }
+    if (S.editing && handle && S.sel.size === 1) { var hc = cellById(Array.from(S.sel)[0]); drag = { type: 'resize', handle: handle, cell: hc, g0: Object.assign({}, hc.geo), start: pt, moved: false }; return; }
+    if (S.editing && e.button === 0 && c && S.tool === 'connect') { drag = { type: 'click', cell: c, sx: e.clientX, sy: e.clientY }; return; }
+    if (S.editing && e.button === 0 && c) {
+      if (e.shiftKey) { if (S.sel.has(c.id)) S.sel.delete(c.id); else S.sel.add(c.id); }
+      else if (!S.sel.has(c.id)) S.sel = new Set([c.id]);
+      drawOverlay(); renderInspector();
+      drag = { type: 'move', start: pt, sx: e.clientX, sy: e.clientY, moved: false, cell: c, ctrl: e.ctrlKey || e.metaKey };
+      return;
+    }
+    if (S.editing && e.button === 0 && e.shiftKey) { drag = { type: 'marquee', start: pt, rect: null }; return; }
+    drag = { type: 'pan', sx: e.clientX, sy: e.clientY, vx: S.view.x, vy: S.view.y, moved: false, cell: c };
+    stage.classList.add('panning');
+  });
+  stage.addEventListener('pointermove', function (e) {
+    if (!drag) {
+      if (!S.editing && !S.focus && !S.query) { var hc = hitCell(e); var id = hc ? hc.id : null; if (id !== S.hover) { S.hover = id; applyHighlight(); } }
+      return;
+    }
+    var pt = toDiagram(e);
+    if (drag.type === 'pan') {
+      var dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+      if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+      S.view.x = drag.vx - dx / S.view.k; S.view.y = drag.vy - dy / S.view.k; applyView();
+    } else if (drag.type === 'move') {
+      if (!drag.moved) { if (Math.abs(e.clientX - drag.sx) + Math.abs(e.clientY - drag.sy) < 4) return; drag.moved = true; beginMove(); }
+      var snap = e.altKey ? 1 : 10;
+      var ddx = Math.round((pt.x - drag.start.x) / snap) * snap, ddy = Math.round((pt.y - drag.start.y) / snap) * snap;
+      drag.items.forEach(function (it) { it.c.geo.x = it.x + ddx; it.c.geo.y = it.y + ddy; });
+      drag.edges.forEach(function (it) { var g = it.c.geo; if (it.pts) g.points = it.pts.map(function (q) { return { x: q.x + ddx, y: q.y + ddy }; }); if (it.sp) g.sourcePoint = { x: it.sp.x + ddx, y: it.sp.y + ddy }; if (it.tp) g.targetPoint = { x: it.tp.x + ddx, y: it.tp.y + ddy }; });
+      frame();
+    } else if (drag.type === 'resize') {
+      if (!drag.moved) { drag.moved = true; pushUndo(); }
+      var g0 = drag.g0, g = drag.cell.geo, sn = e.altKey ? 1 : 10;
+      var mx = Math.round((pt.x - drag.start.x) / sn) * sn, my = Math.round((pt.y - drag.start.y) / sn) * sn;
+      var hnd = drag.handle;
+      if (hnd.indexOf('e') >= 0) g.w = Math.max(20, g0.w + mx);
+      if (hnd.indexOf('s') >= 0) g.h = Math.max(20, g0.h + my);
+      if (hnd.indexOf('w') >= 0) { var nw = Math.max(20, g0.w - mx); g.x = g0.x + (g0.w - nw); g.w = nw; }
+      if (hnd.indexOf('n') >= 0) { var nh = Math.max(20, g0.h - my); g.y = g0.y + (g0.h - nh); g.h = nh; }
+      frame();
+    } else if (drag.type === 'marquee') {
+      drag.rect = { x: Math.min(pt.x, drag.start.x), y: Math.min(pt.y, drag.start.y), w: Math.abs(pt.x - drag.start.x), h: Math.abs(pt.y - drag.start.y) };
+      drawOverlay();
+    }
+  });
+  function endDrag(e) {
+    if (!drag) return;
+    var d = drag; drag = null;
+    stage.classList.remove('panning');
+    try { stage.releasePointerCapture(e.pointerId); } catch (err) { /* already released */ }
+    if (d.type === 'pan' && !d.moved) {
+      if (S.editing) { if (S.tool === 'connect') { S.connectFrom = null; } S.sel.clear(); drawOverlay(); updateChrome(); return; }
+      var c = d.cell;
+      if (c && c.link) { openLink(c.link); return; }
+      S.focus = c && isFocusable(c) ? c.id : null; applyHighlight(); renderInspector();
+    } else if (d.type === 'click') {
+      if (!S.connectFrom) { S.connectFrom = d.cell.id; drawOverlay(); toast('Now click the target box'); }
+      else { var from = S.connectFrom; S.connectFrom = null; S.tool = 'select'; connect(from, d.cell.id); }
+    } else if (d.type === 'move') {
+      if (!d.moved) { if (d.ctrl && d.cell.link) openLink(d.cell.link); return; }
+      render();
+    } else if (d.type === 'resize') { render(); }
+    else if (d.type === 'marquee') {
+      if (d.rect) { var r = d.rect, idx = MX.indexPage(page()); page().cells.forEach(function (c) { if (!c.vertex || !isUnit(c, idx.kids)) return; var b = S.last.bounds.get(c.id); if (b && b.x >= r.x && b.y >= r.y && b.x + b.w <= r.x + r.w && b.y + b.h <= r.y + r.h) S.sel.add(c.id); }); }
+      drawOverlay(); renderInspector();
+    }
+  }
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+  function isFocusable(c) { return c.vertex; }
+  var raf = 0;
+  function frame() { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; var r = MX.renderSvg(page(), { theme: S.theme, background: 'transparent', padding: 0 }); S.last = r; stage.innerHTML = r.svg; svg = stage.firstElementChild; svg.removeAttribute('width'); svg.removeAttribute('height'); var ov = document.createElementNS('http://www.w3.org/2000/svg', 'g'); ov.setAttribute('id', 'ov'); svg.appendChild(ov); if (S.live) svg.classList.add('live'); applyView(); drawOverlay(); }); }
+  function beginMove() {
+    pushUndo();
+    var tops = topSelected();
+    var moved = new Set();
+    tops.forEach(function (c) { if (c.vertex) { moved.add(c.id); descendants(c.id).forEach(function (k) { moved.add(k.id); }); } });
+    drag.items = tops.filter(function (c) { return c.vertex && c.geo && !c.geo.relative; }).map(function (c) { return { c: c, x: c.geo.x, y: c.geo.y }; });
+    drag.edges = [];
+    var topLevelMove = tops.some(function (c) { return c.vertex; });
+    page().cells.forEach(function (e) {
+      if (!e.edge || !e.geo) return;
+      var sIn = e.source ? moved.has(e.source) : false, tIn = e.target ? moved.has(e.target) : false;
+      var selfSel = S.sel.has(e.id);
+      var both = (sIn || !e.source) && (tIn || !e.target) && (sIn || tIn || selfSel);
+      if (both) drag.edges.push({ c: e, pts: (e.geo.points || []).map(function (q) { return { x: q.x, y: q.y }; }), sp: !e.source && e.geo.sourcePoint ? Object.assign({}, e.geo.sourcePoint) : null, tp: !e.target && e.geo.targetPoint ? Object.assign({}, e.geo.targetPoint) : null });
+      else if ((sIn || tIn) && topLevelMove) {
+        // one end moves: let the line re-route itself
+        var ortho = /orthogonal|elbow|entityRelation/.test(e.style.edgeStyle || '');
+        if (ortho) { e.geo.points = []; ['exitX', 'exitY', 'exitDx', 'exitDy', 'entryX', 'entryY', 'entryDx', 'entryDy'].forEach(function (k) { delete e.style[k]; }); delete e.geo.x; e.geo.x = 0; }
+        else if (e.style.curved === '1') e.geo.points = [];
+      }
+    });
+  }
+  stage.addEventListener('dblclick', function (e) {
+    var c = hitCell(e);
+    if (!c) return;
+    if (!S.editing) { setEditing(true); }
+    S.sel = new Set([c.id]); drawOverlay(); renderInspector();
+    var ta = $('#i-label'); if (ta) { ta.focus(); ta.select(); }
+  });
+  stage.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    if (e.ctrlKey || e.metaKey) zoomAt(Math.exp(-e.deltaY * 0.0022), e.clientX, e.clientY);
+    else { S.view.x += e.deltaX / S.view.k; S.view.y += e.deltaY / S.view.k; applyView(); }
+  }, { passive: false });
+
+  /* --------------------------------------------------------- commands -- */
+  function setEditing(on) { S.editing = on; S.focus = null; S.hover = null; S.tool = 'select'; S.connectFrom = null; if (!on) S.sel.clear(); render(); if (on) iconChoices(); }
+  function setTheme(t) { S.theme = t; document.documentElement.setAttribute('data-theme', t); render(); }
+  function closeMenus() { document.querySelectorAll('.menu.open').forEach(function (m) { m.classList.remove('open'); }); }
+  function runSearch(q) {
+    S.query = q.trim().toLowerCase(); S.matches = []; S.matchAt = 0;
+    if (S.query) { var idx = MX.indexPage(page()); page().cells.forEach(function (c) { if (c.vertex && isUnit(c, idx.kids) && plain(c.value).toLowerCase().indexOf(S.query) >= 0) S.matches.push(c.id); }); }
+    applyHighlight();
+    $('#st-mode').textContent = S.query ? S.matches.length + ' match' + (S.matches.length === 1 ? '' : 'es') + ' — Enter jumps to the next one' : (S.editing ? 'Editing' : 'Exploring — click a box to trace its connections');
+  }
+  function baseName() { return (document.title || 'diagram').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'diagram'; }
+  function download(name, data, type) {
+    var blob = data instanceof Blob ? data : new Blob([data], { type: type });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+  }
+  function exportSvg() { return MX.renderSvg(page(), { theme: S.theme, padding: 24 }); }
+  function raster(mime, cb) {
+    var r = exportSvg(), img = new Image(), scale = Math.min(3, Math.max(1, Math.min(2, 12000 / Math.max(r.width, r.height))));
+    img.onload = function () { var c = document.createElement('canvas'); c.width = Math.round(r.width * scale); c.height = Math.round(r.height * scale); var x = c.getContext('2d'); if (mime === 'image/jpeg') { x.fillStyle = S.theme === 'dark' ? '#0b1526' : '#ffffff'; x.fillRect(0, 0, c.width, c.height); } x.drawImage(img, 0, 0, c.width, c.height); c.toBlob(function (b) { cb(b); }, mime, 0.93); };
+    img.onerror = function () { toast('Export failed in this browser'); };
+    img.src = URL.createObjectURL(new Blob([r.svg], { type: 'image/svg+xml;charset=utf-8' }));
+  }
+  function currentXml() { return MX.serializeMxfile(file); }
+  function selfHtml() {
+    var doc = document.documentElement.cloneNode(true);
+    doc.querySelector('#sfd-model').textContent = currentXml();
+    doc.querySelector('#app').innerHTML = '';
+    doc.querySelector('body').removeAttribute('class');
+    doc.setAttribute('data-theme', S.theme);
+    return '<!doctype html>\n' + doc.outerHTML;
+  }
+  function doExport(kind) {
+    var pg = file.pages.length > 1 ? '-' + (S.page + 1) : '';
+    if (kind === 'png') raster('image/png', function (b) { download(baseName() + pg + '.png', b); });
+    else if (kind === 'jpg') raster('image/jpeg', function (b) { download(baseName() + pg + '.jpg', b); });
+    else if (kind === 'svg') download(baseName() + pg + '.svg', exportSvg().svg, 'image/svg+xml');
+    else if (kind === 'copy') raster('image/png', function (b) { try { navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]).then(function () { toast('PNG copied — paste it into your document'); }, function () { toast('Clipboard blocked — use PNG download instead'); }); } catch (err) { toast('Clipboard not available — use PNG download instead'); } });
+    else if (kind === 'drawio') { download(baseName() + '.drawio', currentXml(), 'application/xml'); S.dirty = false; updateChrome(); }
+    else if (kind === 'html') { download(baseName() + '.html', selfHtml(), 'text/html'); S.dirty = false; updateChrome(); toast('Saved a copy with your edits'); }
+    else if (kind === 'print') window.print();
+  }
+
+  /* ----------------------------------------------------------- wiring -- */
+  $('#bar').addEventListener('click', function (e) {
+    var t = e.target.closest('button'); if (!t) return;
+    if (t.hasAttribute('data-menu')) { var m = t.parentNode, was = m.classList.contains('open'); closeMenus(); if (!was) m.classList.add('open'); return; }
+    if (t.hasAttribute('data-page')) { gotoPage(+t.getAttribute('data-page')); return; }
+    if (t.hasAttribute('data-add')) { addShape(t.getAttribute('data-add')); closeMenus(); return; }
+    if (t.hasAttribute('data-x')) { doExport(t.getAttribute('data-x')); closeMenus(); return; }
+    switch (t.id) {
+      case 'zin': zoomAt(1.25); break;
+      case 'zout': zoomAt(0.8); break;
+      case 'zlabel': zoomAt(1 / S.view.k); break;
+      case 'fit': fit(); break;
+      case 'live': S.live = !S.live; render(); break;
+      case 'theme': setTheme(S.theme === 'dark' ? 'light' : 'dark'); break;
+      case 'present': present(); break;
+      case 'edit': setEditing(!S.editing); break;
+      case 'undo': undo(); break;
+      case 'redo': redo(); break;
+      case 'connect': S.tool = S.tool === 'connect' ? 'select' : 'connect'; S.connectFrom = null; updateChrome(); drawOverlay(); break;
+      case 'helpbtn': $('#help').classList.add('open'); break;
+    }
+  });
+  $('#help').addEventListener('click', function (e) { if (e.target.id === 'help' || e.target.id === 'helpclose') $('#help').classList.remove('open'); });
+  $('#search').addEventListener('input', function (e) { runSearch(e.target.value); });
+  $('#search').addEventListener('keydown', function (e) { if (e.key === 'Enter' && S.matches.length) { centerOn(S.matches[S.matchAt % S.matches.length]); S.matchAt++; } if (e.key === 'Escape') { e.target.value = ''; runSearch(''); e.target.blur(); } });
+  function present() { var on = !document.body.classList.contains('present'); document.body.classList.toggle('present', on); try { if (on && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); else if (!on && document.fullscreenElement) document.exitFullscreen(); } catch (err) { /* fullscreen optional */ } setTimeout(fit, 250); if (on) toast('Press Esc or P to leave presentation'); }
+  document.addEventListener('fullscreenchange', function () { if (!document.fullscreenElement && document.body.classList.contains('present')) { document.body.classList.remove('present'); setTimeout(fit, 100); } });
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target.tagName || '').toLowerCase();
+    var typing = tag === 'input' || tag === 'textarea' || tag === 'select';
+    var mod = e.ctrlKey || e.metaKey;
+    if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); doExport('html'); return; }
+    if (typing) return;
+    if (mod && e.key.toLowerCase() === 'z') { e.preventDefault(); if (e.shiftKey) redo(); else undo(); return; }
+    if (mod && e.key.toLowerCase() === 'y') { e.preventDefault(); redo(); return; }
+    if (mod && e.key.toLowerCase() === 'd') { e.preventDefault(); if (S.editing) duplicate(); return; }
+    if (mod && e.key.toLowerCase() === 'a') { if (S.editing) { e.preventDefault(); var idx = MX.indexPage(page()); S.sel = new Set(page().cells.filter(function (c) { return (c.vertex && isUnit(c, idx.kids)) || c.edge; }).map(function (c) { return c.id; })); drawOverlay(); renderInspector(); } return; }
+    if (mod) return;
+    switch (e.key) {
+      case 'Escape': $('#help').classList.remove('open'); closeMenus(); if (document.body.classList.contains('present')) present(); S.sel.clear(); S.focus = null; S.connectFrom = null; S.tool = 'select'; applyHighlight(); drawOverlay(); updateChrome(); break;
+      case 'Delete': case 'Backspace': if (S.editing) { e.preventDefault(); removeSelected(); } break;
+      case '+': case '=': zoomAt(1.25); break;
+      case '-': case '_': zoomAt(0.8); break;
+      case '0': fit(); break;
+      case '1': zoomAt(1 / S.view.k); break;
+      case '/': e.preventDefault(); $('#search').focus(); break;
+      case '?': $('#help').classList.toggle('open'); break;
+      case 'e': case 'E': setEditing(!S.editing); break;
+      case 'l': case 'L': S.live = !S.live; render(); break;
+      case 't': case 'T': setTheme(S.theme === 'dark' ? 'light' : 'dark'); break;
+      case 'p': case 'P': present(); break;
+      case 'c': case 'C': if (S.editing) { S.tool = S.tool === 'connect' ? 'select' : 'connect'; S.connectFrom = null; updateChrome(); drawOverlay(); } break;
+      case 'ArrowLeft': case 'ArrowRight': case 'ArrowUp': case 'ArrowDown':
+        if (S.editing && S.sel.size) {
+          e.preventDefault(); pushUndo();
+          var st = e.shiftKey ? 1 : 10, dx = e.key === 'ArrowLeft' ? -st : e.key === 'ArrowRight' ? st : 0, dy = e.key === 'ArrowUp' ? -st : e.key === 'ArrowDown' ? st : 0;
+          drag = { items: [], edges: [] }; beginMoveNoUndo(); drag.items.forEach(function (it) { it.c.geo.x = it.x + dx; it.c.geo.y = it.y + dy; }); drag.edges.forEach(function (it) { var g = it.c.geo; if (it.pts) g.points = it.pts.map(function (q) { return { x: q.x + dx, y: q.y + dy }; }); if (it.sp) g.sourcePoint = { x: it.sp.x + dx, y: it.sp.y + dy }; if (it.tp) g.targetPoint = { x: it.tp.x + dx, y: it.tp.y + dy }; }); drag = null; render();
+        } else { var s2 = 60 / S.view.k; S.view.x += e.key === 'ArrowLeft' ? -s2 : e.key === 'ArrowRight' ? s2 : 0; S.view.y += e.key === 'ArrowUp' ? -s2 : e.key === 'ArrowDown' ? s2 : 0; applyView(); }
+        break;
+    }
+  });
+  function beginMoveNoUndo() { var u = S.undo.length; beginMove(); S.undo.length = u; }
+  window.addEventListener('resize', function () { applyView(); drawOverlay(); });
+  window.addEventListener('beforeunload', function (e) { if (S.dirty) { e.preventDefault(); e.returnValue = ''; } });
+  document.addEventListener('click', function (e) { if (!e.target.closest('.menu')) closeMenus(); });
+
+  render();
+  fit();
+  if (/[?&#]edit\b/.test(location.search + location.hash)) setEditing(true);
+  // small scripting surface for automation and tests
+  window.SFD = { state: S, xml: currentXml, html: selfHtml, svg: function (o) { return MX.renderSvg(page(), Object.assign({ theme: S.theme, padding: 24 }, o || {})).svg; }, setEditing: setEditing, select: function (ids) { S.sel = new Set([].concat(ids)); drawOverlay(); renderInspector(); }, addShape: addShape, connect: connect, remove: removeSelected, undo: undo, redo: redo, gotoPage: gotoPage, fit: fit, setTheme: setTheme, move: function (dx, dy) { drag = { items: [], edges: [] }; beginMove(); drag.items.forEach(function (it) { it.c.geo.x = it.x + dx; it.c.geo.y = it.y + dy; }); drag.edges.forEach(function (it) { var g = it.c.geo; if (it.pts) g.points = it.pts.map(function (q) { return { x: q.x + dx, y: q.y + dy }; }); }); drag = null; render(); } };
+})();
+
+</script>
+</body>
+</html>

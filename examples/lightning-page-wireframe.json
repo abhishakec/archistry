@@ -1,0 +1,32 @@
+{
+  "type": "lightning-page-wireframe",
+  "title": "Case Record Page — Wireframe",
+  "subtitle": "Service Console layout for tier-1 agents (desktop, three regions)",
+  "app": "Service Console",
+  "tabs": ["Home", "Cases", "Accounts", "Knowledge", "Reports"],
+  "activeTab": 1,
+  "page": "Cases  >  00012345  ·  Lightning record page: Case_Tier1",
+  "rows": [
+    { "columns": [ { "width": 12, "components": [
+      { "type": "highlights", "label": "Broadband fault — no connection", "fields": ["Case Number", "Priority", "Status", "Entitlement", "Owner"], "actions": ["Edit", "Escalate", "Close Case"], "note": "Compact layout shows SLA milestone countdown; Escalate launches the Tier 2 handoff flow." },
+      { "type": "path", "steps": ["New", "Diagnosing", "Engineer Booked", "Resolved", "Closed"], "current": 1 }
+    ] } ] },
+    { "columns": [
+      { "width": 3, "components": [
+        { "type": "record-detail", "label": "Customer", "fields": ["Account", "Contact", "Service Tier", "Open Cases"], "columns": 1 },
+        { "type": "related-list", "label": "Assets", "columns": ["Asset", "Status"], "rows": 2 }
+      ] },
+      { "width": 6, "components": [
+        { "type": "tabs", "tabs": ["Details", "Feed", "Related"], "components": [
+          { "type": "record-detail", "label": "Case Information", "fields": ["Subject", "Type", "Reason", "Product", "Description", "Root Cause"] },
+          { "type": "flow", "label": "Guided Diagnosis", "description": "Screen flow: line test, router reboot, engineer booking. Visible when Type = Fault.", "note": "Screen Flow embedded with conditional visibility; replaces the legacy diagnosis script." }
+        ] }
+      ] },
+      { "width": 3, "components": [
+        { "type": "agent", "label": "Agentforce Assistant", "description": "Suggested reply, case summary and next best action grounded on Knowledge.", "note": "Agentforce side panel — drafts are reviewed by the agent before sending." },
+        { "type": "knowledge", "label": "Suggested Articles", "rows": 3 },
+        { "type": "activity", "label": "Activity", "rows": 2 }
+      ] }
+    ] }
+  ]
+}
