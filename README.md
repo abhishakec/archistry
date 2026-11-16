@@ -22,6 +22,10 @@
   <a href="#-credits"><strong>Credits</strong></a>
 </p>
 
+<p align="center">
+  <a href="https://github.com/abhishakec/archistry/stargazers"><img alt="Star Archistry on GitHub" src="https://img.shields.io/github/stars/abhishakec/archistry?style=for-the-badge&logo=github&label=%E2%AD%90%20Star%20Archistry&color=FFD66E&labelColor=1E1B3A"></a>
+</p>
+
 ---
 
 <h3 align="center">Salesforce diagrams, crafted from a sentence.</h3>
@@ -735,6 +739,14 @@ docs/                 README pictures, the how-it-works diagram and the logo
 - `node scripts/build-banner.mjs` rebuilds the banner.
 
 </details>
+
+## ⭐ If Archistry helped
+
+Archistry is free and open source. If it saved you an hour on a diagram, a star is the best thank-you, and it helps other Salesforce teams find it.
+
+<p align="center">
+  <a href="https://github.com/abhishakec/archistry/stargazers"><img alt="Star Archistry on GitHub" src="https://img.shields.io/github/stars/abhishakec/archistry?style=for-the-badge&logo=github&label=%E2%AD%90%20Star%20on%20GitHub&color=FFD66E&labelColor=1E1B3A"></a>
+</p>
 
 ## 🙏 Credits
 
