@@ -14,7 +14,7 @@ description: >
   ".drawio", "draw.io", "diagrams.net", wants an HTML diagram, wants a diagram exported to an image,
   or wants an existing .drawio file validated or converted. Not for Mermaid output.
 metadata:
-  version: "2.0"
+  version: "1.0"
   requires: "Node.js 18+ (no npm install). PNG/JPG export also needs Chrome, Edge or Chromium."
 ---
 
