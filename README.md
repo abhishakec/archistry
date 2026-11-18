@@ -49,44 +49,46 @@ page** you can both keep editing, plus **PNG, JPG or SVG** images for your docum
 
 <table>
 <tr>
-<td width="33%" valign="top">
+<td width="50%" valign="top">
 
 **🧭 The model describes, the engine draws**<br>
 The agent writes *what* is in the diagram. A layout engine decides *where*, and a router takes every
 connector around the boxes. No overlaps, no lines through boxes.
 
 </td>
-<td width="33%" valign="top">
+<td width="50%" valign="top">
 
 **🏛️ Real Salesforce notation**<br>
 Salesforce ERD notation (crow's foot, master-detail), Diagramming Framework cards and zones,
 BPMN swimlanes, and the Agent Interaction Map approach for Agentforce.
 
 </td>
-<td width="33%" valign="top">
+</tr>
+<tr>
+<td width="50%" valign="top">
 
 **✏️ Editable everywhere**<br>
 Open the `.drawio` in draw.io or VS Code, or edit the `.html` right in the browser. Convert either
 way without losing anything.
 
 </td>
-</tr>
-<tr>
-<td valign="top">
+<td width="50%" valign="top">
 
 **🧱 About 200 Salesforce icons**<br>
 Cloud, product, platform, industry and SLDS icons are embedded in the file. Nothing to install,
 nothing breaks on another machine.
 
 </td>
-<td valign="top">
+</tr>
+<tr>
+<td width="50%" valign="top">
 
 **✅ Checked before you see it**<br>
 Every build is linted for overlaps, clipped labels, low contrast and crossings. A failed check
 fails the build.
 
 </td>
-<td valign="top">
+<td width="50%" valign="top">
 
 **🔒 Everything stays local**<br>
 No diagramming service, no upload, no account. Specs, diagrams and images stay on your disk.
