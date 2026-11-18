@@ -1,0 +1,102 @@
+[
+ {
+  "query": "we kick off the Northwind CPQ rollout monday and I need a one-pager showing sales cloud, revenue cloud, docusign and netsuite and how they talk to each other",
+  "should_trigger": true
+ },
+ {
+  "query": "can you sketch the OAuth JWT bearer flow for our integration user hitting the REST API from the middleware, sequence style",
+  "should_trigger": true
+ },
+ {
+  "query": "give me an ERD I can paste into the design doc: Account, a custom Promotion__c (optional lookup to Account) and Promotion_Line__c (master-detail to Promotion__c, lookup to Product2), main fields only",
+  "should_trigger": true
+ },
+ {
+  "query": "RACI for the data migration workstream pls, 12 activities, PM / architect / BA / client IT / QA",
+  "should_trigger": true
+ },
+ {
+  "query": "draw the Data Cloud mapping from our Shopify orders DLO (order_id, customer_email, total_amount, created_at) to the Sales Order DMO, ssot__SalesOrder__dlm, so the BA can sign it off",
+  "should_trigger": true
+ },
+ {
+  "query": "my architect hand-edited our release-train .drawio in draw.io last week and I'm not sure it's still valid - what's the quickest way to validate it and get a shareable HTML version?",
+  "should_trigger": true
+ },
+ {
+  "query": "show our sandbox strategy: dev, QA, UAT, staging, prod, with the promotion path and who owns each org",
+  "should_trigger": true
+ },
+ {
+  "query": "cutover plan for the 14 March go-live, hour by hour, with owners. Make it look like something I can show the steering committee",
+  "should_trigger": true
+ },
+ {
+  "query": "visualize our sharing model: OWD private on Case, role hierarchy for support, two sharing rules and a permission set for the escalation team",
+  "should_trigger": true
+ },
+ {
+  "query": "we have a record-triggered flow Update_Opportunity_Stage: 3 decisions on Amount, Type and Region, then 2 record updates and an email alert. draw its logic so the admins can read it",
+  "should_trigger": true
+ },
+ {
+  "query": "write me a mermaid sequence diagram of the login flow for our node app",
+  "should_trigger": false
+ },
+ {
+  "query": "explain how master-detail vs lookup affects roll-up summary fields and sharing",
+  "should_trigger": false
+ },
+ {
+  "query": "create an Apex trigger handler for Opportunity that updates the parent Account's last order date",
+  "should_trigger": false
+ },
+ {
+  "query": "make me a pitch deck slide about our sales process: a headline and three bullets, nothing fancy",
+  "should_trigger": false
+ },
+ {
+  "query": "make a bar chart of closed-won revenue by quarter from this csv",
+  "should_trigger": false
+ },
+ {
+  "query": "what's the difference between a permission set and a permission set group? keep it short",
+  "should_trigger": false
+ },
+ {
+  "query": "draw an AWS architecture for our data lake with s3, glue and athena",
+  "should_trigger": false
+ },
+ {
+  "query": "review my SOQL: SELECT Id, (SELECT Id FROM Contacts) FROM Account WHERE CreatedDate = LAST_N_DAYS:30, why is it slow?",
+  "should_trigger": false
+ },
+ {
+  "query": "generate a UML class diagram in PlantUML for my Java order service",
+  "should_trigger": false
+ },
+ {
+  "query": "write the user stories and acceptance criteria for a returns portal on Experience Cloud",
+  "should_trigger": false
+ },
+ {
+  "query": "org chart for the client's Salesforce delivery team: PM, two architects, 4 devs, QA lead and the client product owner",
+  "should_trigger": true
+ },
+ {
+  "query": "fit-gap for our Service Cloud rollout: 18 requirements, mark each standard, config, custom or gap",
+  "should_trigger": true
+ },
+ {
+  "query": "gantt for the Salesforce data migration, 6 tasks with dependencies and a go-live milestone",
+  "should_trigger": true
+ },
+ {
+  "query": "service blueprint for how a customer returns an item: frontstage, backstage and the Salesforce case behind it",
+  "should_trigger": true
+ },
+ {
+  "query": "branching strategy for our SFDX team: main, release branches, feature branches and hotfix, how they merge",
+  "should_trigger": true
+ }
+]

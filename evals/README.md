@@ -1,0 +1,11 @@
+# Archistry evals
+
+Three layers, from cheapest to most expensive. Run them before changing SKILL.md, a reference or a script, and again after.
+
+1. **Regression** (`node evals/regress.mjs . out.json`). Builds all 40 types and the shipped examples, validates them, round-trips draw.io and HTML, and runs the CLI commands. It prints a summary and writes a JSON of exit codes and output hashes. Run it on the old and the new copy and compare the two JSON files: any difference is a functional change. It needs only Node.
+2. **Trigger evals** (`trigger-evals.json`). 25 realistic prompts: 15 that should load this skill and 10 near-misses that should not (Mermaid, AWS, Apex, charts, slides, user stories). Run each in a fresh `claude -p` session in a project that has the skill installed, stop at the first tool calls and check whether the Skill tool loaded `archistry`. Run each prompt more than once; the result varies. Measured on the shipped description: 8 of 10 should-trigger on the first ten, 4 of 5 on the last five, 10 of 10 should-not. Keep it there or better. `fit-gap` and `gantt` prompts and a hand-written cutover plan are the known misses (another diagram skill, or the agent writing the plan itself, wins).
+3. **Behaviour evals** (`cases.json`). Six realistic requests with what a good result contains. Run each with the skill and with the previous version, and compare: the diagram type chosen, the build line, the files produced, the honesty of the reply. Subjective quality (does the picture read well) needs a human looking at the exported image.
+
+Things the evals found, kept here so they are not forgotten: PNG/JPG export can fail on Windows when the Edge launcher returns before the headless browser writes its output, while `archistry doctor` still reports the browser as found. SKILL.md step 6 says what to do.
+
+A warning from the trigger runs: the description is over the 1,024-character guideline of the Agent Skills spec (1,157 characters), but every shorter rewrite that was tried lowered triggering on service blueprint, branching strategy and similar prompts (3 or 4 of 5 down to 1 of 5), even with the same terms. Do not shorten or reword it without re-running these prompts, several times each.

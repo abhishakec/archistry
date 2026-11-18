@@ -31,25 +31,38 @@ and writes two editable outputs from the same model:
 Do not hand-place coordinates and do not write Mermaid. If the user gives Mermaid, PlantUML, a
 screenshot or prose as input, read it for meaning and author a spec.
 
-In every command below, `archistry` means `node <this skill's folder>/scripts/archistry.mjs`.
+In every command below, `archistry` means `node <this skill's folder>/scripts/archistry.mjs`. Call it
+by its absolute path from any directory; the spec and output paths you pass resolve from the
+directory you run it in.
 
 ## Workflow
 
 1. **Pick the type** from the catalogue below by the question the diagram answers. One diagram
    answers one question; a request such as "document this solution" becomes several specs.
 2. **Read the starter and the reference.** `archistry init <type>` prints a complete, valid starter spec.
-   The engine's reference (`references/<engine>.md`, engine shown in the catalogue) lists every
-   field. Read both before writing; the starter teaches shape, not facts.
+   The engine's reference lists every field (the engine is in the catalogue: engine `blocks` is
+   [references/blocks.md](references/blocks.md), `flow` is `references/flow.md`, and so on). Read both
+   before writing; the starter teaches shape, not facts. When a generator already wrote the spec,
+   skip `init` and read just the reference.
 3. **Gather facts.** Use what the user gave you and what the repo shows. For a real project, prefer
    the generators over guessing (see Generators). Ask for facts you cannot find, such as object API
-   names, dates or owners; do not invent them.
+   names, dates or owners; do not invent them. If nobody can answer (a non-interactive run), use
+   plausible placeholders and say so in the subtitle ("illustrative, confirm with the org").
 4. **Write the spec** next to the user's work, for example `diagrams/order-to-cash-architecture.json`
    (lowercase, hyphenated). Common fields are in [references/spec-common.md](references/spec-common.md).
 5. **Build:** `archistry build diagrams/<name>.json` writes `.drawio` and `.html` beside the spec. Add
    `--format drawio,html,png` (or `jpg`, `svg`) when the user wants an image for a document.
 6. **Read the result line.** `OK` means it built and passed. `FAILED` (exit code 2) means there are
    errors: fix the spec and rebuild. Never hand over a failed build. Treat `WARNING` and `NOTE` lines
-   as a fix list (see Repairing).
+   as a fix list (see Repairing). An image can fail on its own: a build that prints `OK` and then
+   `ERROR image export` still exits with code 2, and the `.drawio` and `.html` are written. That is a
+   browser problem, not a spec problem, so do not edit the spec. Fall back to `--format svg` (needs
+   no browser), or tell the user to open the HTML and use Export > PNG, and say that the PNG was not
+   produced. If the user needs a PNG and the built-in export keeps failing, render the SVG
+   yourself: put it in a small HTML page and run the browser once, for example
+   `msedge --headless=new --user-data-dir=<fresh temp folder> --window-size=W,H --screenshot=out.png
+   file:///page.html`. On Windows the Edge launcher can return before the file is written, so wait
+   for `out.png` to appear, then look at it before you hand it over.
 7. **Reply briefly** (see Reply).
 
 ## Diagram catalogue
@@ -101,7 +114,8 @@ In every command below, `archistry` means `node <this skill's folder>/scripts/ar
 
 Common mix-ups: object relationships are a `data-model`, never a flowchart. Call order between
 systems is a `sequence`, not arrows numbered on an architecture. A status field is a
-`state-lifecycle`. An agent's overall design is an `agent-interaction-map`; the logic inside one
+`state-lifecycle`. A process that also has statuses (lead handling, case handling) is two diagrams:
+a `business-process` for who does what and a `state-lifecycle` for the statuses. An agent's overall design is an `agent-interaction-map`; the logic inside one
 topic is an `agent-instruction-diagram` (put `steps` on a topic and the map links to it as a second
 page).
 
@@ -131,7 +145,9 @@ page).
 | Mapping CSV → `data-cloud-mapping` spec | `archistry mapping-from-csv mappings.csv -o diagrams/mapping.json` |
 | Flow metadata → `flow-logic` spec | `archistry flow-from-metadata force-app/.../My_Flow.flow-meta.xml -o diagrams/my-flow.json` |
 
-Each writes a spec you can edit (retitle, trim, regroup) before `archistry build`. For Apex, read the
+Each writes a spec you can edit (retitle, trim, regroup) before `archistry build`. The title comes
+from the folder or file name, so set `title` and `subtitle` yourself. The output folder must
+already exist (`mkdir -p diagrams`). For Apex, read the
 classes and write a `class-diagram` or `sequence` spec yourself.
 
 ## Repairing
@@ -156,7 +172,9 @@ and tell the user what remains.
   drawio + html + png + svg. `--theme dark` and `--scale 3` apply to HTML and images.
 - **Images later:** `archistry export diagram.drawio -o diagram.png` (also accepts `.html` and spec
   `.json`; `--format png,jpg,svg`, `--page 2`, `--transparent`). This is how a user who edited the
-  file gets a fresh image for a document.
+  file gets a fresh image for a document. A multi-page diagram (such as an Agent Interaction Map with
+  instruction pages) writes one image per page, `name-1.png`, `name-2.png`, unless you pass `--page N`.
+  A larger `--scale` (3) makes a PNG easier to read when it will be shrunk into a document.
 - **Round trip:** `archistry convert edited.html -o edited.drawio` and `archistry convert edited.drawio -o
   edited.html`. The HTML embeds the draw.io XML, so nothing is lost either way.
 - **Manual editing:** in draw.io, or in the browser (HTML → Edit: move, resize, retext, recolour,
@@ -188,11 +206,16 @@ Keep it short; the diagram carries the content.
   warnings that remain. Say "built and validated" only when the build line said OK; you have not
   looked at the picture unless you exported an image and viewed it.
 - For several diagrams, list them once with one line each.
+- If a deliverable the user asked for could not be made (a PNG, say), say so first and give the
+  nearest working option, rather than leaving it out.
+- For "put it in a doc", build a PNG (or SVG) beside the spec and say how to embed it; the diagram
+  is the deliverable, and the document is the user's to assemble unless they ask you to write it.
 
 ## Setup check
 
 `archistry doctor` reports the Node version, whether a browser is available for PNG/JPG export, and runs a
-self-test. draw.io, HTML and SVG output need only Node.
+self-test. draw.io, HTML and SVG output need only Node. The self-test does not draw an image, so
+`doctor` can report a browser as found while PNG/JPG export still fails on that machine; see step 6.
 
 ## Reference index
 

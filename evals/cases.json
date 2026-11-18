@@ -1,0 +1,60 @@
+[
+ {
+  "name": "solution-architecture",
+  "prompt": "We're doing order management for a retailer. Can you draw the solution architecture: Commerce Cloud takes the orders, Sales Cloud holds accounts and opportunities, MuleSoft pushes the orders to SAP, Data Cloud unifies the customer profile, and there's an Agentforce service agent on top that answers order-status questions.",
+  "expect": [
+   "type solution-architecture",
+   "names all six systems",
+   "drawio and html written",
+   "build line OK"
+  ]
+ },
+ {
+  "name": "data-model",
+  "prompt": "need the data model for our promotions feature. Account has many Promotion__c (lookup, optional), and each Promotion__c has Promotion_Line__c children that die with it. Lines also point to a Product2. Show the main fields, put it in a doc for the BA team.",
+  "expect": [
+   "type data-model",
+   "Promotion_Line__c to Promotion__c is master-detail",
+   "an image or doc for the BA team",
+   "illustrative fields marked as such"
+  ]
+ },
+ {
+  "name": "oauth-png",
+  "prompt": "can you do the oauth web server flow w/ PKCE for our external client app, need a png for the confluence page (white bg is fine, make it big enough to read)",
+  "expect": [
+   "type oauth-flow",
+   "PKCE present",
+   "a PNG, or an honest note that it could not be made plus an SVG"
+  ]
+ },
+ {
+  "name": "erd-from-sfdx",
+  "prompt": "Make an ERD of the custom objects in this repo and retitle it 'Promotions data model'. Keep it to the objects we actually built, plus Account since they point at it.",
+  "fixture": "an SFDX project with Promotion__c (lookup to Account), Promotion_Line__c (master-detail to Promotion__c) and one Account field",
+  "expect": [
+   "uses erd-from-sfdx",
+   "title is Promotions data model",
+   "only the built objects plus Account"
+  ]
+ },
+ {
+  "name": "lead-process",
+  "prompt": "Document how a Lead gets handled in our org for the workshop tomorrow: marketing hands over MQLs, SDRs qualify them, AEs take the qualified ones and convert them, and leads can be recycled or disqualified along the way. I want people to see both who does what and what statuses a lead can be in.",
+  "expect": [
+   "a business-process spec",
+   "a state-lifecycle spec",
+   "recycle and disqualify paths"
+  ]
+ },
+ {
+  "name": "agentforce",
+  "prompt": "We're building an Agentforce returns agent for the web chat and WhatsApp. Topics: Order Status and Returns. It looks up orders and creates return cases, grounded on our returns policy knowledge article. Give me the interaction map, and for the Returns topic show the step-by-step instruction diagram with the guardrail that it never promises a refund amount.",
+  "expect": [
+   "type agent-interaction-map",
+   "steps on the Returns topic",
+   "refund guardrail",
+   "both channels"
+  ]
+ }
+]
