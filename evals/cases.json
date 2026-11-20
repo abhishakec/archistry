@@ -56,5 +56,26 @@
    "refund guardrail",
    "both channels"
   ]
+ },
+ {
+  "name": "discovery-personas-hierarchy",
+  "prompt": "We run discovery for a utilities company next week: give me the personas and an L0/L1 process hierarchy for customer service",
+  "expect": [
+   "type persona-map",
+   "type process-hierarchy",
+   "L0 to L1 levels shown",
+   "in-scope marked",
+   "illustrative content flagged"
+  ]
+ },
+ {
+  "name": "discovery-current-future",
+  "prompt": "for the discovery readout I need a current vs future state slide: legacy CRM, a shared mailbox and an excel dispatch sheet today, going to Service Cloud, Email-to-Case and Field Service. show what replaces what",
+  "expect": [
+   "type current-future-state",
+   "two zones current and future",
+   "links labelled replaces or retired",
+   "drawio and html written"
+  ]
  }
 ]

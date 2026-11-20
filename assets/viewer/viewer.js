@@ -9,7 +9,9 @@
   var app = $('#app');
   var file;
   try { file = MX.parseMxfile(modelEl.textContent); } catch (e) { app.textContent = 'Could not read the embedded diagram: ' + e.message; return; }
-  var S = { page: 0, sel: new Set(), editing: false, tool: 'select', view: { x: 0, y: 0, k: 1 }, theme: document.documentElement.getAttribute('data-theme') || 'light', live: false, dirty: false, undo: [], redo: [], last: null, focus: null, hover: null, query: '', matches: [], matchAt: 0, connectFrom: null };
+  // the build-time animate default is skipped for people who asked their system for reduced motion; the button still works
+  function reducedMotion() { try { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } }
+  var S = { page: 0, sel: new Set(), editing: false, tool: 'select', view: { x: 0, y: 0, k: 1 }, theme: document.documentElement.getAttribute('data-theme') || 'light', live: document.documentElement.getAttribute('data-animate') === 'on' && !reducedMotion(), highlight: document.documentElement.getAttribute('data-highlight') === 'on', dirty: false, undo: [], redo: [], last: null, focus: null, hover: null, query: '', matches: [], matchAt: 0, connectFrom: null };
   var KINDS = [['#eaf5fe', '#0176d3', 'Salesforce'], ['#f6f2fb', '#5a1ba9', 'Data Cloud'], ['#eef1ff', '#3a49da', 'AI / Agentforce'], ['#def9f3', '#0b827c', 'Integration'], ['#ffece3', '#dd5a1b', 'Engagement'], ['#ebf7e6', '#2e844a', 'Success'], ['#fbf3e0', '#ca8501', 'Warning'], ['#fef1ee', '#ba0517', 'Danger'], ['#f3f3f3', '#747474', 'External'], ['#ffffff', '#969492', 'Neutral'], ['#ffffff', '#032d60', 'People'], ['#fdf0f7', '#b60554', 'Security'], ['#e7f8fb', '#0b6d8a', 'Analytics'], ['#fff8dc', '#ca8501', 'Note']];
 
   /* ------------------------------------------------------------ shell -- */
@@ -18,7 +20,8 @@
     '<span class="title" id="title"></span><span id="tabs"></span><span class="grow"></span>' +
     '<input id="search" type="search" placeholder="Find a box…  ( / )" aria-label="Find">' +
     '<span class="group"><button class="btn icon" id="zout" title="Zoom out (−)">−</button><button class="btn" id="zlabel" title="Actual size (1)">100%</button><button class="btn icon" id="zin" title="Zoom in (+)">+</button><button class="btn" id="fit" title="Fit to window (0)">Fit</button></span>' +
-    '<button class="btn" id="live" title="Animate the direction of every connector (L)">Live</button>' +
+    '<button class="btn" id="hl" role="switch" title="Fade everything except the box you hover or click and its connections (H)">Highlight</button>' +
+    '<button class="btn" id="live" title="Animate the connectors to show the direction of flow, like draw.io flow animation (L)">Animate</button>' +
     '<button class="btn" id="theme" title="Light / dark (T)">Dark</button>' +
     '<button class="btn" id="present" title="Full-screen presentation (P)">Present</button>' +
     '<span class="sep"></span>' +
@@ -34,7 +37,7 @@
     '</div><div id="stage"></div><aside id="inspector"></aside>' +
     '<div id="status"><span id="st-mode"></span><span id="st-count"></span><span id="st-zoom"></span><span class="grow" style="flex:1"></span><span id="st-dirty"></span><span>archistry</span></div>' +
     '<div id="help"><div class="card"><h2>Explore, edit, export</h2><table>' +
-    '<tr><td><b>Explore</b></td><td>Drag to pan · <kbd>Ctrl</kbd>+wheel or <kbd>+</kbd>/<kbd>−</kbd> to zoom · <kbd>0</kbd> fit · click a box to trace its connections · <kbd>/</kbd> find · <kbd>L</kbd> live flow · <kbd>T</kbd> theme · <kbd>P</kbd> present</td></tr>' +
+    '<tr><td><b>Explore</b></td><td>Drag to pan · <kbd>Ctrl</kbd>+wheel or <kbd>+</kbd>/<kbd>−</kbd> to zoom · <kbd>0</kbd> fit · click a box to see its connections · <kbd>H</kbd> highlight (fade all but the hovered or clicked box and its connections) · <kbd>/</kbd> find · <kbd>L</kbd> animate connectors · <kbd>T</kbd> theme · <kbd>P</kbd> present</td></tr>' +
     '<tr><td><b>Edit</b></td><td><kbd>E</kbd> toggles edit mode · drag boxes to move, corner handles to resize · double-click to edit text · <kbd>Shift</kbd>+click or <kbd>Shift</kbd>+drag to multi-select · arrows nudge · <kbd>Del</kbd> delete · <kbd>Ctrl</kbd>+<kbd>D</kbd> duplicate · <kbd>C</kbd> connect two boxes · <kbd>Ctrl</kbd>+<kbd>Z</kbd>/<kbd>Y</kbd> undo/redo</td></tr>' +
     '<tr><td><b>Keep</b></td><td><b>Save HTML</b> stores your edits in a new copy of this file (<kbd>Ctrl</kbd>+<kbd>S</kbd>). <b>Download .drawio</b> gives the same diagram for draw.io, diagrams.net or the VS Code draw.io extension. PNG, JPG and SVG go straight into documents and slides.</td></tr>' +
     '<tr><td><b>Pages</b></td><td>Tabs at the top switch pages. Boxes with a link (for example a topic on an Agent Interaction Map) open their drill-down page; in edit mode use <kbd>Ctrl</kbd>+click.</td></tr>' +
@@ -126,16 +129,24 @@
   }
   function neighbours(id) {
     var ids = new Set([id]);
-    var family = new Set([id]); descendants(id).forEach(function (c) { family.add(c.id); });
+    var family = new Set([id]); descendants(id).forEach(function (c) { family.add(c.id); ids.add(c.id); });
     page().cells.forEach(function (c) { if (c.edge && (family.has(c.source) || family.has(c.target))) { ids.add(c.id); if (c.source) ids.add(c.source); if (c.target) ids.add(c.target); } });
     return ids;
   }
+  // real contents of a box: descendants other than decorative parts (the icon inside a card)
+  function contentsOf(id) { return descendants(id).filter(function (c) { return c.style.part !== '1'; }); }
+  function hasConnectors(id) {
+    var family = new Set([id]); descendants(id).forEach(function (c) { family.add(c.id); });
+    return page().cells.some(function (c) { return c.edge && (family.has(c.source) || family.has(c.target)); });
+  }
+  // nothing to trace (a lone widget with no connectors and no contents) means no fading at all
+  function traceSet(id) { return hasConnectors(id) || contentsOf(id).length ? neighbours(id) : null; }
   function applyHighlight() {
     if (!svg) return;
     svg.querySelectorAll('.hl').forEach(function (g) { g.classList.remove('hl'); });
     var ids = null;
     if (S.query && S.matches.length) ids = new Set(S.matches);
-    else if (!S.editing && (S.focus || S.hover)) ids = neighbours(S.focus || S.hover);
+    else if (S.highlight && !S.editing && (S.focus || S.hover)) ids = traceSet(S.focus || S.hover);
     svg.classList.toggle('dim', !!ids);
     if (ids) ids.forEach(function (id) { var g = svg.querySelector('[data-id="' + cssEsc(id) + '"]'); if (g) g.classList.add('hl'); });
   }
@@ -147,11 +158,11 @@
     var idx = MX.indexPage(p), nodes = 0, edges = 0;
     p.cells.forEach(function (c) { if (c.edge && (c.source || c.target)) edges++; else if (c.connectable !== '0' && isUnit(c, idx.kids) && !('text' in c.style)) nodes++; });
     $('#st-count').textContent = nodes + ' boxes · ' + edges + ' connectors' + (file.pages.length > 1 ? ' · page ' + (S.page + 1) + ' of ' + file.pages.length : '');
-    $('#st-mode').textContent = S.editing ? (S.tool === 'connect' ? 'Connect: click the source box, then the target' : 'Editing — drag to move, double-click to edit text') : 'Exploring — click a box to trace its connections';
+    $('#st-mode').textContent = S.editing ? (S.tool === 'connect' ? 'Connect: click the source box, then the target' : 'Editing — drag to move, double-click to edit text') : 'Exploring — click a box to see its connections';
     $('#st-dirty').textContent = S.dirty ? 'Unsaved edits — Export ▸ Save HTML or Download .drawio' : '';
     $('#st-dirty').className = S.dirty ? 'dirty' : '';
     $('#edit').classList.toggle('on', S.editing); $('#edit').textContent = S.editing ? 'Done editing' : 'Edit';
-    $('#live').classList.toggle('on', S.live); $('#theme').textContent = S.theme === 'dark' ? 'Light' : 'Dark';
+    $('#live').classList.toggle('on', S.live); $('#hl').classList.toggle('on', S.highlight); $('#hl').setAttribute('aria-checked', S.highlight ? 'true' : 'false'); $('#hl').textContent = (S.highlight ? '☑ ' : '☐ ') + 'Highlight'; $('#theme').textContent = S.theme === 'dark' ? 'Light' : 'Dark';
     $('#connect').classList.toggle('on', S.tool === 'connect');
     $('#undo').disabled = !S.undo.length; $('#redo').disabled = !S.redo.length;
     document.body.classList.toggle('editing', S.editing);
@@ -364,7 +375,7 @@
   });
   stage.addEventListener('pointermove', function (e) {
     if (!drag) {
-      if (!S.editing && !S.focus && !S.query) { var hc = hitCell(e); var id = hc ? hc.id : null; if (id !== S.hover) { S.hover = id; applyHighlight(); } }
+      if (S.highlight && !S.editing && !S.focus && !S.query) { var hc = hitCell(e); var id = hc && !contentsOf(hc.id).length ? hc.id : null; if (id !== S.hover) { S.hover = id; applyHighlight(); } }
       return;
     }
     var pt = toDiagram(e);
@@ -458,13 +469,14 @@
 
   /* --------------------------------------------------------- commands -- */
   function setEditing(on) { S.editing = on; S.focus = null; S.hover = null; S.tool = 'select'; S.connectFrom = null; if (!on) S.sel.clear(); render(); if (on) iconChoices(); }
+  function setHighlight(on) { S.highlight = on; S.hover = null; applyHighlight(); updateChrome(); toast(on ? 'Highlight on: hover or click a box' : 'Highlight off'); }
   function setTheme(t) { S.theme = t; document.documentElement.setAttribute('data-theme', t); render(); }
   function closeMenus() { document.querySelectorAll('.menu.open').forEach(function (m) { m.classList.remove('open'); }); }
   function runSearch(q) {
     S.query = q.trim().toLowerCase(); S.matches = []; S.matchAt = 0;
     if (S.query) { var idx = MX.indexPage(page()); page().cells.forEach(function (c) { if (c.vertex && isUnit(c, idx.kids) && plain(c.value).toLowerCase().indexOf(S.query) >= 0) S.matches.push(c.id); }); }
     applyHighlight();
-    $('#st-mode').textContent = S.query ? S.matches.length + ' match' + (S.matches.length === 1 ? '' : 'es') + ' — Enter jumps to the next one' : (S.editing ? 'Editing' : 'Exploring — click a box to trace its connections');
+    $('#st-mode').textContent = S.query ? S.matches.length + ' match' + (S.matches.length === 1 ? '' : 'es') + ' — Enter jumps to the next one' : (S.editing ? 'Editing' : 'Exploring — click a box to see its connections');
   }
   function baseName() { return (document.title || 'diagram').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'diagram'; }
   function download(name, data, type) {
@@ -485,6 +497,8 @@
     doc.querySelector('#app').innerHTML = '';
     doc.querySelector('body').removeAttribute('class');
     doc.setAttribute('data-theme', S.theme);
+    if (S.highlight) doc.setAttribute('data-highlight', 'on'); else doc.removeAttribute('data-highlight');
+    if (S.live) doc.setAttribute('data-animate', 'on'); else doc.removeAttribute('data-animate');
     return '<!doctype html>\n' + doc.outerHTML;
   }
   function doExport(kind) {
@@ -511,6 +525,7 @@
       case 'zlabel': zoomAt(1 / S.view.k); break;
       case 'fit': fit(); break;
       case 'live': S.live = !S.live; render(); break;
+      case 'hl': setHighlight(!S.highlight); break;
       case 'theme': setTheme(S.theme === 'dark' ? 'light' : 'dark'); break;
       case 'present': present(); break;
       case 'edit': setEditing(!S.editing); break;
@@ -547,6 +562,7 @@
       case '?': $('#help').classList.toggle('open'); break;
       case 'e': case 'E': setEditing(!S.editing); break;
       case 'l': case 'L': S.live = !S.live; render(); break;
+      case 'h': case 'H': setHighlight(!S.highlight); break;
       case 't': case 'T': setTheme(S.theme === 'dark' ? 'light' : 'dark'); break;
       case 'p': case 'P': present(); break;
       case 'c': case 'C': if (S.editing) { S.tool = S.tool === 'connect' ? 'select' : 'connect'; S.connectFrom = null; updateChrome(); drawOverlay(); } break;

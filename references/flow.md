@@ -101,3 +101,14 @@ connectors become `exception` edges. Then retitle and trim.
 - Gateways have at least two labelled exits.
 - Flow reads in one direction; loops back are the exception.
 - No more than about 20 nodes; split long processes into sub-processes and link them.
+
+## value-stream-map
+
+Aliases `vsm`, `value-stream`. Draws the end-to-end flow left to right, one step per node, to find where Salesforce removes delay. Put the times in `sub`: `"CT 20 min | WT 1 d"` (cycle time | wait time). Mark bottlenecks and rework with `color` (`danger`, `warning`) and a word in `sub`. Use lanes for customer, team and system; label hand-offs on the edges ("Hand-off 1"); add a `note` node with total cycle time, total wait time and the share that is waiting, and say in the subtitle whether times are measured or illustrative. Draw as-is and to-be as two files.
+
+```json
+{ "type": "value-stream-map", "direction": "LR",
+  "nodes": [ { "id": "a", "kind": "start", "label": "Fault reported" },
+             { "id": "b", "kind": "manual", "label": "Escalate by email", "sub": "CT 10 min | WT 1 d | Bottleneck", "color": "danger" } ],
+  "edges": [ { "from": "a", "to": "b", "label": "Hand-off 1" } ] }
+```

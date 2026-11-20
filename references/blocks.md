@@ -89,3 +89,14 @@ blue; `planned` / `phase 2` / `enhance` amber; `phase 3` purple; `future` / `out
 - Every connector at solution or integration level has a label.
 - Line styles mean what the key says (sync, async, batch).
 - The diagram answers one question at one level.
+
+## current-future-state
+
+Aliases `as-is-to-be`, `current-vs-future`, `gap-overview`. Two zones in a row: "Current state" (`kind: "external"`) on the left, "Future state" (`kind: "salesforce"`) on the right, each a `column` of cards. Colour current pain points `danger` or `warning`; use product icons on the future cards. Links run left to right and carry the change: `replaces`, `retired`, `new`, `integrated`, `migrated`. Order both columns so the links stay horizontal; one link per current item. About 6 to 8 cards a side.
+
+```json
+{ "type": "current-future-state", "children": [
+  { "zone": "Current state", "kind": "external", "children": [ { "id": "c1", "label": "Legacy CRM" }, { "id": "c2", "label": "Shared mailbox", "kind": "danger" } ] },
+  { "zone": "Future state", "kind": "salesforce", "children": [ { "id": "f1", "label": "Service Cloud", "icon": "product/service_cloud" }, { "id": "f2", "label": "Email-to-Case" } ] } ],
+  "links": [ { "from": "c1", "to": "f1", "label": "replaces" }, { "from": "c2", "to": "f2", "label": "retired" } ] }
+```

@@ -62,6 +62,43 @@ const PAGE = `<!doctype html><html><head><meta charset="utf-8"></head><body>
 })();
 </script></body></html>`;
 
+const sleepSync = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+
+// Some launchers (Edge on Windows) return at once while the real headless process keeps running, so --dump-dom
+// prints nothing and --screenshot writes its file a moment later. Wait until the file exists and its size is stable.
+function waitForFile(file, timeoutMs = 30000) {
+  const end = Date.now() + timeoutMs;
+  let last = -1;
+  while (Date.now() < end) {
+    let size = -1;
+    try { size = fs.statSync(file).size; } catch { /* not there yet */ }
+    if (size > 0 && size === last) return true;
+    last = size;
+    sleepSync(size > 0 ? 300 : 150);
+  }
+  return false;
+}
+
+// Fallback for rasterize(): one SVG per page, one screenshot per image (PNG, or JPEG chosen by the file extension).
+function rasterizeByScreenshot(browser, jobs, tmp) {
+  return jobs.map((j, i) => {
+    const jpg = j.format === 'jpg' || j.format === 'jpeg';
+    let s = j.scale || 2;
+    s = Math.min(s, 16000 / j.width, 16000 / j.height, Math.sqrt(180e6 / (j.width * j.height)));
+    const W = Math.max(1, Math.round(j.width * s)), H = Math.max(1, Math.round(j.height * s));
+    const svgFile = path.join(tmp, `s${i}.svg`), htmlFile = path.join(tmp, `s${i}.html`), out = path.join(tmp, `o${i}.${jpg ? 'jpg' : 'png'}`);
+    fs.writeFileSync(svgFile, j.svg);
+    const bg = jpg ? (j.background && j.background !== 'transparent' ? j.background : '#ffffff') : 'transparent';
+    fs.writeFileSync(htmlFile, `<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;padding:0;overflow:hidden;background:${bg}}img{display:block;width:${W}px;height:${H}px}</style></head><body><img src="s${i}.svg" width="${W}" height="${H}"></body></html>`);
+    const args = ['--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--disable-extensions', '--hide-scrollbars', `--user-data-dir=${path.join(tmp, 'profile' + i)}`, `--window-size=${W},${H}`, '--force-device-scale-factor=1', '--virtual-time-budget=5000'];
+    if (!jpg) args.push('--default-background-color=00000000');
+    args.push(`--screenshot=${out}`, pathToFileURL(htmlFile).href);
+    spawnSync(browser, args, { encoding: 'utf8', timeout: 120000 });
+    if (!waitForFile(out)) throw new Error('headless browser did not finish rendering (' + browser + ')');
+    return fs.readFileSync(out);
+  });
+}
+
 // jobs: [{svg, width, height, format:'png'|'jpg', scale, background, quality}] -> [Buffer]
 export function rasterize(jobs, opts = {}) {
   const browser = opts.browser || findBrowser();
@@ -81,7 +118,7 @@ export function rasterize(jobs, opts = {}) {
       dom = r.stdout || '';
       if (dom.includes('id="sfd-done"')) break;
     }
-    if (!dom.includes('id="sfd-done"')) throw new Error('headless browser did not finish rendering (' + browser + ')');
+    if (!dom.includes('id="sfd-done"')) return rasterizeByScreenshot(browser, jobs, tmp);
     return jobs.map((_, i) => {
       const m = dom.match(new RegExp(`<pre id="sfd-out-${i}">([^<]*)</pre>`));
       if (!m) throw new Error('no output for image ' + i);
@@ -99,8 +136,9 @@ export function screenshotHtml(htmlPath, outPng, { width = 1280, height = 640, s
   if (!browser) throw new Error('No Chromium-based browser found.');
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sfd-'));
   try {
+    try { fs.rmSync(outPng, { force: true }); } catch { /* ignore */ }
     spawnSync(browser, ['--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--hide-scrollbars', `--user-data-dir=${path.join(tmp, 'profile')}`, `--window-size=${width},${height}`, `--force-device-scale-factor=${scale}`, '--virtual-time-budget=8000', `--screenshot=${outPng}`, pathToFileURL(htmlPath).href], { encoding: 'utf8', timeout: 120000 });
-    if (!fs.existsSync(outPng)) throw new Error('screenshot failed');
+    if (!waitForFile(outPng)) throw new Error('screenshot failed');
   } finally {
     try { fs.rmSync(tmp, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }); } catch { /* best effort */ }
   }

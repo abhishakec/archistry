@@ -109,3 +109,17 @@ fit in one cell.
 Story map: columns are the user's activities in order (the backbone); rows are release slices.
 MoSCoW: four columns, no rows. SWOT: two columns (helpful, harmful) and two rows (internal,
 external).
+
+## Discovery tables: persona-map and workshop-plan
+
+Both use the table mode (aspects or sessions as rows) and the same fields as above.
+
+- **persona-map** (aliases `persona`, `personas`, `user-personas`): one column per persona (`label` = persona, `sub` = headcount or segment, `kind` to tint the header); rows are aspects: Goals, Pains, Key tasks, Channels and devices, "Salesforce must", Priority. Keep each cell to one short line; a priority row can use `{ "text": "Phase 1", "kind": "success" }` chips. Four to five personas fit a page.
+- **workshop-plan** (aliases `workshop-agenda`, `discovery-plan`): rows are sessions grouped by `{ "section": "Day 1: Context" }` bands; columns Time, Topic, Attendees, Output. Name the output artefact (for example "As-is swimlanes") so each session maps to a diagram.
+
+```json
+{ "type": "persona-map", "rowHeader": "",
+  "columns": [ { "label": "Service Agent", "sub": "120 users", "kind": "salesforce" }, { "label": "Field Technician", "kind": "data" } ],
+  "rows": [ { "label": "Goals", "bold": true, "cells": ["Resolve on first contact", "Fix in one visit"] },
+            { "label": "Pains", "bold": true, "cells": ["Five screens per call", "No parts history"] } ] }
+```

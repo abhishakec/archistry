@@ -1,0 +1,123 @@
+{
+  "type": "workshop-plan",
+  "title": "Discovery Workshops — Three-Day Plan",
+  "subtitle": "Sessions, attendees and outputs (illustrative; adjust to the client calendar)",
+  "rowHeader": "Session",
+  "columns": [
+    {
+      "label": "Time",
+      "width": 110
+    },
+    {
+      "label": "Topic"
+    },
+    {
+      "label": "Attendees"
+    },
+    {
+      "label": "Output"
+    }
+  ],
+  "maxColWidth": 260,
+  "rows": [
+    {
+      "section": "Day 1: Context"
+    },
+    {
+      "label": "Vision and objectives",
+      "bold": true,
+      "cells": [
+        "09:00 to 10:30",
+        "Goals, success metrics, scope boundaries",
+        "Sponsor, Product Owner",
+        "Success metrics"
+      ]
+    },
+    {
+      "label": "Stakeholders and personas",
+      "bold": true,
+      "cells": [
+        "11:00 to 12:30",
+        "Who is affected and what each persona needs",
+        "BAs, team leads",
+        "Stakeholder map, personas"
+      ]
+    },
+    {
+      "label": "As-is walkthrough",
+      "bold": true,
+      "cells": [
+        "13:30 to 16:00",
+        "Current processes and systems step by step",
+        "Agents, team leads",
+        "As-is swimlanes"
+      ]
+    },
+    {
+      "section": "Day 2: Pain and future"
+    },
+    {
+      "label": "Journey and pain points",
+      "bold": true,
+      "cells": [
+        "09:00 to 11:00",
+        "Where customers and agents struggle",
+        "Agents, technicians",
+        "Journey map"
+      ]
+    },
+    {
+      "label": "Value stream mapping",
+      "bold": true,
+      "cells": [
+        "11:00 to 12:30",
+        "Cycle time, wait time, hand-offs",
+        "Operations leads",
+        "Value stream map"
+      ]
+    },
+    {
+      "label": "To-be design",
+      "bold": true,
+      "cells": [
+        "13:30 to 16:00",
+        "Target process on Salesforce",
+        "Architect, Product Owner",
+        "To-be swimlanes"
+      ]
+    },
+    {
+      "section": "Day 3: Scope and plan"
+    },
+    {
+      "label": "Fit-gap review",
+      "bold": true,
+      "cells": [
+        "09:00 to 11:00",
+        "Standard, configure, build or gap",
+        "Architect, BAs",
+        "Fit-gap list"
+      ]
+    },
+    {
+      "label": "Prioritisation",
+      "bold": true,
+      "cells": [
+        "11:00 to 12:30",
+        "Value versus effort ranking",
+        "Sponsor, Product Owner",
+        "Ranked backlog"
+      ]
+    },
+    {
+      "label": "Roadmap and next steps",
+      "bold": true,
+      "cells": [
+        "13:30 to 15:00",
+        "Releases, risks, actions",
+        "All",
+        "Release plan, action log"
+      ]
+    }
+  ]
+}

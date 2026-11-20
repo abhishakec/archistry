@@ -1,0 +1,32 @@
+{
+  "type": "value-stream-map",
+  "title": "Broadband Fault — Value Stream (As-Is)",
+  "subtitle": "Report to resolution: cycle time (CT), wait time (WT) and hand-offs. Illustrative times; lead time 9d 3h 20m",
+  "direction": "LR",
+  "lanes": [
+    { "id": "cust", "label": "Customer", "kind": "user" },
+    { "id": "cc", "label": "Contact centre", "kind": "salesforce" },
+    { "id": "field", "label": "Field operations", "kind": "data" }
+  ],
+  "nodes": [
+    { "id": "start", "kind": "start", "label": "Fault reported", "lane": "cust" },
+    { "id": "log", "kind": "user", "label": "Log case", "sub": "CT 12 min | WT 0", "lane": "cc", "icon": "utility/user" },
+    { "id": "diag", "kind": "user", "label": "Diagnose by phone", "sub": "CT 20 min | WT 2 h", "lane": "cc", "icon": "utility/user" },
+    { "id": "esc", "kind": "manual", "label": "Escalate by email", "sub": "CT 10 min | WT 1 d | Bottleneck", "lane": "cc", "color": "danger" },
+    { "id": "book", "kind": "user", "label": "Book visit", "sub": "CT 15 min | WT 3 d | Bottleneck", "lane": "field", "icon": "utility/user", "color": "danger" },
+    { "id": "visit", "kind": "user", "label": "Repair on site", "sub": "CT 90 min | WT 0", "lane": "field", "icon": "utility/user" },
+    { "id": "update", "kind": "manual", "label": "Update records", "sub": "CT 20 min | WT 5 d | Rework", "lane": "cc", "color": "warning" },
+    { "id": "end", "kind": "end", "label": "Case closed", "lane": "cust" },
+    { "id": "n1", "kind": "note", "label": "Total CT 2 h 47 m, WT 9 d 3 h: 99% of lead time is waiting", "lane": "cust" }
+  ],
+  "edges": [
+    { "from": "start", "to": "log", "label": "Phone" },
+    { "from": "log", "to": "diag" },
+    { "from": "diag", "to": "esc", "label": "Hand-off 1" },
+    { "from": "esc", "to": "book", "label": "Hand-off 2" },
+    { "from": "book", "to": "visit" },
+    { "from": "visit", "to": "update", "label": "Hand-off 3" },
+    { "from": "update", "to": "end" },
+    { "from": "n1", "to": "esc", "kind": "note" }
+  ]
+}

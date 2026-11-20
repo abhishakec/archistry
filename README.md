@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/cover.png" alt="Archistry — architect-grade Salesforce diagrams as draw.io and interactive HTML, 40 diagram types from discovery to go-live" width="960">
+  <img src=".github/cover.png" alt="Archistry — architect-grade Salesforce diagrams as draw.io and interactive HTML, 46 diagram types from discovery to go-live" width="960">
 </p>
 
 <p align="center">
@@ -8,7 +8,7 @@
 
 <p align="center">
   <img alt="Built for Salesforce projects" src="https://img.shields.io/badge/Built%20for-Salesforce%20projects-00A1E0?style=for-the-badge&logo=salesforce&logoColor=white">
-  <img alt="40 diagram types" src="https://img.shields.io/badge/Diagram%20types-40-6E5BD6?style=for-the-badge">
+  <img alt="46 diagram types" src="https://img.shields.io/badge/Diagram%20types-46-6E5BD6?style=for-the-badge">
   <img alt="draw.io editable" src="https://img.shields.io/badge/draw.io-editable-F08705?style=for-the-badge&logo=diagramsdotnet&logoColor=white">
   <img alt="HTML interactive" src="https://img.shields.io/badge/HTML-interactive-E34F26?style=for-the-badge&logo=html5&logoColor=white">
   <img alt="PNG, JPG and SVG export" src="https://img.shields.io/badge/Export-PNG%20%C2%B7%20JPG%20%C2%B7%20SVG-8F7BE8?style=for-the-badge">
@@ -174,11 +174,11 @@ You get `diagrams/<name>.drawio` and `diagrams/<name>.html`, plus any images you
 
 ## 📚 Diagram types
 
-**40 types**, grouped by the project stage where you need them:
+**46 types**, grouped by the project stage where you need them:
 
 | Stage | Count | Use it for |
 |---|:---:|---|
-| 🔎 [Discover](#discover) | 11 | Stakeholders, RACI, capability maps, swimlane processes, journeys, story maps, fit-gap |
+| 🔎 [Discover](#discover) | 17 | Discovery workshops: stakeholders, personas, RACI, capability maps, L0–L2 process hierarchy, as-is and to-be swimlanes, value streams, current vs future state, journeys, mind maps, workshop plans, story maps, fit-gap |
 | 🏛️ [Architect](#architect) | 12 | Landscape, solution and integration architecture, sequences, OAuth, ERD, Data Cloud, sharing, permissions |
 | 🎨 [Design](#design) | 4 | Record lifecycles, decision flows, Lightning page wireframes, Apex class diagrams |
 | 🤖 [Agentforce](#agentforce) | 2 | Agent Interaction Map and Agent Instruction Diagram |
@@ -283,6 +283,54 @@ Which requirements are met out of the box, by configuration, by custom build, or
 Which backlog items give the most value for the least effort?<br>
 <sub><b>Ask:</b> "Plot the backlog on a value vs effort matrix."</sub><br>
 <sub><a href="examples/prioritization-matrix.json">spec</a> · <a href="examples/prioritization-matrix.drawio">draw.io</a> · <a href="examples/prioritization-matrix.html">HTML</a></sub>
+</td>
+<td width="50%" valign="top">
+<a href="examples/persona-map.html"><img src="docs/previews/persona-map.png" alt="persona-map example" width="100%"></a>
+<br><b><code>persona-map</code></b><br>
+Who are the personas, what do they need to get done, what frustrates them and what must Salesforce do for each?<br>
+<sub><b>Ask:</b> "Give me the personas for a utilities contact centre: agent, field technician, customer and team lead, with goals and pains."</sub><br>
+<sub><a href="examples/persona-map.json">spec</a> · <a href="examples/persona-map.drawio">draw.io</a> · <a href="examples/persona-map.html">HTML</a></sub>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="examples/process-hierarchy.html"><img src="docs/previews/process-hierarchy.png" alt="process-hierarchy example" width="100%"></a>
+<br><b><code>process-hierarchy</code></b><br>
+How does the value chain break down into processes and sub-processes (L0 to L2), and which are in scope?<br>
+<sub><b>Ask:</b> "Break customer service down into an L0 to L2 process hierarchy and mark what is in scope for phase 1."</sub><br>
+<sub><a href="examples/process-hierarchy.json">spec</a> · <a href="examples/process-hierarchy.drawio">draw.io</a> · <a href="examples/process-hierarchy.html">HTML</a></sub>
+</td>
+<td width="50%" valign="top">
+<a href="examples/value-stream-map.html"><img src="docs/previews/value-stream-map.png" alt="value-stream-map example" width="100%"></a>
+<br><b><code>value-stream-map</code></b><br>
+Where does time go from trigger to outcome: cycle time, wait time, hand-offs and bottlenecks?<br>
+<sub><b>Ask:</b> "Map the value stream for a broadband fault from report to resolution with cycle and wait times."</sub><br>
+<sub><a href="examples/value-stream-map.json">spec</a> · <a href="examples/value-stream-map.drawio">draw.io</a> · <a href="examples/value-stream-map.html">HTML</a></sub>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="examples/current-future-state.html"><img src="docs/previews/current-future-state.png" alt="current-future-state example" width="100%"></a>
+<br><b><code>current-future-state</code></b><br>
+What does the current landscape look like, what does the Salesforce-based future look like, and what replaces what?<br>
+<sub><b>Ask:</b> "Show current vs future state for service: legacy systems on the left, the Salesforce target on the right, with what replaces what."</sub><br>
+<sub><a href="examples/current-future-state.json">spec</a> · <a href="examples/current-future-state.drawio">draw.io</a> · <a href="examples/current-future-state.html">HTML</a></sub>
+</td>
+<td width="50%" valign="top">
+<a href="examples/discovery-mind-map.html"><img src="docs/previews/discovery-mind-map.png" alt="discovery-mind-map example" width="100%"></a>
+<br><b><code>discovery-mind-map</code></b><br>
+What is in the discovery scope: context, objectives, stakeholders, current state, pain points, constraints and open questions?<br>
+<sub><b>Ask:</b> "Make a discovery mind map for the field service workshop: objectives, stakeholders, pain points, constraints, open questions."</sub><br>
+<sub><a href="examples/discovery-mind-map.json">spec</a> · <a href="examples/discovery-mind-map.drawio">draw.io</a> · <a href="examples/discovery-mind-map.html">HTML</a></sub>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="examples/workshop-plan.html"><img src="docs/previews/workshop-plan.png" alt="workshop-plan example" width="100%"></a>
+<br><b><code>workshop-plan</code></b><br>
+Which discovery sessions run when, on what topic, with whom and with what output?<br>
+<sub><b>Ask:</b> "Plan a three-day discovery workshop schedule with sessions, attendees and outputs."</sub><br>
+<sub><a href="examples/workshop-plan.json">spec</a> · <a href="examples/workshop-plan.drawio">draw.io</a> · <a href="examples/workshop-plan.html">HTML</a></sub>
 </td>
 <td width="50%"></td>
 </tr>
@@ -587,11 +635,17 @@ Both files come from the same model, and each converts to the other without loss
 |---|---|---|---|
 | Pan | drag | Move a box | drag (10px grid) |
 | Zoom / fit | <kbd>Ctrl</kbd> + wheel / <kbd>0</kbd> | Resize | corner handles |
-| Highlight connections | click a box | Change text | double-click |
+| Highlight a box and its connections | <kbd>H</kbd>, then hover or click | Change text | double-click |
 | Find a box | <kbd>/</kbd> | Recolour | palette swatches |
-| Animate connectors | <kbd>L</kbd> | Add cards, notes, zones, icons | toolbar |
+| Animate the flow along connectors | <kbd>L</kbd> | Add cards, notes, zones, icons | toolbar |
 | Light / dark | <kbd>T</kbd> | Connect two boxes | toolbar |
 | Present full screen | <kbd>P</kbd> | Undo / redo | <kbd>Ctrl</kbd> + <kbd>Z</kbd> / <kbd>Y</kbd> |
+
+**Highlight** and **Animate** are toolbar toggles and start off, so the page stays calm for people who
+only want to read it. Turn either on by default when you build the page: add
+`"viewer": { "highlight": true, "animate": true }` to the spec, or pass `--highlight` / `--animate` to
+`build` or `convert`. With `--animate` the `.drawio` also gets draw.io's own flow animation on every
+connector.
 
 On an Agent Interaction Map, click a topic to drill down to its instruction diagram. When you are
 done, use **Export** to save PNG, JPG or SVG, **Save HTML** (with your edits) or **Download .drawio**.
@@ -689,9 +743,9 @@ alias archistry="node ~/.claude/skills/archistry/scripts/archistry.mjs"
 
 | Command | What it does |
 |---|---|
-| `archistry types` | List all 40 diagram types (`--stage architect` to filter) |
+| `archistry types` | List all 46 diagram types (`--stage architect` to filter) |
 | `archistry init <type>` | Write a complete starter spec for a type |
-| `archistry build <spec.json>` | Build the diagram (`--format drawio,html,png,jpg,svg` or `all`) |
+| `archistry build <spec.json>` | Build the diagram (`--format drawio,html,png,jpg,svg` or `all`; `--highlight`, `--animate` for the HTML) |
 | `archistry validate <file>` | Check a `.drawio`, `.html` or spec for layout and notation problems |
 | `archistry convert <in> -o <out>` | Convert `.drawio` ⇄ `.html` |
 | `archistry export <in> -o <out>` | Save as PNG, JPG or SVG ([options](#-images-for-your-documents)) |

@@ -42,6 +42,7 @@ body:not(.editing) .sfd-v > .sfd-shape { transition: opacity .15s; }
 svg.dim .sfd-cell.sfd-leaf, svg.dim .sfd-e { opacity: .16; transition: opacity .15s; }
 svg.dim .sfd-cell.hl, svg.dim .sfd-e.hl, svg.dim .sfd-cell.hl .sfd-cell { opacity: 1; }
 svg.live .sfd-edge { stroke-dasharray: 7 6; animation: sfd-dash 1.1s linear infinite; }
+/* dashes run from the start of each connector (source) to its end (target); animation is opt-in via Animate (L) */
 @keyframes sfd-dash { to { stroke-dashoffset: -26; } }
 .sel-box { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 5 3; vector-effect: non-scaling-stroke; pointer-events: none; }
 .sel-edge { fill: none; stroke: var(--accent); stroke-width: 4; opacity: .35; vector-effect: non-scaling-stroke; pointer-events: none; }

@@ -20,11 +20,11 @@ const escHtml = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').re
 const noScriptEnd = (s) => s.replace(/<\/(script)/gi, '<\\/$1');
 
 /** xml: uncompressed mxfile string. Returns the complete HTML document. */
-export function buildHtml(xml, { title = 'Diagram', theme = 'light', description = '' } = {}) {
+export function buildHtml(xml, { title = 'Diagram', theme = 'light', description = '', highlight = false, animate = false } = {}) {
   const a = assets();
   if (/<\/script/i.test(xml)) throw new Error('diagram XML contains a literal </script> sequence and cannot be embedded safely');
   return `<!doctype html>
-<html lang="en" data-theme="${theme === 'dark' ? 'dark' : 'light'}">
+<html lang="en" data-theme="${theme === 'dark' ? 'dark' : 'light'}"${highlight ? ' data-highlight="on"' : ''}${animate ? ' data-animate="on"' : ''}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

@@ -8,13 +8,15 @@ description: >
   or DLO/DMO field mapping, data model / ERD, OAuth or integration sequence, sharing model, role
   hierarchy, permission matrix, BPMN swimlane process, flowchart, record lifecycle, customer journey,
   service blueprint, user story map, capability map, stakeholder map, RACI, fit-gap, org chart,
+  discovery workshop outputs (persona map, L0/L1 process hierarchy, value stream map, as-is vs to-be
+  current and future state, mind map, workshop agenda),
   Lightning page wireframe, Apex class diagram, Agentforce Agent Interaction Map or Agent Instruction
   Diagram, environment strategy, CI/CD pipeline, branching strategy, Flow logic, test strategy,
   traceability matrix, roadmap, gantt, cutover plan or risk matrix. Also use when the user mentions
   ".drawio", "draw.io", "diagrams.net", wants an HTML diagram, wants a diagram exported to an image,
   or wants an existing .drawio file validated or converted. Not for Mermaid output.
 metadata:
-  version: "1.0"
+  version: "1.1"
   requires: "Node.js 18+ (no npm install). PNG/JPG export also needs Chrome, Edge or Chromium."
 ---
 
@@ -82,6 +84,12 @@ directory you run it in.
 | Discover | `system-context` | blocks | Who and what surrounds the solution? |
 | Discover | `fit-gap-analysis` | matrix | Standard, config, custom or gap for each requirement? |
 | Discover | `prioritization-matrix` | matrix | What gives most value for least effort? |
+| Discover | `persona-map` | matrix | Who are the users: goals, pains, tasks, channels, what Salesforce must do? |
+| Discover | `process-hierarchy` | tree | Which L0 / L1 / L2 processes exist and which are in scope? |
+| Discover | `value-stream-map` | flow | Where does time go end to end: cycle, wait, hand-offs, bottlenecks? |
+| Discover | `current-future-state` | blocks | What exists today, what replaces it and what is new? (as-is vs to-be) |
+| Discover | `discovery-mind-map` | tree | What is the workshop context: objectives, stakeholders, pains, scope, open questions? |
+| Discover | `workshop-plan` | matrix | Which sessions, attendees and outputs, day by day? |
 | Architect | `system-landscape` | blocks | Which systems exist and how are they grouped? |
 | Architect | `solution-architecture` | blocks | Which products and components make up this solution? |
 | Architect | `integration-architecture` | blocks | Which interfaces, with what pattern, protocol and timing? |
@@ -118,6 +126,12 @@ systems is a `sequence`, not arrows numbered on an architecture. A status field 
 a `business-process` for who does what and a `state-lifecycle` for the statuses. An agent's overall design is an `agent-interaction-map`; the logic inside one
 topic is an `agent-instruction-diagram` (put `steps` on a topic and the map links to it as a second
 page).
+
+For a discovery workshop, a usual set is: `discovery-mind-map` and `stakeholder-map` to frame it,
+`workshop-plan` for the agenda, `persona-map` and `customer-journey` for users, `process-hierarchy`
+then `business-process` (as-is and to-be) and `value-stream-map` for processes, `system-context` and
+`current-future-state` for systems, and `capability-map`, `fit-gap-analysis` and
+`prioritization-matrix` to close. Pick only what the workshop needs.
 
 ## Authoring rules
 
@@ -177,6 +191,11 @@ and tell the user what remains.
   A larger `--scale` (3) makes a PNG easier to read when it will be shrunk into a document.
 - **Round trip:** `archistry convert edited.html -o edited.drawio` and `archistry convert edited.drawio -o
   edited.html`. The HTML embeds the draw.io XML, so nothing is lost either way.
+- **Viewer toggles:** the HTML has **Highlight** (<kbd>H</kbd>: fade all but the hovered or clicked box and
+  its connections) and **Animate** (<kbd>L</kbd>: dashes flow along connectors). Both start off. Turn
+  them on by default only when the user asks: `"viewer": { "highlight": true, "animate": true }` in
+  the spec, or `--highlight` / `--animate` on `build` or `convert` (either one is enough); `--animate` also sets draw.io flow
+  animation on the connectors in the `.drawio`.
 - **Manual editing:** in draw.io, or in the browser (HTML → Edit: move, resize, retext, recolour,
   add shapes, connect, undo; then Export → Save HTML or Download .drawio).
 - **Validate anything:** `archistry validate file.drawio|file.html|spec.json [--json] [--strict]`.

@@ -1,0 +1,28 @@
+{
+  "type": "discovery-mind-map",
+  "title": "Field Service Discovery — Scope Map",
+  "subtitle": "Workshop context for a utilities field service programme (illustrative)",
+  "direction": "LR",
+  "nodeWidth": 190,
+  "root": {
+    "label": "Field Service Programme", "sub": "Discovery scope",
+    "children": [
+      { "label": "Business context", "kind": "salesforce", "children": [
+        { "label": "4,000 jobs a week" }, { "label": "Regulated SLA penalties" } ] },
+      { "label": "Objectives", "kind": "success", "children": [
+        { "label": "First-time fix to 85%" }, { "label": "Cut dispatch effort by half" } ] },
+      { "label": "Stakeholders", "kind": "user", "children": [
+        { "label": "COO (sponsor)" }, { "label": "Dispatch managers" }, { "label": "Technician reps" } ] },
+      { "label": "Current state", "kind": "external", "children": [
+        { "label": "Legacy job system" }, { "label": "Excel scheduling" } ] },
+      { "label": "Pain points", "kind": "danger", "children": [
+        { "label": "No parts visibility" }, { "label": "Paper job cards" } ] },
+      { "label": "Scope", "kind": "data", "children": [
+        { "label": "Field Service, mobile app" }, { "label": "Out: billing, HR" } ] },
+      { "label": "Constraints", "kind": "warning", "children": [
+        { "label": "Go-live before winter peak" }, { "label": "Poor rural coverage" } ] },
+      { "label": "Open questions", "kind": "ai", "children": [
+        { "label": "Who owns inventory data?" }, { "label": "Contractor access model?" } ] }
+    ]
+  }
+}

@@ -98,5 +98,21 @@
  {
   "query": "branching strategy for our SFDX team: main, release branches, feature branches and hotfix, how they merge",
   "should_trigger": true
+ },
+ {
+  "query": "workshop tomorrow with the contact centre team, can you put together a persona map: agent, team lead, customer, with goals and pains and what Salesforce needs to do for each",
+  "should_trigger": true
+ },
+ {
+  "query": "map the value stream for our returns process, cycle time and wait time per step, hand-offs, and mark the bottlenecks",
+  "should_trigger": true
+ },
+ {
+  "query": "need an as-is vs to-be overview for the Service Cloud discovery: old systems on the left, the new Salesforce setup on the right with what replaces what",
+  "should_trigger": true
+ },
+ {
+  "query": "draft the agenda for our 3-day discovery workshop: sessions, who attends and what each session produces",
+  "should_trigger": true
  }
 ]

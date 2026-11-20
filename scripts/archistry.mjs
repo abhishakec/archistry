@@ -27,7 +27,7 @@ function parseArgs(argv) {
       const eq = a.indexOf('=');
       const k = (eq > 0 ? a.slice(2, eq) : a.slice(2)).replace(/-([a-z])/g, (m, c) => c.toUpperCase());
       if (eq > 0) opt[k] = a.slice(eq + 1);
-      else if (i + 1 < argv.length && !argv[i + 1].startsWith('-') && !['json', 'strict', 'allFields', 'transparent', 'stdout', 'quiet', 'noValidate', 'force'].includes(k)) opt[k] = argv[++i];
+      else if (i + 1 < argv.length && !argv[i + 1].startsWith('-') && !['json', 'strict', 'allFields', 'transparent', 'stdout', 'quiet', 'noValidate', 'force', 'highlight', 'animate'].includes(k)) opt[k] = argv[++i];
       else opt[k] = true;
     } else pos.push(a);
   }
@@ -47,8 +47,19 @@ function unsupportedShapes(model) {
   return [...seen];
 }
 
+/** Viewer defaults: CLI flags win over the spec's "viewer" field. Both default to off. */
+const flag = (v) => v === true || (typeof v === 'string' && !/^(false|off|no|0)$/i.test(v));
+export function viewerOptions(spec, opt = {}) {
+  const v = (spec && typeof spec.viewer === 'object' && spec.viewer) || {};
+  return { highlight: opt.highlight !== undefined ? flag(opt.highlight) : flag(v.highlight), animate: opt.animate !== undefined ? flag(opt.animate) : flag(v.animate) };
+}
+/** Adds draw.io flow animation to every connector (only used when animate is on). */
+function addFlowAnimation(pages) {
+  for (const p of pages) for (const c of p.cells) if (c.edge) c.style = typeof c.style === 'string' ? c.style.replace(/;?$/, ';') + 'flowAnimation=1;' : Object.assign({}, c.style, { flowAnimation: '1' });
+}
+
 /** spec object -> { model, pages, type, warnings, brand } */
-export function buildSpec(spec, { cwd = process.cwd() } = {}) {
+export function buildSpec(spec, { cwd = process.cwd(), animate } = {}) {
   if (!spec || typeof spec !== 'object') throw new Error('spec must be a JSON object');
   const t = resolveType(spec.type);
   if (!t) { const s = suggestTypes(spec.type); throw new Error(`unknown diagram type "${spec.type}".${s.length ? ' Did you mean: ' + s.join(', ') + '?' : ''} Run "archistry types" for the full list.`); }
@@ -59,6 +70,8 @@ export function buildSpec(spec, { cwd = process.cwd() } = {}) {
   const brand = loadBrand(spec, cwd);
   const palette = makePalette(brand);
   const pages = t.fn(merged, { palette });
+  if (animate === undefined) animate = viewerOptions(spec).animate;
+  if (animate) addFlowAnimation(pages);
   const warnings = [];
   for (const p of pages) for (const w of p.warnings || []) if (!warnings.includes(w)) warnings.push(w);
   for (const w of pages.warnings || []) if (!warnings.includes(w)) warnings.push(w);
@@ -94,11 +107,12 @@ function printFindings(res, { json, quiet } = {}) {
 const commands = {
   build(pos, opt) {
     const specPath = pos[0];
-    if (!specPath) fail('usage: archistry build <spec.json> [-o <output base>] [--format drawio,html,png,jpg,svg] [--theme light|dark] [--scale 2]');
+    if (!specPath) fail('usage: archistry build <spec.json> [-o <output base>] [--format drawio,html,png,jpg,svg] [--theme light|dark] [--scale 2] [--highlight] [--animate]');
     let spec;
     try { spec = JSON.parse(specPath === '-' ? fs.readFileSync(0, 'utf8') : fs.readFileSync(specPath, 'utf8')); } catch (e) { fail(`could not read spec ${specPath}: ${e.message}`); }
     let built;
-    try { built = buildSpec(spec, { cwd: specPath === '-' ? process.cwd() : path.dirname(path.resolve(specPath)) }); } catch (e) { fail(e.message, 2); }
+    const vo = viewerOptions(spec, opt);
+    try { built = buildSpec(spec, { cwd: specPath === '-' ? process.cwd() : path.dirname(path.resolve(specPath)), animate: vo.animate }); } catch (e) { fail(e.message, 2); }
     let base = opt.out ? opt.out.replace(/\.(drawio|html|png|jpe?g|svg|json)$/i, '') : (specPath === '-' ? 'diagram' : specPath.replace(/\.json$/i, '').replace(/\.spec$/i, ''));
     if (opt.out && fs.existsSync(opt.out) && fs.statSync(opt.out).isDirectory()) base = path.join(opt.out, path.basename(specPath === '-' ? 'diagram' : specPath).replace(/\.json$/i, ''));
     fs.mkdirSync(path.dirname(path.resolve(base)), { recursive: true });
@@ -106,7 +120,7 @@ const commands = {
     const res = validateFile(built.model);
     const files = [];
     if (formats.includes('drawio')) { fs.writeFileSync(base + '.drawio', built.xml); files.push(base + '.drawio'); }
-    if (formats.includes('html')) { fs.writeFileSync(base + '.html', buildHtml(built.xml, { title: built.title, theme: opt.theme, description: spec.subtitle })); files.push(base + '.html'); }
+    if (formats.includes('html')) { fs.writeFileSync(base + '.html', buildHtml(built.xml, { title: built.title, theme: opt.theme, description: spec.subtitle, highlight: vo.highlight, animate: vo.animate })); files.push(base + '.html'); }
     const imgs = formats.filter((f) => ['png', 'jpg', 'jpeg', 'svg'].includes(f));
     let imgError = null;
     if (imgs.length) { try { files.push(...writeImages(built.model, base, imgs, { theme: opt.theme, scale: +opt.scale || 2, transparent: !!opt.transparent, pages: 'all' })); } catch (e) { imgError = e.message; } }
@@ -144,11 +158,13 @@ const commands = {
 
   convert(pos, opt) {
     const inp = pos[0], out = opt.out || pos[1];
-    if (!inp || !out) fail('usage: archistry convert <in.drawio|in.html> -o <out.html|out.drawio>');
+    if (!inp || !out) fail('usage: archistry convert <in.drawio|in.html> -o <out.html|out.drawio> [--highlight] [--animate]');
     let model;
     try { model = readModel(inp); } catch (e) { fail(e.message, 2); }
+    const vo = viewerOptions(null, opt);
+    if (vo.animate) addFlowAnimation(model.pages);
     const xml = serializeMxfile(model);
-    if (/\.html?$/i.test(out)) { const title = opt.title || path.basename(inp).replace(/\.(drawio|html?|xml)$/i, '').replace(/[-_]+/g, ' '); fs.writeFileSync(out, buildHtml(xml, { title, theme: opt.theme })); }
+    if (/\.html?$/i.test(out)) { const title = opt.title || path.basename(inp).replace(/\.(drawio|html?|xml)$/i, '').replace(/[-_]+/g, ' '); fs.writeFileSync(out, buildHtml(xml, { title, theme: opt.theme, highlight: vo.highlight, animate: vo.animate })); }
     else fs.writeFileSync(out, xml);
     const odd = unsupportedShapes(model);
     console.log(`wrote ${rel(out)}  ·  ${model.pages.length} page(s)`);
@@ -262,9 +278,9 @@ const commands = {
 
   archistry types [--stage discover|architect|design|agentforce|build|test|release] [--json]
   archistry init <type> [-o spec.json]                 starter spec for a diagram type
-  archistry build <spec.json> [-o base] [--format drawio,html,png,jpg,svg] [--theme dark] [--scale 2] [--json] [--strict]
+  archistry build <spec.json> [-o base] [--format drawio,html,png,jpg,svg] [--theme dark] [--scale 2] [--highlight] [--animate] [--json] [--strict]
   archistry validate <file.drawio|file.html|spec.json> [--json] [--strict]
-  archistry convert <in.drawio|in.html> -o <out.html|out.drawio>
+  archistry convert <in.drawio|in.html> -o <out.html|out.drawio> [--highlight] [--animate]
   archistry export <in.drawio|in.html|spec.json> -o out.png|out.jpg|out.svg [--scale 2] [--theme dark] [--page N] [--transparent]
   archistry icons search <text> | list [category] | show <key>
   archistry erd-from-sfdx <project-dir> -o spec.json [--objects A,B__c] [--include-fields 8]

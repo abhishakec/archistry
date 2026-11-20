@@ -42,3 +42,14 @@ Rules:
   organization-wide default is, because that is what makes the hierarchy matter. Keep it to roles;
   permissions belong in a `permission-matrix`.
 - About 30 nodes per page. Past that, cut the tree at a level and draw each branch on its own page.
+
+## Discovery trees: process-hierarchy and discovery-mind-map
+
+- **process-hierarchy** (aliases `process-decomposition`, `l0-l1-process-map`, `value-chain`): root = L0 value chain, children = L1 processes, grandchildren = L2 sub-processes; put the level in `sub` ("L1"). Show scope with `kind` (`success` in scope, `data` later phase, `muted` out of scope) and `badge` ("Phase 2", "Out of scope"); say what the colours mean in the subtitle. Four or more leaf children stack vertically. Stop at L2; detail goes in a `business-process`.
+- **discovery-mind-map** (aliases `mind-map`, `workshop-map`, `scope-map`): defaults to `direction: "LR"`. Root = the programme, first-level branches = business context, objectives, stakeholders, current state, pain points, scope, constraints, open questions, each with its own `kind`; two or three short leaves per branch.
+
+```json
+{ "type": "process-hierarchy", "root": { "label": "Serve the Customer", "sub": "L0", "children": [
+  { "label": "Handle Enquiries", "sub": "L1", "kind": "success", "children": [ { "label": "Log case", "sub": "L2", "kind": "success" } ] },
+  { "label": "Bill and Collect", "sub": "L1", "kind": "muted", "badge": "Out of scope" } ] } }
+```
