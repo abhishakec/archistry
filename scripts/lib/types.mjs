@@ -31,8 +31,8 @@ export const TYPES = [
   T('persona-map', 'Discover', 'matrix', matrix, 'Who are the personas, what do they need to get done, what frustrates them and what must Salesforce do for each?', { mode: 'table' }, ['persona', 'personas', 'user-personas']),
   T('process-hierarchy', 'Discover', 'tree', tree, 'How does the value chain break down into processes and sub-processes (L0 to L2), and which are in scope?', {}, ['process-decomposition', 'l0-l1-process-map', 'value-chain']),
   T('value-stream-map', 'Discover', 'flow', flow, 'Where does time go from trigger to outcome: cycle time, wait time, hand-offs and bottlenecks?', { direction: 'LR' }, ['vsm', 'value-stream']),
-  T('current-future-state', 'Discover', 'blocks', blocks, 'What does the current landscape look like, what does the Salesforce-based future look like, and what replaces what?', {}, ['as-is-to-be', 'current-vs-future', 'gap-overview']),
-  T('discovery-mind-map', 'Discover', 'tree', tree, 'What is in the discovery scope: context, objectives, stakeholders, current state, pain points, constraints and open questions?', { direction: 'LR' }, ['mind-map', 'workshop-map', 'scope-map']),
+  T('current-future-state', 'Discover', 'blocks', blocks, 'What does the current landscape look like, what does the Salesforce-based future look like, and what replaces what?', { legendLabels: { sync: 'Replaces / changes to' } }, ['as-is-to-be', 'current-vs-future', 'gap-overview']),
+  T('discovery-mind-map', 'Discover', 'tree', tree, 'What is in the discovery scope: context, objectives, stakeholders, current state, pain points, constraints and open questions?', { stackAt: 2 }, ['mind-map', 'workshop-map', 'scope-map']),
   T('workshop-plan', 'Discover', 'matrix', matrix, 'Which discovery sessions run when, on what topic, with whom and with what output?', { mode: 'table' }, ['workshop-agenda', 'discovery-plan']),
   // ---- Architect: landscape, integration, data, security
   T('system-landscape', 'Architect', 'blocks', blocks, 'Which systems exist across the enterprise and how are they grouped and connected?', {}, ['landscape', 'architecture', 'org-strategy']),

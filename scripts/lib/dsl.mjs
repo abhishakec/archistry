@@ -256,6 +256,7 @@ export function measureCard(d, c, o = {}) {
 export function drawCard(d, c, box, parent = '1', o = {}) {
   const k = d.kind(c.kind || o.kind || 'neutral');
   const iconR = c.icon ? resolveIcon(c.icon) : null;
+  if (c.icon && !iconR && d.warnings && !d.warnings.includes(`icon not found: ${c.icon}`)) d.warnings.push(`icon not found: ${c.icon}`);
   const iconSize = o.iconSize || 32;
   const hasBody = !!(c.sub || (c.items && c.items.length));
   const style = Object.assign({
@@ -316,7 +317,7 @@ function legendCells(d, x, y, maxW) {
   if (custom) for (const it of custom) items.push({ kind: it.kind, label: it.label, line: it.line });
   else {
     for (const [k, label] of d.usedKinds) items.push({ kind: k, label: (spec.legendLabels && spec.legendLabels[k]) || label });
-    for (const [k, v] of d.usedLines) items.push({ line: k, label: v.label });
+    for (const [k, v] of d.usedLines) items.push({ line: k, label: (spec.legendLabels && spec.legendLabels[k]) || v.label });
     for (const it of d.legendExtra) items.push(it);
     const colourItems = items.filter((i) => i.kind || i.swatch).length, lineItems = items.filter((i) => i.line).length;
     if (colourItems < 2 && lineItems < 2 && !d.legendExtra.length && spec.legend !== true) return 0;

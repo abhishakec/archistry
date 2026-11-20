@@ -22,7 +22,7 @@ A spec is one JSON object. `type` selects the diagram; everything else is conten
 | `header` | `"title"` (default), `"banner"`, `false` | The banner is a navy band with `meta` on the right; use it for client-ready documents |
 | `meta` | `status`, `version`, `date`, `author`, `client`, `logo` (icon key) | Shown in the header |
 | `legend` | omitted (automatic), `true`, `false`, or `[{ "kind": "data", "label": "…" }, { "line": "batch", "label": "…" }]` | Automatic: a key appears when two or more colours or line styles carry meaning |
-| `legendLabels` | `{ "salesforce": "In scope" }` | Rename automatic key entries |
+| `legendLabels` | `{ "salesforce": "In scope", "sync": "Replaces" }` | Rename automatic key entries: colour kinds and line styles (`sync`, `async`, `batch`, `reference`, …) |
 | `viewer` | `{ "highlight": bool, "animate": bool }`, both optional, default `false` | HTML defaults only: `highlight` fades all but the hovered or clicked box and its connections, `animate` moves dashes along connectors. `animate` also adds `flowAnimation=1` to every connector in the .drawio. CLI `--highlight` / `--animate` override it |
 | `brand` | path or object, `false` to ignore a `brand.json` beside the spec | See `assets/brand/brand.example.json` |
 

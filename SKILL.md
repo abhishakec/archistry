@@ -8,13 +8,15 @@ description: >
   or DLO/DMO field mapping, data model / ERD, OAuth or integration sequence, sharing model, role
   hierarchy, permission matrix, BPMN swimlane process, flowchart, record lifecycle, customer journey,
   service blueprint, user story map, capability map, stakeholder map, RACI, fit-gap, org chart,
-  discovery workshop outputs (persona map, L0/L1 process hierarchy, value stream map, as-is vs to-be
-  current and future state, mind map, workshop agenda),
+  discovery workshop outputs (persona map, L0/L1 process hierarchy, value stream map with cycle and
+  wait times, hand-offs and bottlenecks, as-is vs to-be current and future state, mind map, workshop
+  agenda with sessions, attendees and outputs),
   Lightning page wireframe, Apex class diagram, Agentforce Agent Interaction Map or Agent Instruction
   Diagram, environment strategy, CI/CD pipeline, branching strategy, Flow logic, test strategy,
   traceability matrix, roadmap, gantt, cutover plan or risk matrix. Also use when the user mentions
   ".drawio", "draw.io", "diagrams.net", wants an HTML diagram, wants a diagram exported to an image,
-  or wants an existing .drawio file validated or converted. Not for Mermaid output.
+  or wants an existing .drawio file validated or converted. Load it first, before exploring the repo
+  or asking questions: its starter specs show which facts the diagram needs. Not for Mermaid output.
 metadata:
   version: "1.1"
   requires: "Node.js 18+ (no npm install). PNG/JPG export also needs Chrome, Edge or Chromium."

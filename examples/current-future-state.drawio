@@ -39,7 +39,7 @@
         <mxCell id="key_sw_5" value="" style="html=1;whiteSpace=wrap;rounded=1;arcSize=6;absoluteArcSize=1;fillColor=#f6f2fb;strokeColor=#5a1ba9;strokeWidth=1.5;" vertex="1" connectable="0" parent="1"><mxGeometry x="86" y="742" width="16" height="16" as="geometry"/></mxCell>
         <mxCell id="t_7" value="Data Cloud / Data 360" style="html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="108" y="741" width="130" height="18" as="geometry"/></mxCell>
         <mxCell id="key_line" value="" style="html=1;rounded=1;strokeColor=#514f4d;strokeWidth=1.5;fontSize=11;fontColor=#032d60;endArrow=block;endFill=1;endSize=5;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="252" y="750" as="sourcePoint"/><mxPoint x="286" y="750" as="targetPoint"/></mxGeometry></mxCell>
-        <mxCell id="t_8" value="Real-time / API call" style="html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="292" y="741" width="110" height="18" as="geometry"/></mxCell>
+        <mxCell id="t_8" value="Replaces / changes to" style="html=1;text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;fontColor=#5c5c5c;fontSize=11;" vertex="1" parent="1"><mxGeometry x="292" y="741" width="130" height="18" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

@@ -46,7 +46,7 @@ Rules:
 ## Discovery trees: process-hierarchy and discovery-mind-map
 
 - **process-hierarchy** (aliases `process-decomposition`, `l0-l1-process-map`, `value-chain`): root = L0 value chain, children = L1 processes, grandchildren = L2 sub-processes; put the level in `sub` ("L1"). Show scope with `kind` (`success` in scope, `data` later phase, `muted` out of scope) and `badge` ("Phase 2", "Out of scope"); say what the colours mean in the subtitle. Four or more leaf children stack vertically. Stop at L2; detail goes in a `business-process`.
-- **discovery-mind-map** (aliases `mind-map`, `workshop-map`, `scope-map`): defaults to `direction: "LR"`. Root = the programme, first-level branches = business context, objectives, stakeholders, current state, pain points, scope, constraints, open questions, each with its own `kind`; two or three short leaves per branch.
+- **discovery-mind-map** (aliases `mind-map`, `workshop-map`, `scope-map`): draws top-down, with each branch's leaves stacked in a column under it (`stackAt: 2`); set `"direction": "LR"` for a left-to-right map. Root = the programme, first-level branches = business context, objectives, stakeholders, current state, pain points, scope, constraints, open questions, each with its own `kind`; two or three short leaves per branch.
 
 ```json
 { "type": "process-hierarchy", "root": { "label": "Serve the Customer", "sub": "L0", "children": [

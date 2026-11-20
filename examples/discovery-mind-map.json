@@ -2,7 +2,6 @@
   "type": "discovery-mind-map",
   "title": "Field Service Discovery — Scope Map",
   "subtitle": "Workshop context for a utilities field service programme (illustrative)",
-  "direction": "LR",
   "nodeWidth": 190,
   "root": {
     "label": "Field Service Programme", "sub": "Discovery scope",
