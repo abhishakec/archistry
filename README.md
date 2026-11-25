@@ -14,6 +14,7 @@
   <img alt="PNG, JPG and SVG export" src="https://img.shields.io/badge/Export-PNG%20%C2%B7%20JPG%20%C2%B7%20SVG-8F7BE8?style=for-the-badge">
   <img alt="Node.js 18+, zero dependencies" src="https://img.shields.io/badge/Node.js-18%2B%20%C2%B7%20zero%20deps-339933?style=for-the-badge&logo=nodedotjs&logoColor=white">
   <a href="https://www.skills.sh/abhishakec/archistry/archistry"><img alt="Listed on skills.sh" src="https://skills.sh/b/abhishakec/archistry"></a>
+  <a href="https://github.com/abhishakec/archistry/actions/workflows/ci.yml"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/abhishakec/archistry/ci.yml?branch=main&style=for-the-badge&label=CI&logo=githubactions&logoColor=white"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-2E844A?style=for-the-badge"></a>
 </p>
 
