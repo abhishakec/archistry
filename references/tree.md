@@ -53,3 +53,14 @@ Rules:
   { "label": "Handle Enquiries", "sub": "L1", "kind": "success", "children": [ { "label": "Log case", "sub": "L2", "kind": "success" } ] },
   { "label": "Bill and Collect", "sub": "L1", "kind": "muted", "badge": "Out of scope" } ] } }
 ```
+
+## Sales territories and site maps: territory-model and experience-site-map
+
+- **territory-model** (aliases `territory-management`, `ett`, `sales-territories`; for a role-based view use `role-hierarchy`): Enterprise Territory Management. Root = the territory model (name the plan in `sub`), then regions, countries and segments. Put the owner or the assignment rule and the account count in `sub` ("Rule: Country in UK, IE | 640 accts"). Show phase with `kind` (`success` phase 1, `data` later phase) and `badge` ("Phase 2"); use another `kind` for manually assigned named-account territories, and say what each colour means in the subtitle or `legendLabels`. Rules go in `sub`; the full rule logic belongs in a document.
+- **experience-site-map** (aliases `site-map`, `portal-map`, `community-site-map`): root = the Experience Cloud site, first level = audiences (guest, customer, partner) coloured by `kind`, leaves = pages with the key components or flows in `sub` ("Case List, Case Detail", "Screen Flow: Create Case"). Four or more pages under an audience stack in a column (`stackAt: 3` by default). Say who sees what with the first-level `sub` (profile or licence); use `legendLabels` to name the colours.
+
+```json
+{ "type": "experience-site-map", "root": { "label": "Northwind Portal", "sub": "Experience Cloud site", "children": [
+  { "label": "Public pages", "sub": "Guest user", "kind": "success", "children": [ { "label": "Help Centre", "sub": "Knowledge, Article Detail" } ] },
+  { "label": "Customer area", "sub": "Customer Community Plus", "kind": "salesforce", "children": [ { "label": "My Cases", "sub": "Case List, Case Detail" } ] } ] } }
+```

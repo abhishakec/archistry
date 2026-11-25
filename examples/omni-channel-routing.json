@@ -1,0 +1,36 @@
+{
+  "type": "omni-channel-routing",
+  "title": "Service Cloud — Omni-Channel Routing",
+  "subtitle": "From channel to agent: routing configuration, queue, skills and overflow (illustrative)",
+  "direction": "LR",
+  "lanes": [
+    { "id": "ch", "label": "Channels", "kind": "user" },
+    { "id": "rt", "label": "Routing and queues", "kind": "salesforce" },
+    { "id": "ag", "label": "Agents", "kind": "success" }
+  ],
+  "nodes": [
+    { "id": "chat", "kind": "start", "label": "Web chat", "sub": "Messaging for Web", "lane": "ch", "icon": "utility/chat" },
+    { "id": "wa", "kind": "start", "label": "WhatsApp", "sub": "Enhanced Messaging", "lane": "ch" },
+    { "id": "email", "kind": "start", "label": "Email-to-Case", "sub": "Support mailbox", "lane": "ch", "icon": "utility/email" },
+    { "id": "phone", "kind": "start", "label": "Phone", "sub": "Service Cloud Voice", "lane": "ch", "icon": "utility/phone_portrait" },
+    { "id": "qmsg", "kind": "system", "label": "Messaging Queue", "sub": "Routing: Least Active | max 3", "lane": "rt", "icon": "standard/flow" },
+    { "id": "qcase", "kind": "system", "label": "Case Queue", "sub": "Routing: Most Available | max 5", "lane": "rt", "icon": "standard/flow" },
+    { "id": "qvoice", "kind": "system", "label": "Voice Queue", "sub": "Routing: Skills-based | max 1", "lane": "rt", "icon": "standard/flow" },
+    { "id": "t1", "kind": "user", "label": "Tier 1 Agents", "sub": "Presence: Available - Chat", "lane": "ag", "icon": "standard/user" },
+    { "id": "t2", "kind": "user", "label": "Billing Specialists", "sub": "Skill: Billing | Available - Email", "lane": "ag", "icon": "standard/user" },
+    { "id": "vip", "kind": "user", "label": "VIP Desk", "sub": "Skill: Premier | Available - Voice", "lane": "ag", "icon": "standard/user" },
+    { "id": "over", "kind": "manual", "label": "Overflow Queue", "sub": "After 5 min: any available agent", "lane": "rt", "color": "warning" },
+    { "id": "cb", "kind": "end", "label": "Callback or Case", "sub": "Nobody online", "lane": "ag" }
+  ],
+  "edges": [
+    { "from": "chat", "to": "qmsg" },
+    { "from": "wa", "to": "qmsg" },
+    { "from": "email", "to": "qcase" },
+    { "from": "phone", "to": "qvoice" },
+    { "from": "qmsg", "to": "t1", "label": "No skill needed" },
+    { "from": "qcase", "to": "t2", "label": "Skill: Billing" },
+    { "from": "qvoice", "to": "vip", "label": "Skill: Premier" },
+    { "from": "qmsg", "to": "over", "label": "Timeout", "kind": "exception" },
+    { "from": "over", "to": "cb", "label": "Nobody online", "kind": "exception" }
+  ]
+}

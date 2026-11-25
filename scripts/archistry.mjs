@@ -9,6 +9,7 @@ import { parseMxfile, serializeMxfile, renderSvg, parseStyle } from './lib/mx.mj
 import { makePalette, loadBrand, iconCatalog, resolveIcon, styleImage, SKILL_ROOT } from './lib/dsl.mjs';
 import { TYPES, STAGES, resolveType, suggestTypes } from './lib/types.mjs';
 import { validateFile } from './lib/validate.mjs';
+import { unknownFieldNotes } from './lib/spec-fields.mjs';
 import { buildHtml, extractModel } from './lib/html.mjs';
 import { rasterize, findBrowser, findDrawioCli } from './lib/raster.mjs';
 import { erdFromSfdx, mappingFromCsv, flowFromMetadata } from './lib/generators.mjs';
@@ -75,6 +76,8 @@ export function buildSpec(spec, { cwd = process.cwd(), animate } = {}) {
   const warnings = [];
   for (const p of pages) for (const w of p.warnings || []) if (!warnings.includes(w)) warnings.push(w);
   for (const w of pages.warnings || []) if (!warnings.includes(w)) warnings.push(w);
+  // typo hints only: appended after the pages are built, so they cannot change the generated diagram
+  for (const w of unknownFieldNotes(spec)) warnings.push(w);
   const xml = serializeMxfile({ pages });
   return { xml, model: parseMxfile(xml), type: t, warnings, brand: palette.name, title: spec.title || t.name };
 }
@@ -140,9 +143,9 @@ const commands = {
 
   validate(pos, opt) {
     if (!pos[0]) fail('usage: archistry validate <file.drawio|file.html|spec.json> [--json] [--strict]');
-    let model;
+    let model, specNotes = []; // specNotes: unknown-field hints, only for spec.json input
     try {
-      if (/\.json$/i.test(pos[0])) model = buildSpec(JSON.parse(fs.readFileSync(pos[0], 'utf8')), { cwd: path.dirname(path.resolve(pos[0])) }).model;
+      if (/\.json$/i.test(pos[0])) { const b = buildSpec(JSON.parse(fs.readFileSync(pos[0], 'utf8')), { cwd: path.dirname(path.resolve(pos[0])) }); model = b.model; specNotes = b.warnings.filter((w) => /^unknown field/.test(w)); }
       else model = readModel(pos[0]);
     } catch (e) { if (opt.json) { console.log(JSON.stringify({ ok: false, errors: 1, warnings: 0, findings: [{ level: 'ERROR', code: 'xml-parse', message: e.message }] }, null, 2)); process.exit(2); } fail(e.message, 2); }
     const res = validateFile(model);
@@ -151,6 +154,7 @@ const commands = {
     else {
       console.log(`${res.ok ? (res.warnings ? 'OK with warnings' : 'OK') : 'FAILED'}  ${rel(pos[0])}  ·  ${res.errors} error(s), ${res.warnings} warning(s)  ·  ${res.stats.map((s) => `${s.page}: ${s.nodes} boxes, ${s.edges} connectors, ${s.crossings} crossings`).join(' | ')}`);
       printFindings(res, opt);
+      for (const w of specNotes) console.log('  NOTE    ' + w);
       if (odd.length) console.log(`  NOTE    draw.io stencils the HTML/image renderer approximates as rectangles: ${odd.join(', ')}`);
     }
     process.exit(!res.ok ? 2 : opt.strict && res.warnings ? 3 : 0);

@@ -114,5 +114,29 @@
  {
   "query": "draft the agenda for our 3-day discovery workshop: sessions, who attends and what each session produces",
   "should_trigger": true
+ },
+ {
+  "query": "we're rolling out Enterprise Territory Management, can you draw the territory model: EMEA, Americas, APAC split by country and segment, with owner and the assignment rule on each",
+  "should_trigger": true
+ },
+ {
+  "query": "sketch the territory hierarchy for the sales reorg with account counts per territory and which ones go live in phase 1",
+  "should_trigger": true
+ },
+ {
+  "query": "how should chat, WhatsApp, email and phone calls get routed with Omni-Channel? draw the queues, skills and what happens on overflow",
+  "should_trigger": true
+ },
+ {
+  "query": "need a routing diagram for the service team: channels on the left, routing configs and queues in the middle, agent groups on the right, with a fallback when nobody is online",
+  "should_trigger": true
+ },
+ {
+  "query": "map out the pages of the customer portal on Experience Cloud: home, knowledge, cases, account, partner area, who sees each page and what components are on it",
+  "should_trigger": true
+ },
+ {
+  "query": "site map for our partner community, guest vs customer vs partner pages, with the screen flows and list views on each",
+  "should_trigger": true
  }
 ]

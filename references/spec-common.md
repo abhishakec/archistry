@@ -26,6 +26,8 @@ A spec is one JSON object. `type` selects the diagram; everything else is conten
 | `viewer` | `{ "highlight": bool, "animate": bool }`, both optional, default `false` | HTML defaults only: `highlight` fades all but the hovered or clicked box and its connections, `animate` moves dashes along connectors. `animate` also adds `flowAnimation=1` to every connector in the .drawio. CLI `--highlight` / `--animate` override it |
 | `brand` | path or object, `false` to ignore a `brand.json` beside the spec | See `assets/brand/brand.example.json` |
 
+A top-level field no diagram type reads (a typo such as `direcion`) is ignored, and `build` and `validate` print a `NOTE` with a "did you mean" suggestion. The note never fails a build.
+
 ## Kinds (the colour vocabulary)
 
 Every `kind` is a light tint plus a solid stroke of the same hue. Colour is classification: a kind

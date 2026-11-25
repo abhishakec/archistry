@@ -112,3 +112,16 @@ Aliases `vsm`, `value-stream`. Draws the end-to-end flow left to right, one step
              { "id": "b", "kind": "manual", "label": "Escalate by email", "sub": "CT 10 min | WT 1 d | Bottleneck", "color": "danger" } ],
   "edges": [ { "from": "a", "to": "b", "label": "Hand-off 1" } ] }
 ```
+
+## omni-channel-routing
+
+Aliases `omni-channel`, `routing-model`, `queue-routing`. How work gets from a channel to an agent. Use three lanes: channels (`start` nodes: web chat, WhatsApp, email-to-case, phone), routing and queues (`system` nodes; put the routing configuration and capacity in `sub`, e.g. "Routing: Least Active | max 3"), agents (`user` nodes; put the skill or presence status in `sub`). Label edges with the skill or rule that decides ("Skill: Billing"). Draw overflow and fallback as `kind: "exception"` edges to a `manual` node coloured `warning` and then an `end` node ("Callback or Case"). Keep to one queue per work type; this is routing, not decision logic (use a `flowchart`) and not systems (use a `system-landscape`).
+
+```json
+{ "type": "omni-channel-routing", "direction": "LR",
+  "lanes": [ { "id": "ch", "label": "Channels", "kind": "user" }, { "id": "rt", "label": "Routing and queues", "kind": "salesforce" }, { "id": "ag", "label": "Agents", "kind": "success" } ],
+  "nodes": [ { "id": "wa", "kind": "start", "label": "WhatsApp", "lane": "ch" },
+             { "id": "q", "kind": "system", "label": "Messaging Queue", "sub": "Routing: Least Active | max 3", "lane": "rt" },
+             { "id": "t1", "kind": "user", "label": "Tier 1 Agents", "sub": "Presence: Available - Chat", "lane": "ag" } ],
+  "edges": [ { "from": "wa", "to": "q" }, { "from": "q", "to": "t1", "label": "No skill needed" } ] }
+```

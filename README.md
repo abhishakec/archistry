@@ -1,25 +1,21 @@
 <p align="center">
-  <img src=".github/cover.png" alt="Archistry — architect-grade Salesforce diagrams as draw.io and interactive HTML, 46 diagram types from discovery to go-live" width="960">
-</p>
-
-<p align="center">
-  <a href="https://archistry.dev/"><img alt="Website" src=".github/website-badge.svg" height="52"></a>
+  <img src=".github/cover.png" alt="Archistry — architect-grade Salesforce diagrams as draw.io and interactive HTML, 49 diagram types from discovery to go-live" width="960">
 </p>
 
 <p align="center">
   <img alt="Built for Salesforce projects" src="https://img.shields.io/badge/Built%20for-Salesforce%20projects-00A1E0?style=for-the-badge&logo=salesforce&logoColor=white">
-  <img alt="46 diagram types" src="https://img.shields.io/badge/Diagram%20types-46-6E5BD6?style=for-the-badge">
+  <img alt="49 diagram types" src="https://img.shields.io/badge/Diagram%20types-49-6E5BD6?style=for-the-badge">
   <img alt="draw.io editable" src="https://img.shields.io/badge/draw.io-editable-F08705?style=for-the-badge&logo=diagramsdotnet&logoColor=white">
   <img alt="HTML interactive" src="https://img.shields.io/badge/HTML-interactive-E34F26?style=for-the-badge&logo=html5&logoColor=white">
   <img alt="PNG, JPG and SVG export" src="https://img.shields.io/badge/Export-PNG%20%C2%B7%20JPG%20%C2%B7%20SVG-8F7BE8?style=for-the-badge">
   <img alt="Node.js 18+, zero dependencies" src="https://img.shields.io/badge/Node.js-18%2B%20%C2%B7%20zero%20deps-339933?style=for-the-badge&logo=nodedotjs&logoColor=white">
-  <a href="https://www.skills.sh/abhishakec/archistry/archistry"><img alt="Listed on skills.sh" src="https://skills.sh/b/abhishakec/archistry"></a>
-  <a href="https://github.com/abhishakec/archistry/actions/workflows/ci.yml"><img alt="CI status" src="https://img.shields.io/github/actions/workflow/status/abhishakec/archistry/ci.yml?branch=main&style=for-the-badge&label=CI&logo=githubactions&logoColor=white"></a>
+  <a href="https://github.com/abhishakec/archistry/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/abhishakec/archistry/actions/workflows/ci.yml/badge.svg?branch=main" height="28"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-2E844A?style=for-the-badge"></a>
 </p>
 
 <p align="center">
   <a href="#-quick-start"><strong>Quick start</strong></a> &nbsp;·&nbsp;
+  <a href="https://archistry.dev/"><strong>Website</strong></a> &nbsp;·&nbsp;
   <a href="#-diagram-types"><strong>Diagram types</strong></a> &nbsp;·&nbsp;
   <a href="https://archistry.dev/examples/agent-interaction-map.html"><strong>Live example</strong></a> &nbsp;·&nbsp;
   <a href="#-commands"><strong>Commands</strong></a> &nbsp;·&nbsp;
@@ -30,6 +26,7 @@
 
 <p align="center">
   <a href="https://github.com/abhishakec/archistry/stargazers"><img alt="Star Archistry on GitHub" src="https://img.shields.io/github/stars/abhishakec/archistry?style=for-the-badge&logo=github&label=%E2%AD%90%20Star%20Archistry&color=FFD66E&labelColor=1E1B3A"></a>
+  <a href="https://www.skills.sh/abhishakec/archistry/archistry"><img alt="Listed on skills.sh" src="https://skills.sh/b/abhishakec/archistry" height="28"></a>
 </p>
 
 ---
@@ -177,13 +174,13 @@ You get `diagrams/<name>.drawio` and `diagrams/<name>.html`, plus any images you
 
 ## 📚 Diagram types
 
-**46 types**, grouped by the project stage where you need them:
+**49 types**, grouped by the project stage where you need them:
 
 | Stage | Count | Use it for |
 |---|:---:|---|
 | 🔎 [Discover](#discover) | 17 | Discovery workshops: stakeholders, personas, RACI, capability maps, L0–L2 process hierarchy, as-is and to-be swimlanes, value streams, current vs future state, journeys, mind maps, workshop plans, story maps, fit-gap |
-| 🏛️ [Architect](#architect) | 12 | Landscape, solution and integration architecture, sequences, OAuth, ERD, Data Cloud, sharing, permissions |
-| 🎨 [Design](#design) | 4 | Record lifecycles, decision flows, Lightning page wireframes, Apex class diagrams |
+| 🏛️ [Architect](#architect) | 13 | Landscape, solution and integration architecture, sequences, OAuth, ERD, Data Cloud, sharing, permissions, territory models |
+| 🎨 [Design](#design) | 6 | Record lifecycles, decision flows, Lightning page wireframes, Apex class diagrams, Omni-Channel routing, Experience Cloud site maps |
 | 🤖 [Agentforce](#agentforce) | 2 | Agent Interaction Map and Agent Instruction Diagram |
 | 🛠️ [Build](#build) | 4 | Environment strategy, CI/CD pipeline, branching, Flow logic |
 | 🧪 [Test](#test) | 3 | Test strategy, traceability matrix, defect lifecycle |
@@ -440,6 +437,16 @@ Which profile or permission set gets which access to which object?<br>
 <sub><a href="examples/permission-matrix.json">spec</a> · <a href="examples/permission-matrix.drawio">draw.io</a> · <a href="examples/permission-matrix.html">HTML</a></sub>
 </td>
 </tr>
+<tr>
+<td width="50%" valign="top">
+<a href="examples/territory-model.html"><img src="docs/previews/territory-model.png" alt="territory-model example" width="100%"></a>
+<br><b><code>territory-model</code></b><br>
+Which territories exist, how do they roll up, who owns each and which rules put an account in it?<br>
+<sub><b>Ask:</b> "Draw our sales territory model: regions, countries and segments, with owner, assignment rule and account counts."</sub><br>
+<sub><a href="examples/territory-model.json">spec</a> · <a href="examples/territory-model.drawio">draw.io</a> · <a href="examples/territory-model.html">HTML</a></sub>
+</td>
+<td width="50%"></td>
+</tr>
 </table>
 
 ### Design
@@ -470,6 +477,22 @@ What is the logic, decision by decision?<br>
 What goes where on this Lightning page or screen?<br>
 <sub><b>Ask:</b> "Wireframe the Case record page for the Service Console with annotations."</sub><br>
 <sub><a href="examples/lightning-page-wireframe.json">spec</a> · <a href="examples/lightning-page-wireframe.drawio">draw.io</a> · <a href="examples/lightning-page-wireframe.html">HTML</a></sub>
+</td>
+<td width="50%" valign="top">
+<a href="examples/omni-channel-routing.html"><img src="docs/previews/omni-channel-routing.png" alt="omni-channel-routing example" width="100%"></a>
+<br><b><code>omni-channel-routing</code></b><br>
+How does work get from each channel through routing and queues to the right agent, and what happens on overflow?<br>
+<sub><b>Ask:</b> "Show how chat, WhatsApp, email and phone route through Omni-Channel queues and skills to agents, with overflow."</sub><br>
+<sub><a href="examples/omni-channel-routing.json">spec</a> · <a href="examples/omni-channel-routing.drawio">draw.io</a> · <a href="examples/omni-channel-routing.html">HTML</a></sub>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+<a href="examples/experience-site-map.html"><img src="docs/previews/experience-site-map.png" alt="experience-site-map example" width="100%"></a>
+<br><b><code>experience-site-map</code></b><br>
+Which Experience Cloud pages exist, how are they nested, who sees each and what sits on it?<br>
+<sub><b>Ask:</b> "Map the pages of our customer and partner portal by audience, with the components on each page."</sub><br>
+<sub><a href="examples/experience-site-map.json">spec</a> · <a href="examples/experience-site-map.drawio">draw.io</a> · <a href="examples/experience-site-map.html">HTML</a></sub>
 </td>
 <td width="50%" valign="top">
 <a href="examples/class-diagram.html"><img src="docs/previews/class-diagram.png" alt="class-diagram example" width="100%"></a>
@@ -765,7 +788,7 @@ alias archistry="node ~/.claude/skills/archistry/scripts/archistry.mjs"
 
 | Command | What it does |
 |---|---|
-| `archistry types` | List all 46 diagram types (`--stage architect` to filter) |
+| `archistry types` | List all 49 diagram types (`--stage architect` to filter) |
 | `archistry init <type>` | Write a complete starter spec for a type |
 | `archistry build <spec.json>` | Build the diagram (`--format drawio,html,png,jpg,svg` or `all`; `--highlight`, `--animate` for the HTML) |
 | `archistry validate <file>` | Check a `.drawio`, `.html` or spec for layout and notation problems |

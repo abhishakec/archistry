@@ -104,9 +104,12 @@ directory you run it in.
 | Architect | `sharing-model` | blocks | How is record access opened up layer by layer? |
 | Architect | `role-hierarchy` | tree | How does visibility roll up? |
 | Architect | `permission-matrix` | matrix | Which persona gets which object access? |
+| Architect | `territory-model` | tree | Which territories, owners and assignment rules, and how do they roll up? |
 | Design | `state-lifecycle` | flow | Which statuses, and what triggers each transition? |
 | Design | `flowchart` | flow | What is the logic, decision by decision? |
 | Design | `lightning-page-wireframe` | wireframe | What goes where on the page? |
+| Design | `omni-channel-routing` | flow | How does work get from each channel through queues and skills to an agent? |
+| Design | `experience-site-map` | tree | Which Experience Cloud pages, for which audience, with which components? |
 | Design | `class-diagram` | tables | Which Apex classes and dependencies? |
 | Agentforce | `agent-interaction-map` | aim | Channels, reasoning, topics, actions and grounding of an agent |
 | Agentforce | `agent-instruction-diagram` | flow | Instruction steps, actions, prompts and guardrails in one topic |

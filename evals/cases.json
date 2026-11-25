@@ -77,5 +77,38 @@
    "links labelled replaces or retired",
    "drawio and html written"
   ]
+ },
+ {
+  "name": "territory-model",
+  "prompt": "We're implementing Enterprise Territory Management for a software company. Draw the territory model: Global Sales splits into EMEA, Americas and APAC, each with countries and an enterprise vs mid-market segment. Show owner, the assignment rule and the account count, and mark APAC as phase 2.",
+  "expect": [
+   "type territory-model",
+   "hierarchy from global to segment",
+   "rule and account count in the cards",
+   "phase 2 marked",
+   "illustrative content flagged"
+  ]
+ },
+ {
+  "name": "omni-channel-routing",
+  "prompt": "Service Cloud project: web chat, WhatsApp, email-to-case and phone need to be routed through Omni-Channel. Chat and WhatsApp share a messaging queue, email goes to a case queue for billing specialists, phone goes to a voice queue for the VIP desk. If nobody picks up after 5 minutes it goes to an overflow queue. Draw it.",
+  "expect": [
+   "type omni-channel-routing",
+   "channels, routing and agent lanes",
+   "skills on the edges or cards",
+   "overflow path drawn as an exception",
+   "drawio and html written"
+  ]
+ },
+ {
+  "name": "experience-site-map",
+  "prompt": "For the customer and partner portal on Experience Cloud, give me a site map: public pages (home, help centre, contact us, login), a customer area (cases, account, orders) and a partner area (deal registration, resources, dashboard). Show the audience and key components for each page.",
+  "expect": [
+   "type experience-site-map",
+   "pages grouped by audience",
+   "components in the page cards",
+   "colour meaning explained",
+   "build line OK"
+  ]
  }
 ]
