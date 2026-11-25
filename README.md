@@ -680,7 +680,26 @@ archistry convert diagram.drawio -o diagram.html     # after editing in draw.io
 | Print resolution | `archistry export diagram.drawio -o big.png --scale 4` |
 
 SVG needs only Node. PNG and JPG use your local Chrome, Edge, Chromium or Brave in headless mode
-(set `ARCHISTRY_BROWSER` to pick one). No Node? Use the **Export** menu in the HTML page.
+(set `ARCHISTRY_BROWSER` to pick one; see [troubleshooting](#troubleshooting-image-export)). No Node? Use the **Export** menu in the HTML page.
+
+### Troubleshooting image export
+
+Only PNG and JPG need a browser. draw.io, HTML and SVG output are written by Node alone, so they work
+even when image export does not.
+
+- **Choose the browser.** Set `ARCHISTRY_BROWSER` to the full path of a Chrome, Edge, Chromium or Brave
+  executable (`CHROME_PATH` and `PUPPETEER_EXECUTABLE_PATH` also work). If the path does not exist, it is
+  ignored and Archistry falls back to looking for an installed browser.
+- **What `archistry doctor` checks.** It reports which browser executable it found. It does not start the
+  browser, so a found browser can still fail to render. A real `archistry export` is the only full test.
+- **`headless browser did not finish rendering`.** On Windows the Edge launcher can return before the headless
+  process has written its output. Since 1.1.0 Archistry retries with a headless screenshot automatically.
+  If you still see the error, update to the latest release, or try another browser with `ARCHISTRY_BROWSER`.
+- **No browser found.** Install Chrome, Edge, Chromium or Brave, or point `ARCHISTRY_BROWSER` at one.
+- **Workarounds.** Export SVG with `--format svg`, or open the HTML file and use **Export > PNG**.
+
+Opening an issue? Please include your OS, the browser and its version, the command you ran, and the full
+output of `archistry doctor` and of the failing command.
 
 <img alt="Tip" src="https://img.shields.io/badge/TIP-PowerPoint-1A7F37?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZD0iTTEyIDIuNWE2LjUgNi41IDAgMCAwLTMuOCAxMS44Yy41LjQuOCAxIC44IDEuNlYxN2g2di0xLjFjMC0uNi4zLTEuMi44LTEuNkE2LjUgNi41IDAgMCAwIDEyIDIuNXoiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMi4yIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8%2BPHJlY3QgeD0iOSIgeT0iMTkiIHdpZHRoPSI2IiBoZWlnaHQ9IjIuNCIgcng9IjEuMiIgZmlsbD0id2hpdGUiLz48L3N2Zz4%3D&labelColor=5B47C9">
 
