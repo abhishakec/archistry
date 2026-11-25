@@ -1,0 +1,36 @@
+name: New diagram type
+description: A diagram you draw on Salesforce projects that Archistry does not have yet.
+labels: [enhancement, new-type]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Diagram name
+      placeholder: e.g. release-train-map
+    validations:
+      required: true
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Project stage
+      options: [Discover, Architect, Design, Agentforce, Build, Test, Release]
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: The question it answers
+      description: One sentence, for example "Which releases carry which features, and who signs each off?"
+    validations:
+      required: true
+  - type: textarea
+    id: shape
+    attributes:
+      label: What it looks like
+      description: Sketch it in words or attach a photo of a whiteboard. Which existing diagram is closest?
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Can you help build it?
+      options:
+        - label: I can work on a pull request (see CONTRIBUTING.md)

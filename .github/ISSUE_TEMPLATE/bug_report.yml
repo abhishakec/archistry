@@ -1,0 +1,30 @@
+name: Bug report
+description: A build fails, a diagram looks wrong, or a command errors.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you expected and what you got. A screenshot helps.
+    validations:
+      required: true
+  - type: textarea
+    id: spec
+    attributes:
+      label: Spec or command
+      description: The JSON spec (a cut-down version is best) and the command you ran.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: The full output, including any WARNING or ERROR lines.
+      render: shell
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: "Your OS, and the first lines of `node scripts/archistry.mjs doctor`."

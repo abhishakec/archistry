@@ -22,6 +22,7 @@
   <a href="#-diagram-types"><strong>Diagram types</strong></a> &nbsp;·&nbsp;
   <a href="https://abhishakec.github.io/archistry-site/examples/agent-interaction-map.html"><strong>Live example</strong></a> &nbsp;·&nbsp;
   <a href="#-commands"><strong>Commands</strong></a> &nbsp;·&nbsp;
+  <a href="#-contributing"><strong>Contributing</strong></a> &nbsp;·&nbsp;
   <a href="SKILL.md"><strong>Skill instructions</strong></a> &nbsp;·&nbsp;
   <a href="#-credits"><strong>Credits</strong></a>
 </p>
@@ -799,6 +800,26 @@ docs/                 README pictures, the how-it-works diagram and the logo
 - `node scripts/build-banner.mjs` rebuilds the banner.
 
 </details>
+
+## 🤝 Contributing
+
+Contributions are welcome, from a one-word fix in a reference to a whole new diagram type. Good places to start:
+
+| Help with | What it looks like |
+|---|---|
+| 🧩 **A diagram you draw on projects** | Add a type: a name, a stage, an existing layout engine, one example spec and a short reference section. [How to add a type](CONTRIBUTING.md#adding-a-diagram-type) |
+| 🏛️ **Notation and accuracy** | A relationship drawn wrongly, an outdated product name, a better default |
+| 🎨 **Layout, viewer and icons** | Overlaps, routing, the HTML viewer, missing Salesforce icons |
+| 🎯 **Evals** | A prompt where the skill is not picked up, or an agent goes wrong ([`evals/`](evals/README.md)) |
+| 🐞 **Bug reports** | A spec that fails or a diagram that looks wrong: [open an issue](https://github.com/abhishakec/archistry/issues/new/choose) |
+
+```bash
+git clone https://github.com/abhishakec/archistry.git && cd archistry
+node scripts/build-examples.mjs --no-png    # every example must still build and validate
+node evals/regress.mjs . after.json         # existing diagrams must stay byte-identical
+```
+
+Everything runs on plain Node.js 18+ with no dependencies, and every pull request runs these checks on Linux and Windows. [CONTRIBUTING.md](CONTRIBUTING.md) has the full guide, the [Code of Conduct](CODE_OF_CONDUCT.md) sets the tone, and [SECURITY.md](SECURITY.md) says how to report a vulnerability privately.
 
 ## ⭐ If Archistry helped
 
