@@ -1,0 +1,11 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Salesforce diagrams",
+      "description": "Architect-grade Salesforce diagrams as editable draw.io and interactive HTML, from discovery workshops to go-live.",
+      "skills": ["archistry"]
+    }
+  ]
+}
