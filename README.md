@@ -819,7 +819,7 @@ node scripts/build-examples.mjs --no-png    # every example must still build and
 node evals/regress.mjs . after.json         # existing diagrams must stay byte-identical
 ```
 
-Everything runs on plain Node.js 18+ with no dependencies, and every pull request runs these checks on Linux and Windows. [CONTRIBUTING.md](CONTRIBUTING.md) has the full guide, the [Code of Conduct](CODE_OF_CONDUCT.md) sets the tone, and [SECURITY.md](SECURITY.md) says how to report a vulnerability privately.
+Everything runs on plain Node.js 18+ with no dependencies, and every pull request runs these checks on Linux and Windows. Not sure where to begin? Pick an issue labelled [good first issue](https://github.com/abhishakec/archistry/labels/good%20first%20issue) or [help wanted](https://github.com/abhishakec/archistry/labels/help%20wanted), or start a conversation in [Discussions](https://github.com/abhishakec/archistry/discussions). [CONTRIBUTING.md](CONTRIBUTING.md) has the full guide, the [Code of Conduct](CODE_OF_CONDUCT.md) sets the tone, and [SECURITY.md](SECURITY.md) says how to report a vulnerability privately.
 
 ## ⭐ If Archistry helped
 

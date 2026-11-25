@@ -79,4 +79,4 @@ Open an [issue](https://github.com/abhishakec/archistry/issues/new/choose). For 
 
 ## Community
 
-Be kind and constructive. See the [Code of Conduct](CODE_OF_CONDUCT.md).
+Questions and ideas are welcome in [Discussions](https://github.com/abhishakec/archistry/discussions). Be kind and constructive. See the [Code of Conduct](CODE_OF_CONDUCT.md).

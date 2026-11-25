@@ -1,5 +1,8 @@
 blank_issues_enabled: true
 contact_links:
+  - name: Ask a question or share an idea
+    url: https://github.com/abhishakec/archistry/discussions
+    about: Questions, ideas and show-and-tell for Archistry users and contributors.
   - name: Security problem
     url: https://github.com/abhishakec/archistry/security/advisories/new
     about: Report vulnerabilities privately.
