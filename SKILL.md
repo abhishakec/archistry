@@ -16,7 +16,7 @@ description: >
   plain text for gantt and cutover plans. Load first, before exploring or asking
   questions. Not for Mermaid.
 metadata:
-  version: '1.1'
+  version: '1.2'
   requires:
     'Node.js 18+ (no npm install). PNG/JPG export also needs Chrome, Edge or
     Chromium.'
