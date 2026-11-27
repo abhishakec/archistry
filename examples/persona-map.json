@@ -4,18 +4,80 @@
   "subtitle": "Illustrative personas for a utilities Service Cloud programme; validate in workshops",
   "rowHeader": "",
   "columns": [
-    { "label": "Service Agent", "sub": "Contact centre, 120 users", "kind": "salesforce" },
+    {
+      "label": "Service Agent",
+      "sub": "Contact centre, 120 users",
+      "kind": "salesforce"
+    },
     { "label": "Field Technician", "sub": "Mobile, 60 users", "kind": "data" },
     { "label": "Team Lead", "sub": "Supervises 15 agents", "kind": "ai" },
-    { "label": "Residential Customer", "sub": "Web, app, phone", "kind": "user" }
+    {
+      "label": "Residential Customer",
+      "sub": "Web, app, phone",
+      "kind": "user"
+    }
   ],
   "maxColWidth": 230,
   "rows": [
-    { "label": "Goals", "bold": true, "cells": ["Resolve on first contact", "Fix the fault in one visit", "Hit SLA and CSAT targets", "Get the supply restored fast"] },
-    { "label": "Pains", "bold": true, "cells": ["Five screens per call; no single customer view", "Arrives without parts or job history", "Reports built by hand in Excel", "Repeats the story at every contact"] },
-    { "label": "Key tasks", "bold": true, "cells": ["Identify caller, log case, find answer, escalate", "Accept job, travel, diagnose, record work", "Monitor queues, coach, approve exceptions", "Report outage, track status, rebook visit"] },
-    { "label": "Channels and devices", "bold": true, "cells": ["Desktop softphone, Service Console", "Tablet and phone, often offline", "Desktop, Omni-Channel supervisor", "WhatsApp, web chat, phone, portal"] },
-    { "label": "Salesforce must", "bold": true, "cells": ["Service Console with Customer 360 panel and Knowledge", "Field Service mobile app with offline sync", "Omni-Channel supervisor and service analytics", "Experience Cloud portal and Agentforce agent"] },
-    { "label": "Priority", "bold": true, "cells": [{ "text": "Phase 1", "kind": "success" }, { "text": "Phase 2", "kind": "warning" }, { "text": "Phase 1", "kind": "success" }, { "text": "Phase 2", "kind": "warning" }] }
+    {
+      "label": "Goals",
+      "bold": true,
+      "cells": [
+        "Resolve on first contact",
+        "Fix the fault in one visit",
+        "Hit SLA and CSAT targets",
+        "Get the supply restored fast"
+      ]
+    },
+    {
+      "label": "Pains",
+      "bold": true,
+      "cells": [
+        "Five screens per call; no single customer view",
+        "Arrives without parts or job history",
+        "Reports built by hand in Excel",
+        "Repeats the story at every contact"
+      ]
+    },
+    {
+      "label": "Key tasks",
+      "bold": true,
+      "cells": [
+        "Identify caller, log case, find answer, escalate",
+        "Accept job, travel, diagnose, record work",
+        "Monitor queues, coach, approve exceptions",
+        "Report outage, track status, rebook visit"
+      ]
+    },
+    {
+      "label": "Channels and devices",
+      "bold": true,
+      "cells": [
+        "Desktop softphone, Service Console",
+        "Tablet and phone, often offline",
+        "Desktop, Omni-Channel supervisor",
+        "WhatsApp, web chat, phone, portal"
+      ]
+    },
+    {
+      "label": "Salesforce must",
+      "bold": true,
+      "cells": [
+        "Service Console with Customer 360 panel and Knowledge",
+        "Field Service mobile app with offline sync",
+        "Omni-Channel supervisor and service analytics",
+        "Experience Cloud portal and Agentforce agent"
+      ]
+    },
+    {
+      "label": "Priority",
+      "bold": true,
+      "cells": [
+        { "text": "Phase 1", "kind": "success" },
+        { "text": "Phase 2", "kind": "warning" },
+        { "text": "Phase 1", "kind": "success" },
+        { "text": "Phase 2", "kind": "warning" }
+      ]
+    }
   ]
 }

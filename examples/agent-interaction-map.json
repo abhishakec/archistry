@@ -8,8 +8,14 @@
     "description": "Answers order, delivery and returns questions for signed-in customers, 24/7.",
     "users": ["Customer", "Service rep (copilot)"],
     "channels": ["Web chat", "WhatsApp", "Mobile app"],
-    "instructions": ["Be concise, friendly and never guess", "Confirm identity before any order data"],
-    "guardrails": ["Never give legal or financial advice", "Never reveal another customer's data"],
+    "instructions": [
+      "Be concise, friendly and never guess",
+      "Confirm identity before any order data"
+    ],
+    "guardrails": [
+      "Never give legal or financial advice",
+      "Never reveal another customer's data"
+    ],
     "variables": ["Verified Contact Id", "Language", "Channel"]
   },
   "topics": [
@@ -18,25 +24,78 @@
       "classification": "Customer asks where an order is, when it will arrive, or wants to change a delivery slot.",
       "scope": "Share status and ETA, rebook delivery. Not refunds or pricing.",
       "actions": [
-        { "id": "a_verify", "label": "Verify customer identity", "kind": "flow", "target": "Flow: Verify_Customer" },
-        { "id": "a_order", "label": "Get order and shipment status", "kind": "apex", "target": "Apex: OrderStatusService", "uses": ["oms"] },
-        { "id": "a_rebook", "label": "Rebook delivery slot", "kind": "api", "target": "API: Carrier Booking", "uses": ["carrier"] }
+        {
+          "id": "a_verify",
+          "label": "Verify customer identity",
+          "kind": "flow",
+          "target": "Flow: Verify_Customer"
+        },
+        {
+          "id": "a_order",
+          "label": "Get order and shipment status",
+          "kind": "apex",
+          "target": "Apex: OrderStatusService",
+          "uses": ["oms"]
+        },
+        {
+          "id": "a_rebook",
+          "label": "Rebook delivery slot",
+          "kind": "api",
+          "target": "API: Carrier Booking",
+          "uses": ["carrier"]
+        }
       ],
       "guardrails": ["Never promise a date the carrier has not confirmed"],
       "steps": [
-        { "id": "ask", "kind": "instruction", "label": "Ask for the order number or checkout email" },
-        { "id": "verify", "kind": "action", "label": "Verify customer identity", "resource": "Flow: Verify_Customer" },
-        { "id": "lookup", "kind": "action", "label": "Retrieve order and shipment status", "resource": "Apex: OrderStatusService" },
-        { "id": "explain", "kind": "prompt", "label": "Summarise status and ETA in plain language", "resource": "Order Status Summary" },
-        { "id": "rebook", "kind": "action", "label": "Rebook delivery slot", "resource": "API: Carrier Booking" }
+        {
+          "id": "ask",
+          "kind": "instruction",
+          "label": "Ask for the order number or checkout email"
+        },
+        {
+          "id": "verify",
+          "kind": "action",
+          "label": "Verify customer identity",
+          "resource": "Flow: Verify_Customer"
+        },
+        {
+          "id": "lookup",
+          "kind": "action",
+          "label": "Retrieve order and shipment status",
+          "resource": "Apex: OrderStatusService"
+        },
+        {
+          "id": "explain",
+          "kind": "prompt",
+          "label": "Summarise status and ETA in plain language",
+          "resource": "Order Status Summary"
+        },
+        {
+          "id": "rebook",
+          "kind": "action",
+          "label": "Rebook delivery slot",
+          "resource": "API: Carrier Booking"
+        }
       ],
       "flows": [
-        { "from": "start", "to": "ask", "label": "Customer asks about an order" },
+        {
+          "from": "start",
+          "to": "ask",
+          "label": "Customer asks about an order"
+        },
         { "from": "ask", "to": "verify", "label": "Order number provided" },
         { "from": "verify", "to": "lookup", "label": "Identity verified" },
         { "from": "lookup", "to": "explain", "label": "Order found" },
-        { "from": "explain", "to": "rebook", "label": "Order delayed and customer wants a new slot" },
-        { "from": "explain", "to": "end", "label": "Customer has what they need" },
+        {
+          "from": "explain",
+          "to": "rebook",
+          "label": "Order delayed and customer wants a new slot"
+        },
+        {
+          "from": "explain",
+          "to": "end",
+          "label": "Customer has what they need"
+        },
         { "from": "rebook", "to": "end", "label": "Slot confirmed" }
       ]
     },
@@ -45,9 +104,23 @@
       "classification": "Customer wants to return an item, asks about refund status or the returns policy.",
       "scope": "Check eligibility, create the return, explain policy. Refunds above 200 EUR go to a rep.",
       "actions": [
-        { "label": "Check return eligibility", "kind": "flow", "target": "Flow: Return_Eligibility", "uses": ["oms"] },
-        { "label": "Create return order", "kind": "flow", "target": "Flow: Create_Return" },
-        { "label": "Answer policy questions", "kind": "retriever", "target": "Knowledge: Returns policy", "uses": ["kb"] }
+        {
+          "label": "Check return eligibility",
+          "kind": "flow",
+          "target": "Flow: Return_Eligibility",
+          "uses": ["oms"]
+        },
+        {
+          "label": "Create return order",
+          "kind": "flow",
+          "target": "Flow: Create_Return"
+        },
+        {
+          "label": "Answer policy questions",
+          "kind": "retriever",
+          "target": "Knowledge: Returns policy",
+          "uses": ["kb"]
+        }
       ]
     },
     {
@@ -55,17 +128,48 @@
       "classification": "Customer asks about product features, compatibility, stock or care instructions.",
       "scope": "Answer from the product catalogue and knowledge base only.",
       "actions": [
-        { "label": "Search product knowledge", "kind": "retriever", "target": "Data Library: Product docs", "uses": ["dc"] },
-        { "label": "Draft a personalised answer", "kind": "prompt", "target": "Prompt: Product Answer" }
+        {
+          "label": "Search product knowledge",
+          "kind": "retriever",
+          "target": "Data Library: Product docs",
+          "uses": ["dc"]
+        },
+        {
+          "label": "Draft a personalised answer",
+          "kind": "prompt",
+          "target": "Prompt: Product Answer"
+        }
       ]
     }
   ],
-  "escalation": { "label": "Escalation", "target": "Omni-Channel: Tier 2 queue" },
+  "escalation": {
+    "label": "Escalation",
+    "target": "Omni-Channel: Tier 2 queue"
+  },
   "data": [
-    { "id": "dc", "label": "Data Cloud", "sub": "Unified profile, product docs" },
+    {
+      "id": "dc",
+      "label": "Data Cloud",
+      "sub": "Unified profile, product docs"
+    },
     { "id": "kb", "label": "Knowledge", "sub": "Policies and how-to articles" },
-    { "id": "oms", "label": "Order Management", "sub": "Orders, shipments, returns" },
-    { "id": "carrier", "label": "Carrier API", "sub": "Tracking and slot booking" }
+    {
+      "id": "oms",
+      "label": "Order Management",
+      "sub": "Orders, shipments, returns"
+    },
+    {
+      "id": "carrier",
+      "label": "Carrier API",
+      "sub": "Tracking and slot booking"
+    }
   ],
-  "trustLayer": ["Secure data retrieval", "Dynamic grounding", "Data masking", "Zero data retention", "Toxicity detection", "Audit trail"]
+  "trustLayer": [
+    "Secure data retrieval",
+    "Dynamic grounding",
+    "Data masking",
+    "Zero data retention",
+    "Toxicity detection",
+    "Audit trail"
+  ]
 }

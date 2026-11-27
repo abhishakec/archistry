@@ -70,6 +70,7 @@ export function build(spec, ctx) {
   const laneBoxes = [];
   const deferred = [];
   const allBars = [];
+  const labelCells = []; // labels drawn outside bars / beside milestones: dependency lines must avoid them
   const grid = headerRows[headerRows.length - 1] || [];
   lanes.forEach((lane, li) => {
     const k = d.kind(lane.kind || 'salesforce', false);
@@ -78,23 +79,34 @@ export function build(spec, ctx) {
     const items = [];
     for (const b of lane.bars || []) {
       const x0 = X.start(b.start), x1 = Math.max(X.end(b.end === undefined ? b.start : b.end), x0 + 8);
-      const lw = textWidth(b.label || '', 11, true) + 14;
-      const outside = lw > x1 - x0;
-      const ext = outside ? x1 + lw + 4 : x1;
-      let r = b.row !== undefined ? b.row : subs.findIndex((end) => end <= x0 - 4);
+      const label = String(b.label || '');
+      const lw = textWidth(label, 11, true) + 14;
+      // Label placement: inside; else wrapped on two lines inside; else outside on the side with room.
+      let mode = 'inside', lines = null;
+      if (lw > x1 - x0) {
+        const two = twoLines(label, 10);
+        if (two && two.w + 12 <= x1 - x0) { mode = 'wrap'; lines = two.lines; }
+        else mode = x1 + lw + 4 <= totalW || x0 - lw - 4 < 0 ? 'right' : 'left';
+      }
+      const extL = mode === 'left' ? x0 - lw - 4 : x0;
+      const extR = mode === 'right' ? x1 + lw + 4 : x1;
+      let r = b.row !== undefined ? b.row : subs.findIndex((end) => end <= extL - 4);
       if (r < 0) { r = subs.length; subs.push(0); }
       while (subs.length <= r) subs.push(0);
-      subs[r] = Math.max(subs[r], ext);
-      items.push({ b, x0, x1, r, outside });
+      subs[r] = Math.max(subs[r], extR);
+      items.push({ b, x0, x1, r, mode, lines, lw });
     }
     const ms = [];
     for (const m of lane.milestones || []) {
       const mx = X.point(m.date !== undefined ? m.date : m.at);
-      const lw = textWidth(m.label || '', 10, true) + 10;
-      let r = subs.findIndex((end) => end <= mx - 14);
+      const lw = textWidth(m.label || '', 10, true) + 12;
+      // label right of the diamond, or left of it when it would run past the end of the grid
+      const left = mx + 14 + lw > totalW && mx - 14 - lw >= 0;
+      const extL = left ? mx - 14 - lw : mx - 14;
+      let r = subs.findIndex((end) => end <= extL - 4);
       if (r < 0) { r = subs.length; subs.push(0); }
-      subs[r] = Math.max(subs[r], mx + 14 + lw);
-      ms.push({ m, mx, r });
+      subs[r] = Math.max(subs[r], left ? mx + 14 : mx + 14 + lw);
+      ms.push({ m, mx, r, left, lw });
     }
     const rowsN = Math.max(1, subs.length);
     const lh = LPAD * 2 + rowsN * ROWH + (rowsN - 1) * ROWGAP;
@@ -109,9 +121,11 @@ export function build(spec, ctx) {
       const bk = d.kind(b.kind || (b.status && STATUS_KIND[String(b.status).toLowerCase()]) || lane.kind || 'salesforce', false);
       const by = y + LPAD + it.r * (ROWH + ROWGAP);
       const w = it.x1 - it.x0;
-      const cell = d.node({ id: d.uid(b.id || 'bar_' + (b.label || '')), x: LW + it.x0, y: by, w, h: ROWH, value: it.outside ? '' : `<b>${h(b.label || '')}</b>`, style: { rounded: '1', arcSize: 10, absoluteArcSize: '1', fillColor: bk.fill, strokeColor: bk.stroke, strokeWidth: 1.5, fontColor: d.ink.text, fontSize: 11, whiteSpace: undefined, container: b.progress ? '1' : undefined, collapsible: b.progress ? '0' : undefined }, tooltip: b.note });
+      const value = it.mode === 'inside' ? `<b>${h(b.label || '')}</b>` : it.mode === 'wrap' ? `<b>${it.lines.map(h).join('<br>')}</b>` : '';
+      const cell = d.node({ id: d.uid(b.id || 'bar_' + (b.label || '')), x: LW + it.x0, y: by, w, h: ROWH, value, style: { rounded: '1', arcSize: 10, absoluteArcSize: '1', fillColor: bk.fill, strokeColor: bk.stroke, strokeWidth: 1.5, fontColor: d.ink.text, fontSize: it.mode === 'wrap' ? 10 : 11, whiteSpace: undefined, spacing: it.mode === 'wrap' ? 0 : undefined, container: b.progress ? '1' : undefined, collapsible: b.progress ? '0' : undefined }, tooltip: b.note });
       if (b.progress) d.node({ id: d.uid('prog'), x: 0, y: ROWH - 6, w: Math.max(4, w * clamp(b.progress, 0, 1)), h: 6, value: '', parent: cell.id, connectable: '0', style: { rounded: '1', arcSize: 6, absoluteArcSize: '1', fillColor: bk.stroke, strokeColor: 'none', part: '1' } });
-      if (it.outside) d.text(LW + it.x1 + 6, by, textWidth(b.label || '', 11, true) + 12, ROWH, `<b>${h(b.label || '')}</b>`, { fontSize: 11, verticalAlign: 'middle', whiteSpace: undefined });
+      if (it.mode === 'right') labelCells.push(d.text(LW + it.x1 + 6, by, it.lw - 2, ROWH, `<b>${h(b.label || '')}</b>`, { fontSize: 11, verticalAlign: 'middle', whiteSpace: undefined }));
+      if (it.mode === 'left') labelCells.push(d.text(LW + it.x0 - it.lw - 2, by, it.lw - 2, ROWH, `<b>${h(b.label || '')}</b>`, { fontSize: 11, verticalAlign: 'middle', align: 'right', whiteSpace: undefined }));
       if (b.id) barCells.set(b.id, cell);
       allBars.push(cell);
     }
@@ -121,7 +135,9 @@ export function build(spec, ctx) {
       const c = d.node({ id: d.uid(it.m.id || 'ms_' + (it.m.label || '')), x: LW + it.mx - 11, y: by + 4, w: 22, h: 22, value: '', style: { rhombus: '', fillColor: mk.stroke, strokeColor: mk.stroke }, tooltip: it.m.note });
       if (it.m.id) barCells.set(it.m.id, c);
       allBars.push(c);
-      d.text(LW + it.mx + 14, by, textWidth(it.m.label || '', 10, true) + 12, ROWH, `<b>${h(it.m.label || '')}</b>`, { fontSize: 10, verticalAlign: 'middle', whiteSpace: undefined });
+      labelCells.push(it.left
+        ? d.text(LW + it.mx - 14 - it.lw, by, it.lw, ROWH, `<b>${h(it.m.label || '')}</b>`, { fontSize: 10, verticalAlign: 'middle', align: 'right', whiteSpace: undefined })
+        : d.text(LW + it.mx + 14, by, it.lw, ROWH, `<b>${h(it.m.label || '')}</b>`, { fontSize: 10, verticalAlign: 'middle', whiteSpace: undefined }));
     }
     });
     y += lh;
@@ -153,7 +169,7 @@ export function build(spec, ctx) {
     if (!a || !b) { d.warnings.push(`dependency skipped — unknown bar id: ${!a ? dep.from : dep.to}`); continue; }
     deps.push({ from: a.id, to: b.id, fromSides: { E: 0, S: 6, N: 6 }, toSides: { W: 0, N: 6, S: 6 }, style: { strokeColor: '#747474', strokeWidth: 1, endArrow: 'block', endSize: 4, arcSize: 8 } });
   }
-  if (deps.length) d.routeEdges(deps, allBars, { bendCost: 8, soft: [{ x: 0, y: 0, w: LW + totalW, h: headH, cost: 60 }, { x: 0, y: 0, w: LW, h: bottom, cost: 60 }] });
+  if (deps.length) d.routeEdges(deps, allBars.concat(labelCells), { bendCost: 8, soft: [{ x: 0, y: 0, w: LW + totalW, h: headH, cost: 60 }, { x: 0, y: 0, w: LW, h: bottom, cost: 60 }] });
   d.node({ id: d.uid('frame'), x: 0, y: 0, w: LW + totalW, h: bottom, value: '', connectable: '0', style: { fillColor: 'none', strokeColor: d.ink.border, strokeWidth: 1.5, pointerEvents: '0' } });
   const statuses = new Set();
   for (const l of lanes) for (const b of l.bars || []) if (b.status && STATUS_KIND[String(b.status).toLowerCase()]) statuses.add(String(b.status).toLowerCase());
@@ -161,4 +177,17 @@ export function build(spec, ctx) {
   if (lanes.some((l) => (l.milestones || []).length)) d.legendExtra.push({ swatch: { style: { rhombus: '', rounded: '0', fillColor: d.kind('danger', false).stroke, strokeColor: d.kind('danger', false).stroke } }, label: 'Milestone' });
   void up10;
   return [finishPage(d)];
+}
+
+// Best split of a label over two lines (bold): returns { lines, w } or null for a single word.
+function twoLines(label, size) {
+  const words = label.split(/\s+/).filter(Boolean);
+  if (words.length < 2) return null;
+  let best = null;
+  for (let i = 1; i < words.length; i++) {
+    const a = words.slice(0, i).join(' '), b = words.slice(i).join(' ');
+    const w = Math.max(textWidth(a, size, true), textWidth(b, size, true));
+    if (!best || w < best.w) best = { lines: [a, b], w };
+  }
+  return best;
 }

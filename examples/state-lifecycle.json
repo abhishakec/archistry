@@ -6,9 +6,24 @@
     { "id": "start", "kind": "start" },
     { "id": "new", "kind": "state", "label": "New" },
     { "id": "working", "kind": "state", "label": "Working" },
-    { "id": "waiting", "kind": "state", "label": "Waiting on Customer", "color": "warning" },
-    { "id": "escalated", "kind": "state", "label": "Escalated", "color": "danger" },
-    { "id": "resolved", "kind": "state", "label": "Resolved", "color": "success" },
+    {
+      "id": "waiting",
+      "kind": "state",
+      "label": "Waiting on Customer",
+      "color": "warning"
+    },
+    {
+      "id": "escalated",
+      "kind": "state",
+      "label": "Escalated",
+      "color": "danger"
+    },
+    {
+      "id": "resolved",
+      "kind": "state",
+      "label": "Resolved",
+      "color": "success"
+    },
     { "id": "closed", "kind": "state", "label": "Closed", "color": "external" },
     { "id": "end", "kind": "end" }
   ],
@@ -17,7 +32,12 @@
     { "from": "new", "to": "working", "label": "Agent accepts" },
     { "from": "working", "to": "waiting", "label": "Info requested" },
     { "from": "waiting", "to": "working", "label": "Customer replies" },
-    { "from": "working", "to": "escalated", "label": "SLA breach or Tier 2 needed", "kind": "exception" },
+    {
+      "from": "working",
+      "to": "escalated",
+      "label": "SLA breach or Tier 2 needed",
+      "kind": "exception"
+    },
     { "from": "escalated", "to": "working", "label": "Specialist assigned" },
     { "from": "working", "to": "resolved", "label": "Solution provided" },
     { "from": "resolved", "to": "working", "label": "Customer reopens" },

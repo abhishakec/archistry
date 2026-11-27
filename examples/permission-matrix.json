@@ -3,7 +3,13 @@
   "title": "Object Permissions by Persona",
   "subtitle": "Permission set groups for the Service Cloud rollout — C = create, R = read, U = edit, D = delete",
   "rowHeader": "Object",
-  "columns": [ { "label": "Service Agent", "sub": "PSG" }, { "label": "Team Leader", "sub": "PSG" }, { "label": "Knowledge Author", "sub": "PSG" }, { "label": "Partner User", "sub": "PSG" }, { "label": "Integration", "sub": "PS" } ],
+  "columns": [
+    { "label": "Service Agent", "sub": "PSG" },
+    { "label": "Team Leader", "sub": "PSG" },
+    { "label": "Knowledge Author", "sub": "PSG" },
+    { "label": "Partner User", "sub": "PSG" },
+    { "label": "Integration", "sub": "PS" }
+  ],
   "rows": [
     { "section": "Standard objects" },
     { "label": "Account", "cells": ["R", "RU", "R", "R", "CRU"] },
@@ -11,10 +17,36 @@
     { "label": "Case", "cells": ["CRU", "CRUD", "R", "CR", "CRU"] },
     { "label": "Knowledge", "cells": ["R", "R", "CRUD", "R", "—"] },
     { "section": "Custom objects" },
-    { "label": "Service Visit", "sub": "Service_Visit__c", "cells": ["CRU", "CRUD", "—", "R", "CRU"] },
-    { "label": "Warranty Claim", "sub": "Warranty_Claim__c", "cells": ["CR", "CRUD", "—", "—", "CRU"] },
-    { "label": "Integration Log", "sub": "Integration_Log__c", "cells": ["—", "R", "—", "—", "CR"] }
+    {
+      "label": "Service Visit",
+      "sub": "Service_Visit__c",
+      "cells": ["CRU", "CRUD", "—", "R", "CRU"]
+    },
+    {
+      "label": "Warranty Claim",
+      "sub": "Warranty_Claim__c",
+      "cells": ["CR", "CRUD", "—", "—", "CRU"]
+    },
+    {
+      "label": "Integration Log",
+      "sub": "Integration_Log__c",
+      "cells": ["—", "R", "—", "—", "CR"]
+    }
   ],
-  "valueKinds": { "CRUD": "success", "CRU": "salesforce", "CR": "salesforce", "RU": "salesforce", "R": "warning", "—": "muted" },
-  "valueLabels": { "CRUD": "Full access", "CRU": "Create, read, edit", "CR": "Create and read", "RU": "Read and edit", "R": "Read only", "—": "No access" }
+  "valueKinds": {
+    "CRUD": "success",
+    "CRU": "salesforce",
+    "CR": "salesforce",
+    "RU": "salesforce",
+    "R": "warning",
+    "—": "muted"
+  },
+  "valueLabels": {
+    "CRUD": "Full access",
+    "CRU": "Create, read, edit",
+    "CR": "Create and read",
+    "RU": "Read and edit",
+    "R": "Read only",
+    "—": "No access"
+  }
 }

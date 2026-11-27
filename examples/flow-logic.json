@@ -5,13 +5,47 @@
   "direction": "TB",
   "nodes": [
     { "id": "start", "kind": "start", "label": "Case updated" },
-    { "id": "isHigh", "kind": "gateway", "label": "Priority = High and not Closed?" },
-    { "id": "getEnt", "kind": "system", "label": "Get Entitlement", "sub": "Get Records: Entitlement", "icon": "utility/database" },
+    {
+      "id": "isHigh",
+      "kind": "gateway",
+      "label": "Priority = High and not Closed?"
+    },
+    {
+      "id": "getEnt",
+      "kind": "system",
+      "label": "Get Entitlement",
+      "sub": "Get Records: Entitlement",
+      "icon": "utility/database"
+    },
     { "id": "hasSla", "kind": "gateway", "label": "Premium SLA?" },
-    { "id": "assign", "kind": "system", "label": "Assign to Tier 2 queue", "sub": "Update Records: Case", "icon": "utility/database" },
-    { "id": "notify", "kind": "system", "label": "Notify duty manager", "sub": "Action: Send Slack notification", "icon": "standard/slack" },
-    { "id": "task", "kind": "system", "label": "Create follow-up task", "sub": "Create Records: Task", "icon": "utility/database" },
-    { "id": "log", "kind": "task", "label": "Log fault", "sub": "Create Records: Integration_Log__c", "color": "danger" },
+    {
+      "id": "assign",
+      "kind": "system",
+      "label": "Assign to Tier 2 queue",
+      "sub": "Update Records: Case",
+      "icon": "utility/database"
+    },
+    {
+      "id": "notify",
+      "kind": "system",
+      "label": "Notify duty manager",
+      "sub": "Action: Send Slack notification",
+      "icon": "standard/slack"
+    },
+    {
+      "id": "task",
+      "kind": "system",
+      "label": "Create follow-up task",
+      "sub": "Create Records: Task",
+      "icon": "utility/database"
+    },
+    {
+      "id": "log",
+      "kind": "task",
+      "label": "Log fault",
+      "sub": "Create Records: Integration_Log__c",
+      "color": "danger"
+    },
     { "id": "end", "kind": "end", "label": "End" }
   ],
   "edges": [

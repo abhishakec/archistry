@@ -10,26 +10,51 @@
     { "label": "Follow up", "sub": "Service manager", "kind": "ai" }
   ],
   "rows": [
-    { "label": "MVP", "sub": "Release 1", "kind": "success", "cells": [
-      [ { "label": "See today's appointments", "badge": "3" }, { "label": "Assign work orders by skill", "badge": "8" } ],
-      [ { "label": "Navigate to the customer", "badge": "2" } ],
-      [ { "label": "View asset history", "badge": "5" }, { "label": "Capture work steps", "badge": "5" } ],
-      [ { "label": "Collect customer signature", "badge": "3" } ],
-      [ { "label": "Send service report", "badge": "5" } ]
-    ] },
-    { "label": "Release 2", "kind": "warning", "cells": [
-      [ { "label": "Optimise schedule automatically", "badge": "13" } ],
-      [ { "label": "Notify customer of ETA", "badge": "5" } ],
-      [ { "label": "Order parts from van stock", "badge": "8" } ],
-      [ { "label": "Take payment on site", "badge": "8" } ],
-      [ { "label": "Trigger satisfaction survey", "badge": "3" } ]
-    ] },
-    { "label": "Later", "kind": "muted", "cells": [
-      [],
-      [],
-      [ { "label": "Agentforce troubleshooting guide", "kind": "ai", "badge": "13" } ],
-      [],
-      [ { "label": "Predict next maintenance", "kind": "ai", "badge": "13" } ]
-    ] }
+    {
+      "label": "MVP",
+      "sub": "Release 1",
+      "kind": "success",
+      "cells": [
+        [
+          { "label": "See today's appointments", "badge": "3" },
+          { "label": "Assign work orders by skill", "badge": "8" }
+        ],
+        [{ "label": "Navigate to the customer", "badge": "2" }],
+        [
+          { "label": "View asset history", "badge": "5" },
+          { "label": "Capture work steps", "badge": "5" }
+        ],
+        [{ "label": "Collect customer signature", "badge": "3" }],
+        [{ "label": "Send service report", "badge": "5" }]
+      ]
+    },
+    {
+      "label": "Release 2",
+      "kind": "warning",
+      "cells": [
+        [{ "label": "Optimise schedule automatically", "badge": "13" }],
+        [{ "label": "Notify customer of ETA", "badge": "5" }],
+        [{ "label": "Order parts from van stock", "badge": "8" }],
+        [{ "label": "Take payment on site", "badge": "8" }],
+        [{ "label": "Trigger satisfaction survey", "badge": "3" }]
+      ]
+    },
+    {
+      "label": "Later",
+      "kind": "muted",
+      "cells": [
+        [],
+        [],
+        [
+          {
+            "label": "Agentforce troubleshooting guide",
+            "kind": "ai",
+            "badge": "13"
+          }
+        ],
+        [],
+        [{ "label": "Predict next maintenance", "kind": "ai", "badge": "13" }]
+      ]
+    }
   ]
 }

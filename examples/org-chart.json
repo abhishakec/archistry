@@ -3,26 +3,53 @@
   "title": "Salesforce Programme — Delivery Organisation",
   "subtitle": "Reporting lines for the Service Cloud + Agentforce rollout",
   "root": {
-    "label": "Programme Sponsor", "sub": "Chief Customer Officer", "icon": "utility/user",
+    "label": "Programme Sponsor",
+    "sub": "Chief Customer Officer",
+    "icon": "utility/user",
     "children": [
-      { "label": "Product Owner", "sub": "Service Operations", "icon": "utility/user",
+      {
+        "label": "Product Owner",
+        "sub": "Service Operations",
+        "icon": "utility/user",
         "children": [
           { "label": "Business Analysts", "sub": "2 FTE" },
           { "label": "Change & Training Lead", "sub": "1 FTE" },
           { "label": "Super Users", "sub": "8 champions" },
           { "label": "UAT Lead", "sub": "1 FTE" }
-        ] },
-      { "label": "Solution Architect", "sub": "Design authority", "icon": "utility/user", "kind": "ai",
+        ]
+      },
+      {
+        "label": "Solution Architect",
+        "sub": "Design authority",
+        "icon": "utility/user",
+        "kind": "ai",
         "children": [
           { "label": "Technical Architect", "sub": "Integration, security" },
           { "label": "Data Architect", "sub": "Data Cloud, migration" }
-        ] },
-      { "label": "Delivery Lead", "sub": "Scrum of scrums", "icon": "utility/user",
+        ]
+      },
+      {
+        "label": "Delivery Lead",
+        "sub": "Scrum of scrums",
+        "icon": "utility/user",
         "children": [
-          { "label": "Core Squad", "sub": "Admins, developers", "kind": "salesforce" },
-          { "label": "Agentforce Squad", "sub": "Prompt + agent builders", "kind": "ai" },
-          { "label": "QA & Release", "sub": "Test automation, DevOps", "kind": "success" }
-        ] }
+          {
+            "label": "Core Squad",
+            "sub": "Admins, developers",
+            "kind": "salesforce"
+          },
+          {
+            "label": "Agentforce Squad",
+            "sub": "Prompt + agent builders",
+            "kind": "ai"
+          },
+          {
+            "label": "QA & Release",
+            "sub": "Test automation, DevOps",
+            "kind": "success"
+          }
+        ]
+      }
     ]
   }
 }

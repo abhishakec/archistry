@@ -6,16 +6,29 @@
   "yAxis": { "label": "Business value", "low": "Low", "high": "High" },
   "quadrants": [
     { "label": "Quick wins", "sub": "Do first — MVP", "kind": "success" },
-    { "label": "Strategic bets", "sub": "Plan and phase", "kind": "salesforce" },
+    {
+      "label": "Strategic bets",
+      "sub": "Plan and phase",
+      "kind": "salesforce"
+    },
     { "label": "Fill-ins", "sub": "Do if capacity allows", "kind": "muted" },
-    { "label": "Reconsider", "sub": "Challenge the requirement", "kind": "warning" }
+    {
+      "label": "Reconsider",
+      "sub": "Challenge the requirement",
+      "kind": "warning"
+    }
   ],
   "items": [
     { "label": "Case auto-routing", "x": 0.18, "y": 0.86 },
     { "label": "Knowledge search", "x": 0.3, "y": 0.72 },
     { "label": "Agentforce order status", "x": 0.42, "y": 0.92, "kind": "ai" },
     { "label": "Data Cloud unification", "x": 0.82, "y": 0.88, "kind": "data" },
-    { "label": "ERP real-time sync", "x": 0.7, "y": 0.68, "kind": "integration" },
+    {
+      "label": "ERP real-time sync",
+      "x": 0.7,
+      "y": 0.68,
+      "kind": "integration"
+    },
     { "label": "Email templates refresh", "x": 0.15, "y": 0.3 },
     { "label": "Custom mobile app", "x": 0.88, "y": 0.25 },
     { "label": "Legacy report rebuild", "x": 0.62, "y": 0.18 }

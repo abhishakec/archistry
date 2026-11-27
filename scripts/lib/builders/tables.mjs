@@ -40,16 +40,36 @@ const REL = {
 };
 const REL_ALIAS = { md: 'master-detail', masterdetail: 'master-detail', lk: 'lookup', 'm:n': 'many-to-many', junction: 'many-to-many', '1:1': 'one-to-one', required: 'required-lookup', dependency: 'uses', inherits: 'extends', realizes: 'implements', 'external-lookup': 'external', 'indirect-lookup': 'external', self: 'hierarchy' };
 
+// Salesforce data-model notation (architect.salesforce.com, Data Model Notation):
+// "#" marks a field in the logical unique key, "•" any other attribute.
+// Entity styling: focus-cloud colour = comes with the cloud in focus; white + dark border = another
+// licence, not extended; light grey + dark border = another licence, extended by the focus cloud;
+// no border = virtual (external API / Salesforce Connect); dashed = record type; dotted = virtual subtype.
+const LICENSE = {
+  focus: null,
+  other: { fill: '#ffffff', stroke: '#2b2826', label: 'Object from another licence (not extended)' },
+  extended: { fill: '#e5e5e5', stroke: '#2b2826', label: 'Object from another licence, extended here' },
+};
+const LICENSE_ALIAS = { platform: 'other', 'other-license': 'other', 'other-licence': 'other', extends: 'extended', extend: 'extended' };
+const MODELED = {
+  object: null,
+  'record-type': { style: { dashed: '1', dashPattern: '6 4' }, label: 'Modelled as a record type' },
+  virtual: { style: { strokeColor: 'none' }, label: 'Virtual entity (external API / Salesforce Connect)' },
+  'virtual-subtype': { style: { dashed: '1', dashPattern: '1 3' }, label: 'Virtual subtype (no record type or object)' },
+};
+const MODELED_ALIAS = { recordtype: 'record-type', 'record type': 'record-type', rt: 'record-type', external: 'virtual', connect: 'virtual', subtype: 'virtual-subtype' };
+
 function fieldLine(d, f, isClass) {
   if (typeof f === 'string') {
-    const m = f.match(/^([#+*~-])\s*(.*)$/);
-    const mark = m ? m[1] : (isClass ? '' : '+');
+    const m = f.match(/^([#+*~•-])\s*(.*)$/);
+    let mark = m ? m[1] : (isClass ? '' : '•');
+    if (!isClass && mark !== '#') mark = '•';
     const body = m ? m[2] : f;
     const parts = body.split(/\s*:\s*/);
     return `${mark ? h(mark) + ' ' : ''}${h(parts[0])}${parts.length > 1 ? small(' : ' + h(parts.slice(1).join(': ')), d.ink.sub, 11) : ''}`;
   }
   const key = f.key === true || ['pk', 'ext', 'id', 'key', 'unique'].includes(String(f.key || '').toLowerCase());
-  const mark = isClass ? (f.visibility === 'private' ? '-' : f.visibility === 'protected' ? '#' : '+') : (key ? '#' : '+');
+  const mark = isClass ? (f.visibility === 'private' ? '-' : f.visibility === 'protected' ? '#' : '+') : (key ? '#' : '•');
   let s = `${h(mark)} ${key && !isClass ? '<b>' + h(f.name) + '</b>' : h(f.name)}`;
   if (f.type) s += small(' : ' + h(f.type), d.ink.sub, 11);
   if (f.required && !isClass) s += small(' *', d.kind('danger', false).stroke, 11);
@@ -64,6 +84,7 @@ export function build(spec, ctx) {
   const maxFields = spec.maxFields || 12;
   const byId = new Map();
   const kindsSeen = new Map();
+  const modsSeen = new Map();
   for (const e of ents) {
     e.id = e.id || e.api || e.label;
     if (!e.label) e.label = e.id;
@@ -71,7 +92,16 @@ export function build(spec, ctx) {
     let kind = String(e.kind || (isClass ? 'class' : (/__c$/.test(e.api || e.id) ? 'custom' : /__x$/.test(e.api || e.id) ? 'external' : /__(dlm|dll)$/.test(e.api || e.id) ? 'data' : /__(e|mdt|b)$/.test(e.api || e.id) ? 'bigobject' : 'standard'))).toLowerCase();
     if (!ENTITY_KINDS[kind]) kind = isClass ? 'class' : 'standard';
     e._ek = ENTITY_KINDS[kind];
-    kindsSeen.set(e._ek.label, e._ek.kind);
+    if (!isClass) {
+      const lk = String(e.license || e.licence || 'focus').toLowerCase();
+      e._lic = LICENSE[LICENSE_ALIAS[lk] || lk] || null;
+      const mk = String(e.modeled || e.modelled || 'object').toLowerCase();
+      e._mod = MODELED[MODELED_ALIAS[mk] || mk] || null;
+      if (e.license && !(LICENSE_ALIAS[lk] || lk in LICENSE)) d.warnings.push(`unknown license "${e.license}" on ${e.id}: use focus, other or extended`);
+      if (e.modeled && !(MODELED_ALIAS[mk] || mk in MODELED)) d.warnings.push(`unknown modeled "${e.modeled}" on ${e.id}: use object, record-type, virtual or virtual-subtype`);
+    }
+    if (e._lic) kindsSeen.set(e._lic.label, e._lic); else kindsSeen.set(e._ek.label, e._ek.kind);
+    if (e._mod) modsSeen.set(e._mod.label, e._mod.style);
     // header + body text
     const api = e.api && e.api !== e.label ? e.api : null;
     let head = '';
@@ -196,8 +226,8 @@ export function build(spec, ctx) {
   const cells = new Map();
   for (const e of ents) {
     const p = place.get(e.id);
-    const k = d.kind(e._ek.kind, false);
-    const cell = d.node({ id: d.uid(e.id), x: p.x, y: p.y, w: e._w, h: e._h, value: e._head, style: { swimlane: '', startSize: e._hh, horizontal: '1', rounded: '1', arcSize: 16, absoluteArcSize: '1', fillColor: k.fill, swimlaneFillColor: '#ffffff', strokeColor: k.stroke, strokeWidth: 1.5, fontColor: d.ink.text, fontSize: 13, fontStyle: 0, align: e._icon ? 'left' : 'center', spacingLeft: e._icon ? 44 : 4, collapsible: '0', recursiveResize: '0', container: '1' }, link: e.link, tooltip: e.description || e.tooltip });
+    const k = e._lic || d.kind(e._ek.kind, false);
+    const cell = d.node({ id: d.uid(e.id), x: p.x, y: p.y, w: e._w, h: e._h, value: e._head, style: Object.assign({ swimlane: '', startSize: e._hh, horizontal: '1', rounded: '1', arcSize: 16, absoluteArcSize: '1', fillColor: k.fill, swimlaneFillColor: '#ffffff', strokeColor: k.stroke, strokeWidth: 1.5, fontColor: d.ink.text, fontSize: 13, fontStyle: 0, align: e._icon ? 'left' : 'center', spacingLeft: e._icon ? 44 : 4, collapsible: '0', recursiveResize: '0', container: '1' }, e._mod ? e._mod.style : {}), link: e.link, tooltip: e.description || e.tooltip });
     if (e._icon) d.icon(e._icon.key, 10, Math.round((e._hh - 26) / 2), 26, cell.id);
     if (e._body) d.node({ id: d.uid(e.id + '_fields'), x: 0, y: e._hh, w: e._w, h: e._bh, value: e._body, parent: cell.id, connectable: '0', style: { text: '', fillColor: 'none', strokeColor: 'none', align: 'left', verticalAlign: 'top', spacingLeft: 10, spacingTop: 5, fontSize: 12, fontColor: d.ink.text, whiteSpace: undefined, part: '1', overflow: 'hidden' } });
     cells.set(e.id, cell);
@@ -210,8 +240,12 @@ export function build(spec, ctx) {
     return { from: cells.get(r.from).id, to: cells.get(r.to).id, label: r.label ? h(r.label) : '', style: st, tooltip: r.note };
   });
   if (links.length) d.routeEdges(links, [...cells.values()], { bendCost: 18 });
-  for (const [label, kind] of kindsSeen) { const k = d.palette.resolve(kind); d.legendExtra.push({ swatch: { style: { fillColor: k.fill, strokeColor: k.stroke, strokeWidth: 1.5 } }, label }); }
+  for (const [label, kind] of kindsSeen) { const k = typeof kind === 'object' ? kind : d.palette.resolve(kind); d.legendExtra.push({ swatch: { style: { fillColor: k.fill, strokeColor: k.stroke, strokeWidth: 1.5 } }, label }); }
+  for (const [label, style] of modsSeen) d.legendExtra.push({ swatch: { style: Object.assign({ fillColor: '#ffffff', strokeColor: d.ink.text, strokeWidth: 1.5 }, style, style.strokeColor === 'none' ? { fillColor: '#e5e5e5' } : {}) }, label });
   for (const [label, style] of relSeen) d.legendExtra.push({ line: 'x', style: Object.assign({ startSize: 8, endSize: 8 }, style, { _legend: undefined }), label });
-  if (!isClass && ents.some((e) => (e.fields || []).length)) d.legendExtra.push({ swatch: { text: '#', style: { fillColor: '#ffffff', strokeColor: d.ink.border, fontColor: d.ink.text } }, label: 'Key / external ID field' });
+  if (!isClass && ents.some((e) => (e.fields || []).length)) {
+    d.legendExtra.push({ swatch: { text: '#', style: { fillColor: '#ffffff', strokeColor: d.ink.border, fontColor: d.ink.text } }, label: 'Logical unique key / external ID' });
+    d.legendExtra.push({ swatch: { text: '•', style: { fillColor: '#ffffff', strokeColor: d.ink.border, fontColor: d.ink.text } }, label: 'Other attribute' });
+  }
   return [finishPage(d)];
 }

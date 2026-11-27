@@ -4,28 +4,49 @@
   "subtitle": "Experience Cloud pages by audience: green is public, blue needs customer login, indigo is partner-only (illustrative)",
   "direction": "TB",
   "nodeWidth": 190,
-  "legendLabels": { "success": "Public (guest)", "salesforce": "Customer login", "ai": "Partner login" },
+  "legendLabels": {
+    "success": "Public (guest)",
+    "salesforce": "Customer login",
+    "ai": "Partner login"
+  },
   "root": {
-    "label": "Northwind Portal", "sub": "Experience Cloud site", "icon": "product/experience_cloud",
+    "label": "Northwind Portal",
+    "sub": "Experience Cloud site",
+    "icon": "product/experience_cloud",
     "children": [
-      { "label": "Public pages", "sub": "Guest user", "kind": "success", "children": [
-        { "label": "Home", "sub": "Search, Featured Articles" },
-        { "label": "Help Centre", "sub": "Knowledge, Article Detail" },
-        { "label": "Contact Us", "sub": "Screen Flow: Create Case" },
-        { "label": "Login", "sub": "Login, Self-Register" }
-      ] },
-      { "label": "Customer area", "sub": "Customer Community Plus", "kind": "salesforce", "children": [
-        { "label": "My Cases", "sub": "Case List, Case Detail" },
-        { "label": "My Account", "sub": "Account Details, Contacts" },
-        { "label": "My Orders", "sub": "Order List, Reorder Flow" },
-        { "label": "Chat with us", "sub": "Embedded Service Chat" }
-      ] },
-      { "label": "Partner area", "sub": "Partner Community", "kind": "ai", "children": [
-        { "label": "Deal Registration", "sub": "Lead and Opportunity List" },
-        { "label": "Partner Resources", "sub": "Files, Knowledge" },
-        { "label": "Partner Dashboard", "sub": "Reports and Dashboards" },
-        { "label": "Training", "sub": "Course List, Certificates" }
-      ] }
+      {
+        "label": "Public pages",
+        "sub": "Guest user",
+        "kind": "success",
+        "children": [
+          { "label": "Home", "sub": "Search, Featured Articles" },
+          { "label": "Help Centre", "sub": "Knowledge, Article Detail" },
+          { "label": "Contact Us", "sub": "Screen Flow: Create Case" },
+          { "label": "Login", "sub": "Login, Self-Register" }
+        ]
+      },
+      {
+        "label": "Customer area",
+        "sub": "Customer Community Plus",
+        "kind": "salesforce",
+        "children": [
+          { "label": "My Cases", "sub": "Case List, Case Detail" },
+          { "label": "My Account", "sub": "Account Details, Contacts" },
+          { "label": "My Orders", "sub": "Order List, Reorder Flow" },
+          { "label": "Chat with us", "sub": "Embedded Service Chat" }
+        ]
+      },
+      {
+        "label": "Partner area",
+        "sub": "Partner Community",
+        "kind": "ai",
+        "children": [
+          { "label": "Deal Registration", "sub": "Lead and Opportunity List" },
+          { "label": "Partner Resources", "sub": "Files, Knowledge" },
+          { "label": "Partner Dashboard", "sub": "Reports and Dashboards" },
+          { "label": "Training", "sub": "Course List, Certificates" }
+        ]
+      }
     ]
   }
 }

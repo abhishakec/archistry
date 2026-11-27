@@ -4,30 +4,108 @@
   "subtitle": "API-led integration between Salesforce and back-office systems, with pattern, protocol and timing on every interface",
   "layout": "row",
   "children": [
-    { "zone": "Salesforce", "kind": "salesforce", "children": [
-      { "id": "sales", "label": "Sales Cloud", "sub": "Opportunity, Quote, Order", "icon": "product/sales_cloud" },
-      { "id": "pe", "label": "Platform Events", "sub": "Order_Activated__e", "icon": "standard/event" },
-      { "id": "ext", "label": "External Services", "sub": "Named credential + OpenAPI", "icon": "standard/connected_apps" }
-    ] },
-    { "zone": "MuleSoft Anypoint", "kind": "integration", "layout": "column", "children": [
-      { "id": "xapi", "label": "Experience API", "sub": "salesforce-orders-xapi", "icon": "product/mulesoft" },
-      { "id": "papi", "label": "Process API", "sub": "order-fulfilment-papi", "icon": "product/mulesoft" },
-      { "id": "sapi", "label": "System APIs", "sub": "sap-sapi · tax-sapi · carrier-sapi", "icon": "product/mulesoft" }
-    ] },
-    { "zone": "Back office", "kind": "external", "children": [
-      { "id": "sap", "label": "SAP S/4HANA", "sub": "Orders, invoices", "icon": "utility/database" },
-      { "id": "tax", "label": "Tax engine", "sub": "Vertex", "icon": "utility/integration" },
-      { "id": "carrier", "label": "Carrier hub", "sub": "Shipment tracking", "icon": "utility/integration" }
-    ] }
+    {
+      "zone": "Salesforce",
+      "kind": "salesforce",
+      "children": [
+        {
+          "id": "sales",
+          "label": "Sales Cloud",
+          "sub": "Opportunity, Quote, Order",
+          "icon": "product/sales_cloud"
+        },
+        {
+          "id": "pe",
+          "label": "Platform Events",
+          "sub": "Order_Activated__e",
+          "icon": "standard/event"
+        },
+        {
+          "id": "ext",
+          "label": "External Services",
+          "sub": "Named credential + OpenAPI",
+          "icon": "standard/connected_apps"
+        }
+      ]
+    },
+    {
+      "zone": "MuleSoft Anypoint",
+      "kind": "integration",
+      "layout": "column",
+      "children": [
+        {
+          "id": "xapi",
+          "label": "Experience API",
+          "sub": "salesforce-orders-xapi",
+          "icon": "product/mulesoft"
+        },
+        {
+          "id": "papi",
+          "label": "Process API",
+          "sub": "order-fulfilment-papi",
+          "icon": "product/mulesoft"
+        },
+        {
+          "id": "sapi",
+          "label": "System APIs",
+          "sub": "sap-sapi · tax-sapi · carrier-sapi",
+          "icon": "product/mulesoft"
+        }
+      ]
+    },
+    {
+      "zone": "Back office",
+      "kind": "external",
+      "children": [
+        {
+          "id": "sap",
+          "label": "SAP S/4HANA",
+          "sub": "Orders, invoices",
+          "icon": "utility/database"
+        },
+        {
+          "id": "tax",
+          "label": "Tax engine",
+          "sub": "Vertex",
+          "icon": "utility/integration"
+        },
+        {
+          "id": "carrier",
+          "label": "Carrier hub",
+          "sub": "Shipment tracking",
+          "icon": "utility/integration"
+        }
+      ]
+    }
   ],
   "links": [
-    { "from": "ext", "to": "xapi", "label": "Request-reply · REST", "note": "Price and tax quote, < 2 s", "step": 1 },
-    { "from": "pe", "to": "xapi", "label": "Fire-and-forget · Pub/Sub API", "note": "On order activation", "style": "async", "step": 2 },
+    {
+      "from": "ext",
+      "to": "xapi",
+      "label": "Request-reply · REST",
+      "note": "Price and tax quote, < 2 s",
+      "step": 1
+    },
+    {
+      "from": "pe",
+      "to": "xapi",
+      "label": "Fire-and-forget · Pub/Sub API",
+      "note": "On order activation",
+      "style": "async",
+      "step": 2
+    },
     { "from": "xapi", "to": "papi", "label": "REST", "step": 3 },
     { "from": "papi", "to": "sapi", "label": "REST", "step": 4 },
     { "from": "sapi", "to": "sap", "label": "OData / IDoc", "step": 5 },
     { "from": "sapi", "to": "tax", "label": "REST" },
     { "from": "sapi", "to": "carrier", "label": "REST" },
-    { "from": "sap", "to": "sales", "label": "Batch sync · Bulk API 2.0", "note": "Invoices nightly", "style": "batch", "step": 6 }
+    {
+      "from": "sap",
+      "to": "sales",
+      "label": "Batch sync · Bulk API 2.0",
+      "note": "Invoices nightly",
+      "style": "batch",
+      "step": 6
+    }
   ]
 }

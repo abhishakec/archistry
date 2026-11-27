@@ -4,14 +4,90 @@
   "subtitle": "Test levels, ownership, environments and exit criteria for the Service Cloud release",
   "rowHeader": "Test level",
   "maxColWidth": 240,
-  "columns": [ { "label": "Scope" }, { "label": "Owner" }, { "label": "Environment" }, { "label": "Tooling" }, { "label": "Exit criteria" } ],
+  "columns": [
+    { "label": "Scope" },
+    { "label": "Owner" },
+    { "label": "Environment" },
+    { "label": "Tooling" },
+    { "label": "Exit criteria" }
+  ],
   "rows": [
-    { "label": "Unit", "bold": true, "cells": ["Apex classes, triggers, LWC", "Developers", "Scratch org / dev sandbox", "Apex tests, Jest", "85% coverage, all tests pass"] },
-    { "label": "Static analysis", "bold": true, "cells": ["Code quality and security rules", "Developers", "CI", "Salesforce Code Analyzer", "No high-severity violations"] },
-    { "label": "System integration", "bold": true, "cells": ["End-to-end flows across systems", "QA team", "SIT", "Provar, Postman", "No open severity 1 or 2 defects"] },
-    { "label": "Agent testing", "bold": true, "cells": ["Topic selection, action use, guardrails", "QA + agent builder", "SIT", "Agentforce Testing Center", "95% utterances routed to the right topic"] },
-    { "label": "User acceptance", "bold": true, "cells": ["Business scenarios by persona", "Product owner, super users", "UAT (Partial Copy)", "Test scripts in test management tool", "All must-have scenarios signed off"] },
-    { "label": "Performance", "bold": true, "cells": ["Peak case volume, large data volumes", "Technical architect", "Staging (Full Copy)", "Scale Test", "Page loads under 3 s at peak"] },
-    { "label": "Regression", "bold": true, "cells": ["Critical paths after each release", "QA team", "Staging", "Automated suite in CI", "100% of critical paths pass"] }
+    {
+      "label": "Unit",
+      "bold": true,
+      "cells": [
+        "Apex classes, triggers, LWC",
+        "Developers",
+        "Scratch org / dev sandbox",
+        "Apex tests, Jest",
+        "85% coverage, all tests pass"
+      ]
+    },
+    {
+      "label": "Static analysis",
+      "bold": true,
+      "cells": [
+        "Code quality and security rules",
+        "Developers",
+        "CI",
+        "Salesforce Code Analyzer",
+        "No high-severity violations"
+      ]
+    },
+    {
+      "label": "System integration",
+      "bold": true,
+      "cells": [
+        "End-to-end flows across systems",
+        "QA team",
+        "SIT",
+        "Provar, Postman",
+        "No open severity 1 or 2 defects"
+      ]
+    },
+    {
+      "label": "Agent testing",
+      "bold": true,
+      "cells": [
+        "Topic selection, action use, guardrails",
+        "QA + agent builder",
+        "SIT",
+        "Agentforce Testing Center",
+        "95% utterances routed to the right topic"
+      ]
+    },
+    {
+      "label": "User acceptance",
+      "bold": true,
+      "cells": [
+        "Business scenarios by persona",
+        "Product owner, super users",
+        "UAT (Partial Copy)",
+        "Test scripts in test management tool",
+        "All must-have scenarios signed off"
+      ]
+    },
+    {
+      "label": "Performance",
+      "bold": true,
+      "cells": [
+        "Peak case volume, large data volumes",
+        "Technical architect",
+        "Staging (Full Copy)",
+        "Scale Test",
+        "Page loads under 3 s at peak"
+      ]
+    },
+    {
+      "label": "Regression",
+      "bold": true,
+      "cells": [
+        "Critical paths after each release",
+        "QA team",
+        "Staging",
+        "Automated suite in CI",
+        "100% of critical paths pass"
+      ]
+    }
   ]
 }

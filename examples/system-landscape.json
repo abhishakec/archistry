@@ -4,31 +4,107 @@
   "subtitle": "Customer-facing platforms and the systems of record behind them (level 1 — executives and kickoff)",
   "layout": "column",
   "children": [
-    { "zone": "Experience", "kind": "user", "layout": "row", "children": [
-      { "id": "web", "label": "Website", "icon": "platform/web" },
-      { "id": "app", "label": "Mobile app", "icon": "platform/apps_mobile" },
-      { "id": "store", "label": "Stores", "icon": "industry/retail" },
-      { "id": "cc", "label": "Contact centre", "icon": "platform/channel" }
-    ] },
-    { "zone": "Salesforce Customer 360", "kind": "salesforce", "layout": "row", "children": [
-      { "id": "sales", "label": "Sales Cloud", "icon": "product/sales_cloud" },
-      { "id": "service", "label": "Service Cloud", "icon": "product/service_cloud" },
-      { "id": "mktg", "label": "Marketing Cloud", "icon": "product/marketing_cloud", "kind": "engagement" },
-      { "id": "commerce", "label": "Commerce Cloud", "icon": "product/commerce_cloud" },
-      { "id": "dc", "label": "Data Cloud", "icon": "standard/data_cloud", "kind": "data" },
-      { "id": "af", "label": "Agentforce", "icon": "standard/agent_astro", "kind": "ai" }
-    ] },
-    { "zone": "Integration", "kind": "integration", "layout": "row", "children": [
-      { "id": "mule", "label": "MuleSoft Anypoint", "sub": "API-led connectivity", "icon": "product/mulesoft" },
-      { "id": "events", "label": "Event bus", "sub": "Platform Events / Kafka", "icon": "utility/event" }
-    ] },
-    { "zone": "Systems of record", "kind": "external", "layout": "row", "children": [
-      { "id": "erp", "label": "ERP", "sub": "SAP S/4HANA", "icon": "utility/database" },
-      { "id": "pim", "label": "Product information", "icon": "utility/database" },
-      { "id": "wms", "label": "Warehouse", "icon": "utility/package" },
-      { "id": "dwh", "label": "Data warehouse", "sub": "Snowflake", "icon": "utility/database" },
-      { "id": "idp", "label": "Identity provider", "icon": "utility/lock", "kind": "security" }
-    ] }
+    {
+      "zone": "Experience",
+      "kind": "user",
+      "layout": "row",
+      "children": [
+        { "id": "web", "label": "Website", "icon": "platform/web" },
+        { "id": "app", "label": "Mobile app", "icon": "platform/apps_mobile" },
+        { "id": "store", "label": "Stores", "icon": "industry/retail" },
+        { "id": "cc", "label": "Contact centre", "icon": "platform/channel" }
+      ]
+    },
+    {
+      "zone": "Salesforce Customer 360",
+      "kind": "salesforce",
+      "layout": "row",
+      "children": [
+        {
+          "id": "sales",
+          "label": "Sales Cloud",
+          "icon": "product/sales_cloud"
+        },
+        {
+          "id": "service",
+          "label": "Service Cloud",
+          "icon": "product/service_cloud"
+        },
+        {
+          "id": "mktg",
+          "label": "Marketing Cloud",
+          "icon": "product/marketing_cloud",
+          "kind": "engagement"
+        },
+        {
+          "id": "commerce",
+          "label": "Commerce Cloud",
+          "icon": "product/commerce_cloud"
+        },
+        {
+          "id": "dc",
+          "label": "Data Cloud",
+          "icon": "standard/data_cloud",
+          "kind": "data"
+        },
+        {
+          "id": "af",
+          "label": "Agentforce",
+          "icon": "standard/agent_astro",
+          "kind": "ai"
+        }
+      ]
+    },
+    {
+      "zone": "Integration",
+      "kind": "integration",
+      "layout": "row",
+      "children": [
+        {
+          "id": "mule",
+          "label": "MuleSoft Anypoint",
+          "sub": "API-led connectivity",
+          "icon": "product/mulesoft"
+        },
+        {
+          "id": "events",
+          "label": "Event bus",
+          "sub": "Platform Events / Kafka",
+          "icon": "utility/event"
+        }
+      ]
+    },
+    {
+      "zone": "Systems of record",
+      "kind": "external",
+      "layout": "row",
+      "children": [
+        {
+          "id": "erp",
+          "label": "ERP",
+          "sub": "SAP S/4HANA",
+          "icon": "utility/database"
+        },
+        {
+          "id": "pim",
+          "label": "Product information",
+          "icon": "utility/database"
+        },
+        { "id": "wms", "label": "Warehouse", "icon": "utility/package" },
+        {
+          "id": "dwh",
+          "label": "Data warehouse",
+          "sub": "Snowflake",
+          "icon": "utility/database"
+        },
+        {
+          "id": "idp",
+          "label": "Identity provider",
+          "icon": "utility/lock",
+          "kind": "security"
+        }
+      ]
+    }
   ],
   "links": [
     { "from": "web", "to": "commerce" },
@@ -41,6 +117,11 @@
     { "from": "mule", "to": "erp" },
     { "from": "mule", "to": "pim" },
     { "from": "events", "to": "wms", "style": "async" },
-    { "from": "dc", "to": "dwh", "style": "bidirectional", "label": "Zero copy" }
+    {
+      "from": "dc",
+      "to": "dwh",
+      "style": "bidirectional",
+      "label": "Zero copy"
+    }
   ]
 }

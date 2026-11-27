@@ -6,12 +6,43 @@
   "nodes": [
     { "id": "start", "kind": "start", "label": "New automation requirement" },
     { "id": "ui", "kind": "gateway", "label": "Needs user interaction?" },
-    { "id": "screen", "kind": "task", "label": "Screen Flow", "color": "success" },
-    { "id": "sameRec", "kind": "gateway", "label": "Only updates the triggering record?" },
-    { "id": "before", "kind": "task", "label": "Record-triggered Flow", "sub": "Fast field update (before save)", "color": "success" },
-    { "id": "complex", "kind": "gateway", "label": "Complex logic, bulk or callouts at scale?" },
-    { "id": "after", "kind": "task", "label": "Record-triggered Flow", "sub": "Actions and related records (after save)", "color": "success" },
-    { "id": "apex", "kind": "task", "label": "Apex trigger + handler", "sub": "Invocable actions for reuse", "color": "warning" },
+    {
+      "id": "screen",
+      "kind": "task",
+      "label": "Screen Flow",
+      "color": "success"
+    },
+    {
+      "id": "sameRec",
+      "kind": "gateway",
+      "label": "Only updates the triggering record?"
+    },
+    {
+      "id": "before",
+      "kind": "task",
+      "label": "Record-triggered Flow",
+      "sub": "Fast field update (before save)",
+      "color": "success"
+    },
+    {
+      "id": "complex",
+      "kind": "gateway",
+      "label": "Complex logic, bulk or callouts at scale?"
+    },
+    {
+      "id": "after",
+      "kind": "task",
+      "label": "Record-triggered Flow",
+      "sub": "Actions and related records (after save)",
+      "color": "success"
+    },
+    {
+      "id": "apex",
+      "kind": "task",
+      "label": "Apex trigger + handler",
+      "sub": "Invocable actions for reuse",
+      "color": "warning"
+    },
     { "id": "end", "kind": "end", "label": "Document and test" }
   ],
   "edges": [

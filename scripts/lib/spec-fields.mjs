@@ -5,7 +5,7 @@
 // Source: references/spec-common.md + references/<engine>.md + every `spec.<field>` read in
 // scripts/lib/builders/*.mjs, dsl.mjs and archistry.mjs (viewer). Add new fields here when a builder reads one.
 const FIELDS = `
-type title subtitle header meta legend legendLabels brand viewer mode direction grid layout
+type title subtitle description header meta legend legendLabels brand viewer mode direction grid layout
 children links nodes edges lanes steps flows wrap gap gapX gapY spacing bandGap compact compactLeaves stackAt
 card cardWidth cardsPerRow columns rows rowHeader rowHeaderWidth roles items quadrants xAxis yAxis heat heatLabels
 valueKinds valueLabels solidChips maxColWidth cellWidth cellHeight columnWidth labelWidth laneWidth nodeWidth

@@ -148,7 +148,7 @@ export function build(spec, ctx) {
   // ---- drill-down pages: one Agent Instruction Diagram per topic that has steps
   for (const t of topics) {
     if (!t._pageId) continue;
-    const sub = { type: 'agent-instruction-diagram', title: `${t.name} — Agent Instruction Diagram`, subtitle: `Topic ${t._n} of ${agent.name || 'the agent'} · drill-down from the Agent Interaction Map`, topic: { name: t.name, classification: t.classification, scope: t.scope }, guardrails: t.guardrails || [], inputs: t.inputs, data: t.data, steps: t.steps, flows: t.flows || [], wrap: t.wrap, brand: spec.brand };
+    const sub = { type: 'agent-instruction-diagram', header: spec.header, meta: spec.meta, title: `${t.name} — Agent Instruction Diagram`, subtitle: `Topic ${t._n} of ${agent.name || 'the agent'} · drill-down from the Agent Interaction Map`, topic: { name: t.name, classification: t.classification, scope: t.scope }, guardrails: t.guardrails || [], inputs: t.inputs, data: t.data, steps: t.steps, flows: t.flows || [], wrap: t.wrap, brand: spec.brand };
     const d2 = new Diagram(sub, ctx);
     drawAid(d2, sub);
     let x0 = Infinity, y0 = Infinity;

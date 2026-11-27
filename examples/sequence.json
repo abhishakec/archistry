@@ -3,27 +3,98 @@
   "title": "Order Submission — Integration Sequence",
   "subtitle": "Synchronous credit check, then asynchronous hand-off to ERP with a callback",
   "participants": [
-    { "id": "rep", "label": "Sales Rep", "kind": "user", "icon": "utility/user" },
-    { "id": "sf", "label": "Salesforce", "sub": "Order + Flow", "kind": "salesforce", "icon": "product/sales_cloud" },
-    { "id": "mule", "label": "MuleSoft", "sub": "order-papi", "kind": "integration", "icon": "product/mulesoft" },
-    { "id": "credit", "label": "Credit Service", "kind": "external", "icon": "utility/integration" },
-    { "id": "sap", "label": "SAP S/4HANA", "kind": "external", "icon": "utility/database" }
+    {
+      "id": "rep",
+      "label": "Sales Rep",
+      "kind": "user",
+      "icon": "utility/user"
+    },
+    {
+      "id": "sf",
+      "label": "Salesforce",
+      "sub": "Order + Flow",
+      "kind": "salesforce",
+      "icon": "product/sales_cloud"
+    },
+    {
+      "id": "mule",
+      "label": "MuleSoft",
+      "sub": "order-papi",
+      "kind": "integration",
+      "icon": "product/mulesoft"
+    },
+    {
+      "id": "credit",
+      "label": "Credit Service",
+      "kind": "external",
+      "icon": "utility/integration"
+    },
+    {
+      "id": "sap",
+      "label": "SAP S/4HANA",
+      "kind": "external",
+      "icon": "utility/database"
+    }
   ],
   "messages": [
     { "from": "rep", "to": "sf", "label": "Activate order" },
     { "from": "sf", "to": "mule", "label": "POST /credit-checks (callout)" },
     { "from": "mule", "to": "credit", "label": "GET /customers/{id}/limit" },
-    { "from": "credit", "to": "mule", "label": "200 limit and exposure", "kind": "reply" },
-    { "from": "mule", "to": "sf", "label": "200 approved | declined", "kind": "reply" },
-    { "fragment": "alt", "label": "credit approved", "messages": [
-      { "from": "sf", "to": "sf", "label": "Set Status = Activated" },
-      { "from": "sf", "to": "mule", "label": "Publish Order_Activated__e", "kind": "async" },
-      { "from": "mule", "to": "sap", "label": "Create sales order (IDoc)", "kind": "async" },
-      { "from": "sap", "to": "mule", "label": "Order confirmation", "kind": "async" },
-      { "from": "mule", "to": "sf", "label": "PATCH Order: ERP number (Composite API)" }
-    ], "else": [ { "label": "credit declined", "messages": [
-      { "from": "sf", "to": "rep", "label": "Show reason and next steps", "kind": "error" }
-    ] } ] },
+    {
+      "from": "credit",
+      "to": "mule",
+      "label": "200 limit and exposure",
+      "kind": "reply"
+    },
+    {
+      "from": "mule",
+      "to": "sf",
+      "label": "200 approved | declined",
+      "kind": "reply"
+    },
+    {
+      "fragment": "alt",
+      "label": "credit approved",
+      "messages": [
+        { "from": "sf", "to": "sf", "label": "Set Status = Activated" },
+        {
+          "from": "sf",
+          "to": "mule",
+          "label": "Publish Order_Activated__e",
+          "kind": "async"
+        },
+        {
+          "from": "mule",
+          "to": "sap",
+          "label": "Create sales order (IDoc)",
+          "kind": "async"
+        },
+        {
+          "from": "sap",
+          "to": "mule",
+          "label": "Order confirmation",
+          "kind": "async"
+        },
+        {
+          "from": "mule",
+          "to": "sf",
+          "label": "PATCH Order: ERP number (Composite API)"
+        }
+      ],
+      "else": [
+        {
+          "label": "credit declined",
+          "messages": [
+            {
+              "from": "sf",
+              "to": "rep",
+              "label": "Show reason and next steps",
+              "kind": "error"
+            }
+          ]
+        }
+      ]
+    },
     { "from": "sf", "to": "rep", "label": "Order confirmed", "kind": "reply" }
   ]
 }

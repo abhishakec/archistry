@@ -13,7 +13,8 @@ body:
     id: spec
     attributes:
       label: Spec or command
-      description: The JSON spec (a cut-down version is best) and the command you ran.
+      description:
+        The JSON spec (a cut-down version is best) and the command you ran.
       render: shell
     validations:
       required: true
@@ -27,4 +28,5 @@ body:
     id: env
     attributes:
       label: Environment
-      description: "Your OS, and the first lines of `node scripts/archistry.mjs doctor`."
+      description:
+        'Your OS, and the first lines of `node scripts/archistry.mjs doctor`.'

@@ -5,29 +5,62 @@
   "direction": "TB",
   "nodeWidth": 170,
   "root": {
-    "label": "Serve the Customer", "sub": "L0 value chain",
+    "label": "Serve the Customer",
+    "sub": "L0 value chain",
     "children": [
-      { "label": "Handle Enquiries", "sub": "L1", "kind": "success", "children": [
-        { "label": "Identify customer", "sub": "L2", "kind": "success" },
-        { "label": "Log and classify case", "sub": "L2", "kind": "success" },
-        { "label": "Answer from Knowledge", "sub": "L2", "kind": "success" },
-        { "label": "Escalate to tier 2", "sub": "L2", "kind": "success" }
-      ] },
-      { "label": "Resolve Faults", "sub": "L1", "kind": "success", "children": [
-        { "label": "Diagnose remotely", "sub": "L2", "kind": "success" },
-        { "label": "Book field visit", "sub": "L2", "kind": "data", "badge": "Phase 2" },
-        { "label": "Dispatch technician", "sub": "L2", "kind": "data", "badge": "Phase 2" },
-        { "label": "Close and confirm", "sub": "L2", "kind": "success" }
-      ] },
-      { "label": "Manage Complaints", "sub": "L1", "kind": "data", "badge": "Phase 2", "children": [
-        { "label": "Register complaint", "sub": "L2", "kind": "data" },
-        { "label": "Investigate", "sub": "L2", "kind": "data" },
-        { "label": "Compensate", "sub": "L2", "kind": "data" }
-      ] },
-      { "label": "Bill and Collect", "sub": "L1", "kind": "muted", "badge": "Out of scope", "children": [
-        { "label": "Issue invoice", "sub": "L2", "kind": "muted" },
-        { "label": "Collect payment", "sub": "L2", "kind": "muted" }
-      ] }
+      {
+        "label": "Handle Enquiries",
+        "sub": "L1",
+        "kind": "success",
+        "children": [
+          { "label": "Identify customer", "sub": "L2", "kind": "success" },
+          { "label": "Log and classify case", "sub": "L2", "kind": "success" },
+          { "label": "Answer from Knowledge", "sub": "L2", "kind": "success" },
+          { "label": "Escalate to tier 2", "sub": "L2", "kind": "success" }
+        ]
+      },
+      {
+        "label": "Resolve Faults",
+        "sub": "L1",
+        "kind": "success",
+        "children": [
+          { "label": "Diagnose remotely", "sub": "L2", "kind": "success" },
+          {
+            "label": "Book field visit",
+            "sub": "L2",
+            "kind": "data",
+            "badge": "Phase 2"
+          },
+          {
+            "label": "Dispatch technician",
+            "sub": "L2",
+            "kind": "data",
+            "badge": "Phase 2"
+          },
+          { "label": "Close and confirm", "sub": "L2", "kind": "success" }
+        ]
+      },
+      {
+        "label": "Manage Complaints",
+        "sub": "L1",
+        "kind": "data",
+        "badge": "Phase 2",
+        "children": [
+          { "label": "Register complaint", "sub": "L2", "kind": "data" },
+          { "label": "Investigate", "sub": "L2", "kind": "data" },
+          { "label": "Compensate", "sub": "L2", "kind": "data" }
+        ]
+      },
+      {
+        "label": "Bill and Collect",
+        "sub": "L1",
+        "kind": "muted",
+        "badge": "Out of scope",
+        "children": [
+          { "label": "Issue invoice", "sub": "L2", "kind": "muted" },
+          { "label": "Collect payment", "sub": "L2", "kind": "muted" }
+        ]
+      }
     ]
   }
 }

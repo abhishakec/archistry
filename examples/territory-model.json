@@ -3,33 +3,128 @@
   "title": "Sales Territory Model — Enterprise Territory Management",
   "subtitle": "Hierarchy, owner, assignment rule and size; green is in scope for phase 1, purple is phase 2, indigo is named accounts (illustrative)",
   "nodeWidth": 200,
-  "legendLabels": { "success": "Phase 1 territory", "data": "Phase 2 territory", "ai": "Named accounts", "salesforce": "Model root" },
+  "legendLabels": {
+    "success": "Phase 1 territory",
+    "data": "Phase 2 territory",
+    "ai": "Named accounts",
+    "salesforce": "Model root"
+  },
   "root": {
-    "label": "Global Sales", "sub": "Model: FY27 Plan | CRO", "icon": "standard/account",
+    "label": "Global Sales",
+    "sub": "Model: FY27 Plan | CRO",
+    "icon": "standard/account",
     "children": [
-      { "label": "EMEA", "sub": "VP EMEA | Region = EMEA", "kind": "success", "children": [
-        { "label": "UK and Ireland", "sub": "Rule: Country in UK, IE | 640 accts", "kind": "success", "children": [
-          { "label": "UK Enterprise", "sub": "Rule: Employees > 1,000 | 180 accts", "kind": "success" },
-          { "label": "UK Mid-Market", "sub": "Rule: Employees 100-1,000 | 460 accts", "kind": "success" } ] },
-        { "label": "DACH", "sub": "Rule: Country in DE, AT, CH | 520 accts", "kind": "success", "children": [
-          { "label": "DACH Enterprise", "sub": "Rule: Employees > 1,000 | 150 accts", "kind": "success" },
-          { "label": "DACH Mid-Market", "sub": "Rule: Employees 100-1,000 | 370 accts", "kind": "success" } ] }
-      ] },
-      { "label": "Americas", "sub": "VP Americas | Region = AMER", "kind": "success", "children": [
-        { "label": "US East", "sub": "Rule: State in NY, MA, FL... | 910 accts", "kind": "success", "children": [
-          { "label": "East Strategic", "sub": "Rule: Strategic = true | 60 accts", "kind": "success" },
-          { "label": "East Commercial", "sub": "Rule: Strategic = false | 850 accts", "kind": "success" } ] },
-        { "label": "US West", "sub": "Rule: State in CA, WA, OR... | 780 accts", "kind": "success" },
-        { "label": "Canada", "sub": "Rule: Country = CA | 240 accts", "kind": "data", "badge": "Phase 2" }
-      ] },
-      { "label": "APAC", "sub": "VP APAC | Region = APAC", "kind": "data", "badge": "Phase 2", "children": [
-        { "label": "ANZ", "sub": "Rule: Country in AU, NZ | 310 accts", "kind": "data" },
-        { "label": "Japan", "sub": "Rule: Country = JP | 190 accts", "kind": "data" }
-      ] },
-      { "label": "Named Accounts", "sub": "Global Accounts Director | Manual", "kind": "ai", "children": [
-        { "label": "Global 100", "sub": "Rule: manual assignment | 100 accts", "kind": "ai" },
-        { "label": "Public Sector", "sub": "Rule: Industry = Government | 220 accts", "kind": "ai" }
-      ] }
+      {
+        "label": "EMEA",
+        "sub": "VP EMEA | Region = EMEA",
+        "kind": "success",
+        "children": [
+          {
+            "label": "UK and Ireland",
+            "sub": "Rule: Country in UK, IE | 640 accts",
+            "kind": "success",
+            "children": [
+              {
+                "label": "UK Enterprise",
+                "sub": "Rule: Employees > 1,000 | 180 accts",
+                "kind": "success"
+              },
+              {
+                "label": "UK Mid-Market",
+                "sub": "Rule: Employees 100-1,000 | 460 accts",
+                "kind": "success"
+              }
+            ]
+          },
+          {
+            "label": "DACH",
+            "sub": "Rule: Country in DE, AT, CH | 520 accts",
+            "kind": "success",
+            "children": [
+              {
+                "label": "DACH Enterprise",
+                "sub": "Rule: Employees > 1,000 | 150 accts",
+                "kind": "success"
+              },
+              {
+                "label": "DACH Mid-Market",
+                "sub": "Rule: Employees 100-1,000 | 370 accts",
+                "kind": "success"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "Americas",
+        "sub": "VP Americas | Region = AMER",
+        "kind": "success",
+        "children": [
+          {
+            "label": "US East",
+            "sub": "Rule: State in NY, MA, FL... | 910 accts",
+            "kind": "success",
+            "children": [
+              {
+                "label": "East Strategic",
+                "sub": "Rule: Strategic = true | 60 accts",
+                "kind": "success"
+              },
+              {
+                "label": "East Commercial",
+                "sub": "Rule: Strategic = false | 850 accts",
+                "kind": "success"
+              }
+            ]
+          },
+          {
+            "label": "US West",
+            "sub": "Rule: State in CA, WA, OR... | 780 accts",
+            "kind": "success"
+          },
+          {
+            "label": "Canada",
+            "sub": "Rule: Country = CA | 240 accts",
+            "kind": "data",
+            "badge": "Phase 2"
+          }
+        ]
+      },
+      {
+        "label": "APAC",
+        "sub": "VP APAC | Region = APAC",
+        "kind": "data",
+        "badge": "Phase 2",
+        "children": [
+          {
+            "label": "ANZ",
+            "sub": "Rule: Country in AU, NZ | 310 accts",
+            "kind": "data"
+          },
+          {
+            "label": "Japan",
+            "sub": "Rule: Country = JP | 190 accts",
+            "kind": "data"
+          }
+        ]
+      },
+      {
+        "label": "Named Accounts",
+        "sub": "Global Accounts Director | Manual",
+        "kind": "ai",
+        "children": [
+          {
+            "label": "Global 100",
+            "sub": "Rule: manual assignment | 100 accts",
+            "kind": "ai"
+          },
+          {
+            "label": "Public Sector",
+            "sub": "Rule: Industry = Government | 220 accts",
+            "kind": "ai"
+          }
+        ]
+      }
     ]
   }
 }

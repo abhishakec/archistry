@@ -3,34 +3,111 @@
   "title": "Order Management — Solution Architecture",
   "subtitle": "Commerce storefront to ERP fulfilment, with unified profiles and an Agentforce service agent",
   "header": "banner",
-  "meta": { "status": "Draft", "version": "0.3", "date": "2026-11-15", "author": "Solution Architecture" },
+  "meta": {
+    "status": "Draft",
+    "version": "0.3",
+    "date": "2026-11-15",
+    "author": "Solution Architecture"
+  },
   "layout": "row",
   "children": [
     {
-      "zone": "Customer Channels", "kind": "user", "id": "channels",
+      "zone": "Customer Channels",
+      "kind": "user",
+      "id": "channels",
       "children": [
-        { "id": "storefront", "label": "B2C Storefront", "sub": "LWR Experience site", "icon": "platform/web" },
-        { "id": "mobile", "label": "Mobile App", "sub": "iOS / Android", "icon": "platform/apps_mobile" },
-        { "id": "chat", "label": "Messaging", "sub": "Web chat, WhatsApp", "icon": "platform/channel" }
+        {
+          "id": "storefront",
+          "label": "B2C Storefront",
+          "sub": "LWR Experience site",
+          "icon": "platform/web"
+        },
+        {
+          "id": "mobile",
+          "label": "Mobile App",
+          "sub": "iOS / Android",
+          "icon": "platform/apps_mobile"
+        },
+        {
+          "id": "chat",
+          "label": "Messaging",
+          "sub": "Web chat, WhatsApp",
+          "icon": "platform/channel"
+        }
       ]
     },
     {
-      "zone": "Salesforce Platform", "kind": "salesforce", "id": "sf", "layout": "grid", "columns": 2,
+      "zone": "Salesforce Platform",
+      "kind": "salesforce",
+      "id": "sf",
+      "layout": "grid",
+      "columns": 2,
       "children": [
-        { "id": "commerce", "label": "Commerce Cloud", "sub": "Cart, checkout, catalog", "icon": "product/commerce_cloud" },
-        { "id": "sales", "label": "Sales Cloud", "sub": "Accounts, orders", "icon": "product/sales_cloud" },
-        { "id": "agent", "label": "Agentforce", "sub": "Order status agent", "icon": "standard/agent_astro", "kind": "ai", "badge": "New" },
-        { "id": "service", "label": "Service Cloud", "sub": "Cases, Omni-Channel", "icon": "product/service_cloud" },
-        { "id": "dc", "label": "Data Cloud", "sub": "Unified customer profile", "icon": "standard/data_cloud", "kind": "data" },
-        { "id": "flows", "label": "Order Flows", "sub": "Record-triggered automation", "icon": "standard/flow" }
+        {
+          "id": "commerce",
+          "label": "Commerce Cloud",
+          "sub": "Cart, checkout, catalog",
+          "icon": "product/commerce_cloud"
+        },
+        {
+          "id": "sales",
+          "label": "Sales Cloud",
+          "sub": "Accounts, orders",
+          "icon": "product/sales_cloud"
+        },
+        {
+          "id": "agent",
+          "label": "Agentforce",
+          "sub": "Order status agent",
+          "icon": "standard/agent_astro",
+          "kind": "ai",
+          "badge": "New"
+        },
+        {
+          "id": "service",
+          "label": "Service Cloud",
+          "sub": "Cases, Omni-Channel",
+          "icon": "product/service_cloud"
+        },
+        {
+          "id": "dc",
+          "label": "Data Cloud",
+          "sub": "Unified customer profile",
+          "icon": "standard/data_cloud",
+          "kind": "data"
+        },
+        {
+          "id": "flows",
+          "label": "Order Flows",
+          "sub": "Record-triggered automation",
+          "icon": "standard/flow"
+        }
       ]
     },
     {
-      "zone": "Enterprise Systems", "kind": "external", "id": "ent",
+      "zone": "Enterprise Systems",
+      "kind": "external",
+      "id": "ent",
       "children": [
-        { "id": "mule", "label": "MuleSoft", "sub": "API-led integration", "icon": "product/mulesoft", "kind": "integration" },
-        { "id": "sap", "label": "SAP S/4HANA", "sub": "Fulfilment, invoicing", "icon": "utility/database" },
-        { "id": "wms", "label": "Warehouse Mgmt", "sub": "Pick, pack, ship", "icon": "utility/package" }
+        {
+          "id": "mule",
+          "label": "MuleSoft",
+          "sub": "API-led integration",
+          "icon": "product/mulesoft",
+          "kind": "integration"
+        },
+        {
+          "id": "sap",
+          "label": "SAP S/4HANA",
+          "sub": "Fulfilment, invoicing",
+          "icon": "utility/database"
+        },
+        {
+          "id": "wms",
+          "label": "Warehouse Mgmt",
+          "sub": "Pick, pack, ship",
+          "icon": "utility/package"
+        }
       ]
     }
   ],
@@ -41,8 +118,19 @@
     { "from": "commerce", "to": "sales", "label": "Order sync", "step": 4 },
     { "from": "sales", "to": "mule", "label": "REST · real-time", "step": 5 },
     { "from": "mule", "to": "sap", "label": "IDoc", "step": 6 },
-    { "from": "sap", "to": "wms", "label": "Events", "style": "async", "step": 7 },
-    { "from": "sales", "to": "dc", "label": "CRM connector · hourly", "style": "batch" },
+    {
+      "from": "sap",
+      "to": "wms",
+      "label": "Events",
+      "style": "async",
+      "step": 7
+    },
+    {
+      "from": "sales",
+      "to": "dc",
+      "label": "CRM connector · hourly",
+      "style": "batch"
+    },
     { "from": "agent", "to": "dc", "label": "Grounding", "style": "reference" },
     { "from": "agent", "to": "service", "label": "Escalation" },
     { "from": "sales", "to": "flows", "label": "Trigger" }

@@ -6,9 +6,26 @@
     { "id": "start", "kind": "start" },
     { "id": "new", "kind": "state", "label": "New" },
     { "id": "triage", "kind": "gateway", "label": "Valid defect?" },
-    { "id": "rejected", "kind": "state", "label": "Rejected", "sub": "Duplicate, as designed", "color": "external" },
-    { "id": "open", "kind": "state", "label": "Open", "sub": "Assigned to developer" },
-    { "id": "fixed", "kind": "state", "label": "Fixed", "sub": "Deployed to test org", "color": "warning" },
+    {
+      "id": "rejected",
+      "kind": "state",
+      "label": "Rejected",
+      "sub": "Duplicate, as designed",
+      "color": "external"
+    },
+    {
+      "id": "open",
+      "kind": "state",
+      "label": "Open",
+      "sub": "Assigned to developer"
+    },
+    {
+      "id": "fixed",
+      "kind": "state",
+      "label": "Fixed",
+      "sub": "Deployed to test org",
+      "color": "warning"
+    },
     { "id": "retest", "kind": "gateway", "label": "Retest passes?" },
     { "id": "closed", "kind": "state", "label": "Closed", "color": "success" },
     { "id": "end", "kind": "end" }
@@ -21,7 +38,12 @@
     { "from": "open", "to": "fixed", "label": "Fix merged" },
     { "from": "fixed", "to": "retest" },
     { "from": "retest", "to": "closed", "label": "Yes" },
-    { "from": "retest", "to": "open", "label": "No — reopened", "kind": "exception" },
+    {
+      "from": "retest",
+      "to": "open",
+      "label": "No — reopened",
+      "kind": "exception"
+    },
     { "from": "closed", "to": "end" },
     { "from": "rejected", "to": "end" }
   ]

@@ -3,19 +3,63 @@
   "title": "Service Cloud — Fit-Gap Analysis",
   "subtitle": "Requirements from discovery assessed against standard Salesforce capability",
   "rowHeader": "Requirement",
-  "columns": [ { "label": "Priority" }, { "label": "Fit" }, { "label": "Approach", "width": 280 }, { "label": "Effort" } ],
+  "columns": [
+    { "label": "Priority" },
+    { "label": "Fit" },
+    { "label": "Approach", "width": 280 },
+    { "label": "Effort" }
+  ],
   "rows": [
     { "section": "Case management" },
-    { "label": "REQ-001  Route cases by skill and language", "cells": ["Must", "Config", "Omni-Channel skills-based routing", "M"] },
-    { "label": "REQ-002  Track SLA milestones per entitlement", "cells": ["Must", "Fit", "Entitlements and milestones", "S"] },
-    { "label": "REQ-003  Merge duplicate cases automatically", "cells": ["Should", "Custom", "Flow + Apex matching on email thread", "L"] },
+    {
+      "label": "REQ-001  Route cases by skill and language",
+      "cells": ["Must", "Config", "Omni-Channel skills-based routing", "M"]
+    },
+    {
+      "label": "REQ-002  Track SLA milestones per entitlement",
+      "cells": ["Must", "Fit", "Entitlements and milestones", "S"]
+    },
+    {
+      "label": "REQ-003  Merge duplicate cases automatically",
+      "cells": ["Should", "Custom", "Flow + Apex matching on email thread", "L"]
+    },
     { "section": "Self-service" },
-    { "label": "REQ-010  Customers track cases online", "cells": ["Must", "Config", "Experience Cloud Customer Service template", "M"] },
-    { "label": "REQ-011  AI answers order questions 24/7", "cells": ["Should", "Config", "Agentforce Service Agent with order topic", "L"] },
-    { "label": "REQ-012  Video chat with screen share", "cells": ["Could", "AppExchange", "Partner video solution", "M"] },
+    {
+      "label": "REQ-010  Customers track cases online",
+      "cells": [
+        "Must",
+        "Config",
+        "Experience Cloud Customer Service template",
+        "M"
+      ]
+    },
+    {
+      "label": "REQ-011  AI answers order questions 24/7",
+      "cells": [
+        "Should",
+        "Config",
+        "Agentforce Service Agent with order topic",
+        "L"
+      ]
+    },
+    {
+      "label": "REQ-012  Video chat with screen share",
+      "cells": ["Could", "AppExchange", "Partner video solution", "M"]
+    },
     { "section": "Reporting" },
-    { "label": "REQ-020  First-contact resolution dashboard", "cells": ["Must", "Fit", "Standard reports and dashboards", "S"] },
-    { "label": "REQ-021  Predict case volume by channel", "cells": ["Could", "Gap", "No standard forecast — evaluate CRM Analytics", "XL"] }
+    {
+      "label": "REQ-020  First-contact resolution dashboard",
+      "cells": ["Must", "Fit", "Standard reports and dashboards", "S"]
+    },
+    {
+      "label": "REQ-021  Predict case volume by channel",
+      "cells": [
+        "Could",
+        "Gap",
+        "No standard forecast — evaluate CRM Analytics",
+        "XL"
+      ]
+    }
   ],
   "valueKinds": { "Must": "danger", "Should": "warning", "Could": "muted" }
 }

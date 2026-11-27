@@ -1,0 +1,15 @@
+# Engine and eval scripts keep their compact one-line style.
+scripts/
+evals/*.mjs
+# Generated output: rebuilt by the engine, never edited by hand.
+examples/*.html
+examples/*.drawio
+docs/*.html
+docs/previews/
+evals/results/
+# Embedded verbatim in every generated HTML page: formatting adds ~50 KB per page.
+assets/viewer/
+# Large generated data.
+assets/icons/catalog.json
+package-lock.json
+node_modules/

@@ -1,9 +1,12 @@
 // Trigger eval: for each query, start `claude -p` in a project that has the skill installed, stop at the
 // first tool call, and record whether it was the Skill tool loading `archistry`.
-// usage: node trigger-run.mjs <project-dir-with-the-skill-installed> <evals.json> <out.json> [concurrency]
+// usage: node trigger-run.mjs <project-dir-with-the-skill-installed> <evals.json> [out.json] [concurrency]
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
-const [proj, evalsFile, outFile, conc = '4'] = process.argv.slice(2);
+const [proj, evalsFile, outArg, conc = '4'] = process.argv.slice(2);
+// default: results/trigger-latest.json, where Command Centre picks it up
+const outFile = outArg || new URL('./results/trigger-latest.json', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
+fs.mkdirSync(new URL('./results/', import.meta.url), { recursive: true });
 const evals = JSON.parse(fs.readFileSync(evalsFile, 'utf8'));
 // CLAUDE_CLI = path to the Claude Code cli.js (needed on Windows); otherwise `claude` must be on PATH
 const cli = process.env.CLAUDE_CLI || null;

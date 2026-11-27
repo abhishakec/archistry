@@ -4,26 +4,91 @@
   "subtitle": "Who uses the portal and which systems it depends on (level 1, scope agreed in discovery)",
   "layout": "row",
   "children": [
-    { "zone": "People", "kind": "user", "children": [
-      { "id": "partner", "label": "Partner sales rep", "sub": "Registers deals, tracks leads", "icon": "utility/user" },
-      { "id": "pam", "label": "Partner account manager", "sub": "Approves deals, runs MDF", "icon": "utility/user" },
-      { "id": "admin", "label": "Channel operations", "sub": "Onboards partners", "icon": "utility/groups" }
-    ] },
-    { "zone": "In scope", "kind": "salesforce", "children": [
-      { "id": "portal", "label": "Partner Portal", "sub": "Experience Cloud + PRM", "icon": "product/experience_cloud", "items": ["Deal registration", "Lead distribution", "Market development funds", "Training and certification"] }
-    ] },
-    { "zone": "Depends on", "kind": "external", "children": [
-      { "id": "crm", "label": "Sales Cloud", "sub": "Accounts, opportunities", "icon": "product/sales_cloud", "kind": "salesforce" },
-      { "id": "idp", "label": "Identity provider", "sub": "Okta — SAML SSO", "icon": "utility/lock", "kind": "security" },
-      { "id": "erp", "label": "ERP", "sub": "Pricing, orders, rebates", "icon": "utility/database" },
-      { "id": "lms", "label": "Learning platform", "sub": "Courses, certifications", "icon": "cloud/learning" }
-    ] }
+    {
+      "zone": "People",
+      "kind": "user",
+      "children": [
+        {
+          "id": "partner",
+          "label": "Partner sales rep",
+          "sub": "Registers deals, tracks leads",
+          "icon": "utility/user"
+        },
+        {
+          "id": "pam",
+          "label": "Partner account manager",
+          "sub": "Approves deals, runs MDF",
+          "icon": "utility/user"
+        },
+        {
+          "id": "admin",
+          "label": "Channel operations",
+          "sub": "Onboards partners",
+          "icon": "utility/groups"
+        }
+      ]
+    },
+    {
+      "zone": "In scope",
+      "kind": "salesforce",
+      "children": [
+        {
+          "id": "portal",
+          "label": "Partner Portal",
+          "sub": "Experience Cloud + PRM",
+          "icon": "product/experience_cloud",
+          "items": [
+            "Deal registration",
+            "Lead distribution",
+            "Market development funds",
+            "Training and certification"
+          ]
+        }
+      ]
+    },
+    {
+      "zone": "Depends on",
+      "kind": "external",
+      "children": [
+        {
+          "id": "crm",
+          "label": "Sales Cloud",
+          "sub": "Accounts, opportunities",
+          "icon": "product/sales_cloud",
+          "kind": "salesforce"
+        },
+        {
+          "id": "idp",
+          "label": "Identity provider",
+          "sub": "Okta — SAML SSO",
+          "icon": "utility/lock",
+          "kind": "security"
+        },
+        {
+          "id": "erp",
+          "label": "ERP",
+          "sub": "Pricing, orders, rebates",
+          "icon": "utility/database"
+        },
+        {
+          "id": "lms",
+          "label": "Learning platform",
+          "sub": "Courses, certifications",
+          "icon": "cloud/learning"
+        }
+      ]
+    }
   ],
   "links": [
     { "from": "partner", "to": "portal", "label": "Uses" },
     { "from": "pam", "to": "portal", "label": "Approves" },
     { "from": "admin", "to": "portal", "label": "Administers" },
-    { "from": "portal", "to": "crm", "label": "Shares records", "style": "bidirectional" },
+    {
+      "from": "portal",
+      "to": "crm",
+      "label": "Shares records",
+      "style": "bidirectional"
+    },
     { "from": "portal", "to": "idp", "label": "Authenticates" },
     { "from": "portal", "to": "erp", "label": "Price lookup" },
     { "from": "portal", "to": "lms", "label": "Completions", "style": "batch" }

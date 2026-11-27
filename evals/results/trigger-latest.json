@@ -1,0 +1,282 @@
+[
+ {
+  "query": "we kick off the Northwind CPQ rollout monday and I need a one-pager showing sales cloud, revenue cloud, docusign and netsuite and how they talk to each other",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "can you sketch the OAuth JWT bearer flow for our integration user hitting the REST API from the middleware, sequence style",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "give me an ERD I can paste into the design doc: Account, a custom Promotion__c (optional lookup to Account) and Promotion_Line__c (master-detail to Promotion__c, lookup to Product2), main fields only",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "RACI for the data migration workstream pls, 12 activities, PM / architect / BA / client IT / QA",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "draw the Data Cloud mapping from our Shopify orders DLO (order_id, customer_email, total_amount, created_at) to the Sales Order DMO, ssot__SalesOrder__dlm, so the BA can sign it off",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "my architect hand-edited our release-train .drawio in draw.io last week and I'm not sure it's still valid - what's the quickest way to validate it and get a shareable HTML version?",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "show our sandbox strategy: dev, QA, UAT, staging, prod, with the promotion path and who owns each org",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "cutover plan for the 14 March go-live, hour by hour, with owners. Make it look like something I can show the steering committee",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "visualize our sharing model: OWD private on Case, role hierarchy for support, two sharing rules and a permission set for the escalation team",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "we have a record-triggered flow Update_Opportunity_Stage: 3 decisions on Amount, Type and Region, then 2 record updates and an email alert. draw its logic so the admins can read it",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "write me a mermaid sequence diagram of the login flow for our node app",
+  "should_trigger": false,
+  "first": "Task > Bash > Bash > Bash > Bash > Glob",
+  "why": "tool",
+  "triggered": false,
+  "pass": true
+ },
+ {
+  "query": "explain how master-detail vs lookup affects roll-up summary fields and sharing",
+  "should_trigger": false,
+  "first": null,
+  "why": "result",
+  "triggered": false,
+  "pass": true
+ },
+ {
+  "query": "create an Apex trigger handler for Opportunity that updates the parent Account's last order date",
+  "should_trigger": false,
+  "first": "Bash",
+  "why": "result",
+  "triggered": false,
+  "pass": true
+ },
+ {
+  "query": "make me a pitch deck slide about our sales process: a headline and three bullets, nothing fancy",
+  "should_trigger": false,
+  "first": null,
+  "why": "result",
+  "triggered": false,
+  "pass": true
+ },
+ {
+  "query": "make a bar chart of closed-won revenue by quarter from this csv",
+  "should_trigger": false,
+  "first": "Glob",
+  "why": "result",
+  "triggered": false,
+  "pass": true
+ },
+ {
+  "query": "what's the difference between a permission set and a permission set group? keep it short",
+  "should_trigger": false,
+  "first": null,
+  "why": "result",
+  "triggered": false,
+  "pass": true
+ },
+ {
+  "query": "draw an AWS architecture for our data lake with s3, glue and athena",
+  "should_trigger": false,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": false
+ },
+ {
+  "query": "review my SOQL: SELECT Id, (SELECT Id FROM Contacts) FROM Account WHERE CreatedDate = LAST_N_DAYS:30, why is it slow?",
+  "should_trigger": false,
+  "first": null,
+  "why": "result",
+  "triggered": false,
+  "pass": true
+ },
+ {
+  "query": "generate a UML class diagram in PlantUML for my Java order service",
+  "should_trigger": false,
+  "first": "Task > Glob > Bash > Bash > Bash > Bash",
+  "why": "tool",
+  "triggered": false,
+  "pass": true
+ },
+ {
+  "query": "write the user stories and acceptance criteria for a returns portal on Experience Cloud",
+  "should_trigger": false,
+  "first": "Write",
+  "why": "result",
+  "triggered": false,
+  "pass": true
+ },
+ {
+  "query": "org chart for the client's Salesforce delivery team: PM, two architects, 4 devs, QA lead and the client product owner",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "fit-gap for our Service Cloud rollout: 18 requirements, mark each standard, config, custom or gap",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "gantt for the Salesforce data migration, 6 tasks with dependencies and a go-live milestone",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "service blueprint for how a customer returns an item: frontstage, backstage and the Salesforce case behind it",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "branching strategy for our SFDX team: main, release branches, feature branches and hotfix, how they merge",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "workshop tomorrow with the contact centre team, can you put together a persona map: agent, team lead, customer, with goals and pains and what Salesforce needs to do for each",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "map the value stream for our returns process, cycle time and wait time per step, hand-offs, and mark the bottlenecks",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "need an as-is vs to-be overview for the Service Cloud discovery: old systems on the left, the new Salesforce setup on the right with what replaces what",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "draft the agenda for our 3-day discovery workshop: sessions, who attends and what each session produces",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "we're rolling out Enterprise Territory Management, can you draw the territory model: EMEA, Americas, APAC split by country and segment, with owner and the assignment rule on each",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "sketch the territory hierarchy for the sales reorg with account counts per territory and which ones go live in phase 1",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "how should chat, WhatsApp, email and phone calls get routed with Omni-Channel? draw the queues, skills and what happens on overflow",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "need a routing diagram for the service team: channels on the left, routing configs and queues in the middle, agent groups on the right, with a fallback when nobody is online",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "map out the pages of the customer portal on Experience Cloud: home, knowledge, cases, account, partner area, who sees each page and what components are on it",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ },
+ {
+  "query": "site map for our partner community, guest vs customer vs partner pages, with the screen flows and list views on each",
+  "should_trigger": true,
+  "first": "Skill:archistry",
+  "why": "tool",
+  "triggered": true,
+  "pass": true
+ }
+]

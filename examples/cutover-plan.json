@@ -2,32 +2,95 @@
   "type": "cutover-plan",
   "title": "Go-Live Cutover Plan",
   "subtitle": "Weekend cutover — every step has an owner; the rollback decision point is Sunday 10:00",
-  "axis": ["Fri 18:00", "Fri 22:00", "Sat 02:00", "Sat 08:00", "Sat 14:00", "Sat 20:00", "Sun 08:00", "Sun 14:00", "Mon 07:00"],
-  "axisGroups": [ { "label": "Freeze & deploy", "span": 3 }, { "label": "Migrate & verify", "span": 4 }, { "label": "Go live", "span": 2 } ],
+  "axis": [
+    "Fri 18:00",
+    "Fri 22:00",
+    "Sat 02:00",
+    "Sat 08:00",
+    "Sat 14:00",
+    "Sat 20:00",
+    "Sun 08:00",
+    "Sun 14:00",
+    "Mon 07:00"
+  ],
+  "axisGroups": [
+    { "label": "Freeze & deploy", "span": 3 },
+    { "label": "Migrate & verify", "span": 4 },
+    { "label": "Go live", "span": 2 }
+  ],
   "columnWidth": 130,
   "lanes": [
-    { "label": "Release manager", "kind": "salesforce", "bars": [
-      { "id": "freeze", "label": "Change freeze", "start": 1, "end": 1, "kind": "warning" },
-      { "id": "deploy", "label": "Deploy metadata", "start": 2, "end": 3 },
-      { "id": "smoke", "label": "Smoke test", "start": 4, "end": 4 }
-    ] },
-    { "label": "Data team", "kind": "data", "bars": [
-      { "id": "extract", "label": "Final extract", "start": 2, "end": 2 },
-      { "id": "load", "label": "Load accounts, contacts, cases", "start": 4, "end": 5 },
-      { "id": "recon", "label": "Reconcile", "start": 6, "end": 6 }
-    ] },
-    { "label": "Integration team", "kind": "integration", "bars": [
-      { "id": "off", "label": "Pause interfaces", "start": 1, "end": 1, "kind": "warning" },
-      { "id": "on", "label": "Enable interfaces", "start": 6, "end": 7 }
-    ] },
-    { "label": "Business", "kind": "engagement", "bars": [
-      { "id": "bv", "label": "Business verification", "start": 7, "end": 7 },
-      { "id": "open", "label": "Open to users", "start": 9, "end": 9, "kind": "success" }
-    ], "milestones": [ { "label": "Go / no-go", "at": 8, "id": "gng" } ] },
-    { "label": "Support", "kind": "ai", "bars": [
-      { "id": "hyper", "label": "Hypercare starts", "start": 9, "end": 9 }
-    ] }
+    {
+      "label": "Release manager",
+      "kind": "salesforce",
+      "bars": [
+        {
+          "id": "freeze",
+          "label": "Change freeze",
+          "start": 1,
+          "end": 1,
+          "kind": "warning"
+        },
+        { "id": "deploy", "label": "Deploy metadata", "start": 2, "end": 3 },
+        { "id": "smoke", "label": "Smoke test", "start": 4, "end": 4 }
+      ]
+    },
+    {
+      "label": "Data team",
+      "kind": "data",
+      "bars": [
+        { "id": "extract", "label": "Final extract", "start": 2, "end": 2 },
+        {
+          "id": "load",
+          "label": "Load accounts, contacts, cases",
+          "start": 4,
+          "end": 5
+        },
+        { "id": "recon", "label": "Reconcile", "start": 6, "end": 6 }
+      ]
+    },
+    {
+      "label": "Integration team",
+      "kind": "integration",
+      "bars": [
+        {
+          "id": "off",
+          "label": "Pause interfaces",
+          "start": 1,
+          "end": 1,
+          "kind": "warning"
+        },
+        { "id": "on", "label": "Enable interfaces", "start": 6, "end": 7 }
+      ]
+    },
+    {
+      "label": "Business",
+      "kind": "engagement",
+      "bars": [
+        { "id": "bv", "label": "Business verification", "start": 7, "end": 7 },
+        {
+          "id": "open",
+          "label": "Open to users",
+          "start": 9,
+          "end": 9,
+          "kind": "success"
+        }
+      ],
+      "milestones": [{ "label": "Go / no-go", "at": 8, "id": "gng" }]
+    },
+    {
+      "label": "Support",
+      "kind": "ai",
+      "bars": [
+        { "id": "hyper", "label": "Hypercare starts", "start": 9, "end": 9 }
+      ]
+    }
   ],
-  "milestones": [ { "label": "Rollback decision", "at": 7.5, "kind": "danger" } ],
-  "dependencies": [ { "from": "deploy", "to": "smoke" }, { "from": "extract", "to": "load" }, { "from": "load", "to": "recon" }, { "from": "recon", "to": "bv" } ]
+  "milestones": [{ "label": "Rollback decision", "at": 7.5, "kind": "danger" }],
+  "dependencies": [
+    { "from": "deploy", "to": "smoke" },
+    { "from": "extract", "to": "load" },
+    { "from": "load", "to": "recon" },
+    { "from": "recon", "to": "bv" }
+  ]
 }

@@ -309,40 +309,114 @@ function shiftAll(d, dx, dy) {
     if (c.edge) for (const p of [...(c.geo.points || []), c.geo.sourcePoint, c.geo.targetPoint]) if (p) { p.x += dx; p.y += dy; }
   }
 }
-function legendCells(d, x, y, maxW) {
+// Key entries for the diagram: custom list, or the colour kinds / line styles / extras the builder used.
+// Returns [] when the key would not carry meaning (fewer than two colours and two line styles).
+function legendItems(d) {
   const spec = d.spec;
-  if (spec.legend === false) return 0;
+  if (spec.legend === false) return [];
   const items = [];
   const custom = Array.isArray(spec.legend) ? spec.legend : null;
-  if (custom) for (const it of custom) items.push({ kind: it.kind, label: it.label, line: it.line });
-  else {
-    for (const [k, label] of d.usedKinds) items.push({ kind: k, label: (spec.legendLabels && spec.legendLabels[k]) || label });
-    for (const [k, v] of d.usedLines) items.push({ line: k, label: (spec.legendLabels && spec.legendLabels[k]) || v.label });
-    for (const it of d.legendExtra) items.push(it);
-    const colourItems = items.filter((i) => i.kind || i.swatch).length, lineItems = items.filter((i) => i.line).length;
-    if (colourItems < 2 && lineItems < 2 && !d.legendExtra.length && spec.legend !== true) return 0;
+  if (custom) { for (const it of custom) items.push({ kind: it.kind, label: it.label, line: it.line }); return items.filter((i) => i.label); }
+  for (const [k, label] of d.usedKinds) items.push({ kind: k, label: (spec.legendLabels && spec.legendLabels[k]) || label });
+  for (const [k, v] of d.usedLines) items.push({ line: k, label: (spec.legendLabels && spec.legendLabels[k]) || v.label });
+  for (const it of d.legendExtra) items.push(it);
+  const colourItems = items.filter((i) => i.kind || i.swatch).length, lineItems = items.filter((i) => i.line).length;
+  if (colourItems < 2 && lineItems < 2 && !d.legendExtra.length && spec.legend !== true) return [];
+  return items;
+}
+const KEY_ROW = 24;
+const keyItemW = (it) => (it.line ? 34 : 16) + 6 + up10(textWidth(it.label, 11) + 12);
+// Even-row grid (Salesforce kit of parts: "the key should be grouped into even rows when possible").
+// Each column is as wide as its widest item; the most columns that fit in maxW win.
+function keyGrid(items, maxW) {
+  if (!items.length) return { cols: 0, rows: 0, colWs: [], colW: 0, w: 0, h: 0 };
+  const widths = items.map(keyItemW);
+  for (let cols = Math.min(items.length, 6); cols >= 1; cols--) {
+    const rows = Math.ceil(items.length / cols);
+    const c = Math.ceil(items.length / rows); // balance: same number of items per row
+    const colWs = Array.from({ length: c }, (_, ci) => Math.max(...widths.filter((_, i) => i % c === ci)) + 18);
+    const w = colWs.reduce((a, b) => a + b, 0) - 18;
+    if (w <= maxW || cols === 1) return { cols: c, rows, colWs, colW: Math.max(...colWs), w, h: rows * KEY_ROW };
   }
-  if (!items.length) return 0;
-  let cx = x + 46, cy = y;
-  const rowH = 24;
-  d.text(x, y + 3, 44, 18, '<b>Key</b>', { fontSize: 11, fontColor: d.ink.sub });
-  for (const it of items) {
-    const tw = up10(textWidth(it.label, 11) + 12);
+}
+// Draws key items in a grid. Coordinates are relative to `parent` (or absolute when parent is '1').
+function drawKeyItems(d, items, grid, x, y, parent = '1') {
+  const colX = grid.colWs.map((_, i) => grid.colWs.slice(0, i).reduce((a, b) => a + b, 0));
+  items.forEach((it, i) => {
+    const ci = i % grid.cols;
+    const cx = x + colX[ci], cy = y + Math.floor(i / grid.cols) * KEY_ROW;
     const iw = it.line ? 34 : 16;
-    if (cx + iw + 6 + tw > x + maxW && cx > x + 46) { cx = x + 46; cy += rowH; }
+    const tw = Math.max(40, grid.colWs[ci] - 18 - iw - 6);
     if (it.line) {
       const st = Object.assign({ endArrow: 'block', endFill: '1', endSize: 5 }, LINE_STYLES[it.line] ? LINE_STYLES[it.line].style : (it.style || {}));
-      d.edge({ id: d.uid('key_line'), style: st, sourcePoint: { x: cx, y: cy + 12 }, targetPoint: { x: cx + iw, y: cy + 12 } });
+      d.edge({ id: d.uid('key_line'), style: st, sourcePoint: { x: cx, y: cy + 12 }, targetPoint: { x: cx + iw, y: cy + 12 }, parent });
     } else if (it.swatch) {
-      d.node({ id: d.uid('key_sw'), x: cx, y: cy + 4, w: 16, h: 16, value: it.swatch.text || '', connectable: '0', style: Object.assign({ rounded: '1', arcSize: 6, absoluteArcSize: '1', fontSize: 9, fontStyle: 1, whiteSpace: undefined }, it.swatch.style) });
+      d.node({ id: d.uid('key_sw'), x: cx, y: cy + 4, w: 16, h: 16, value: it.swatch.text || '', parent, connectable: '0', style: Object.assign({ rounded: '1', arcSize: 6, absoluteArcSize: '1', fontSize: 9, fontStyle: 1, whiteSpace: undefined }, it.swatch.style) });
     } else {
       const k = d.kind(it.kind, false);
-      d.node({ id: d.uid('key_sw'), x: cx, y: cy + 4, w: 16, h: 16, value: '', connectable: '0', style: { rounded: '1', arcSize: 6, absoluteArcSize: '1', fillColor: k.fill, strokeColor: k.stroke, strokeWidth: 1.5 } });
+      d.node({ id: d.uid('key_sw'), x: cx, y: cy + 4, w: 16, h: 16, value: '', parent, connectable: '0', style: { rounded: '1', arcSize: 6, absoluteArcSize: '1', fillColor: k.fill, strokeColor: k.stroke, strokeWidth: 1.5 } });
     }
-    d.text(cx + iw + 6, cy + 3, tw, 18, h(it.label), { fontSize: 11, fontColor: d.ink.sub, whiteSpace: undefined });
-    cx += iw + 6 + tw + 14;
+    d.text(cx + iw + 6, cy + 3, tw, 18, h(it.label), { fontSize: 11, fontColor: d.ink.sub, whiteSpace: undefined }, parent);
+  });
+}
+// Classic key under the diagram (used by the "title" and "banner" headers).
+function legendCells(d, x, y, maxW) {
+  const items = legendItems(d);
+  if (!items.length) return 0;
+  d.text(x, y + 3, 44, 18, '<b>Key</b>', { fontSize: 11, fontColor: d.ink.sub });
+  const grid = keyGrid(items, maxW - 46);
+  drawKeyItems(d, items, grid, x + 46, y);
+  return grid.h;
+}
+
+/* ------------------------------------------------- Salesforce header card -- */
+// Salesforce Architects kit of parts: every diagram has a Header with a Title and a Description
+// (purpose, scope, message), at least 10% of the diagram height and 100% of its width, description
+// font at least half the title size, and a Key on the right for anything not labelled on the diagram.
+// Drawn as: grey band (frame) > white title panel with a curved right edge > white rounded key panel.
+const CARD = { title: 24, desc: 13, meta: 11, band: '#e5e5e5', frame: '#c9c7c5', minW: 760, minH: 140, pad: 28 };
+function headerCard(d, M, width, contentH, metaLine) {
+  const spec = d.spec;
+  const desc = spec.subtitle || spec.description || '';
+  const items = legendItems(d);
+  const logo = spec.meta && spec.meta.logo ? resolveIcon(spec.meta.logo) : null;
+  let W = Math.max(width, CARD.minW);
+  // A big key on a narrow diagram: widen the header (and page) rather than stacking the key tall.
+  const bulgeGuess = 36;
+  const keyFit = (w) => keyGrid(items, w - (clamp(Math.round(w * 0.42), 340, 560) + bulgeGuess + 24) - 52);
+  while (items.length && keyFit(W).rows > 4 && W < 1800) W += 40;
+  const leftW = clamp(Math.round(W * 0.42), 340, 560);
+  const textPadL = CARD.pad + (logo ? 56 : 0);
+  let v = `<font style="font-size:${CARD.title}px">${h(spec.title)}</font>`;
+  if (desc) v += `<br><font style="font-size:4px"> </font><br>${small(h(desc), d.ink.text, CARD.desc)}`;
+  if (metaLine.length && items.length) v += `<br>${small(metaLine.map((t) => h(t)).join(' · '), d.ink.sub, CARD.meta)}`;
+  const tm = measure(v, { fontSize: CARD.desc }, leftW - textPadL - 24);
+  // right panel: the key, else meta (status, version, date, author), else nothing
+  const keyLines = !items.length && metaLine.length ? metaLine : null;
+  const keyX = leftW + bulgeGuess + 24;
+  let keyInnerW = W - keyX - 20 - 32;
+  let grid = keyGrid(items, keyInnerW);
+  if (items.length && grid.w > keyInnerW) { W = keyX + grid.w + 52; keyInnerW = grid.w; }
+  const keyH = items.length ? grid.h + 44 : keyLines ? keyLines.length * 18 + 40 : 0;
+  const H = up10(Math.max(CARD.minH, tm.h + 56, keyH + 40, contentH / 9));
+  const bulge = Math.round(clamp(H * 0.2, 24, 60));
+  const frame = d.node({ id: d.uid('hdr'), x: M, y: M, w: W, h: H, value: '', connectable: '0', style: { rounded: '0', fillColor: CARD.band, strokeColor: CARD.frame, strokeWidth: 3, container: '1', collapsible: '0', recursiveResize: '0' } });
+  const panel = { fillColor: d.ink.canvas, strokeColor: 'none', connectable: '0' };
+  d.node({ id: d.uid('hdr_curve'), x: leftW - bulge, y: 2, w: bulge * 2, h: H - 4, value: '', parent: frame.id, connectable: '0', style: { ellipse: '', fillColor: panel.fillColor, strokeColor: 'none', part: '1' } });
+  d.node({ id: d.uid('hdr_title'), x: 2, y: 2, w: leftW - 2, h: H - 4, value: v, parent: frame.id, connectable: '0', style: { fillColor: panel.fillColor, strokeColor: 'none', fontColor: d.ink.text, fontSize: CARD.desc, align: 'left', verticalAlign: 'middle', spacingLeft: textPadL, spacingRight: 8, part: '1' } });
+  if (logo) d.icon(logo.key, CARD.pad, Math.round((H - 40) / 2), 40, frame.id);
+  if (keyH) {
+    const kx = leftW + bulge + 24, kw = W - kx - 20;
+    const kp = d.node({ id: d.uid('hdr_key'), x: kx, y: 20, w: kw, h: H - 40, value: '', parent: frame.id, connectable: '0', style: { rounded: '1', arcSize: 12, absoluteArcSize: '1', fillColor: panel.fillColor, strokeColor: 'none', container: '1', collapsible: '0', recursiveResize: '0' } });
+    const top = Math.max(12, Math.round((H - 40 - keyH) / 2) + 8);
+    d.text(16, top, 60, 18, '<b>Key</b>', { fontSize: 11, fontColor: d.ink.sub }, kp.id);
+    if (items.length) drawKeyItems(d, items, grid, 16, top + 22, kp.id);
+    else d.text(16, top + 22, kw - 32, keyLines.length * 18, keyLines.map((t) => h(t)).join('<br>'), { fontSize: CARD.meta, fontColor: d.ink.sub }, kp.id);
   }
-  return cy + rowH - y;
+  // keep the header first so it paints underneath everything
+  const at = d.cells.indexOf(frame);
+  d.cells.unshift(...d.cells.splice(at));
+  return { id: frame.id, W, H };
 }
 
 /** Adds header + legend, normalises coordinates, returns an mx page object. */
@@ -350,13 +424,34 @@ export function finishPage(d, opts = {}) {
   const spec = d.spec;
   const M = 40;
   const bb = contentBBox(d);
-  let header = spec.header === undefined ? 'title' : spec.header;
-  if (header === true) header = 'banner';
-  if (!spec.title) header = false;
+  // Default is the Salesforce Architects header card (title + description + key).
+  let header = spec.header === undefined ? 'card' : spec.header;
+  if (header === true) header = 'card';
+  if (!['card', 'banner', 'title', false].includes(header)) { d.warnings.push(`unknown header "${header}" — use "card" (default), "banner", "title" or false`); header = 'card'; }
+  if (!spec.title) {
+    if (header) d.warnings.push('no title, so no header was drawn: Salesforce diagrams need a header with a title and a description (set "title" and "subtitle")');
+    header = false;
+  } else if (header === 'card' && !(spec.subtitle || spec.description)) {
+    d.warnings.push('header card has no description: add "subtitle" with one or two sentences on the purpose, scope and message of the diagram');
+  }
   const metaLine = spec.meta ? [spec.meta.status, spec.meta.version && 'v' + String(spec.meta.version).replace(/^v/i, ''), spec.meta.date, spec.meta.author, spec.meta.client].filter(Boolean) : [];
   let headH = 0;
   const cw = Math.max(bb.x1 - bb.x0, opts.minWidth || 480);
   let titleW = cw;
+  if (header === 'card') {
+    shiftAll(d, M - bb.x0, 0); // x first; y once the card height is known
+    const card = headerCard(d, M, cw, bb.y1 - bb.y0, metaLine);
+    headH = card.H + 30;
+    for (const c of d.cells) {
+      if (c.vertex && c.parent === '1' && c.id !== card.id) c.geo.y += M + headH - bb.y0;
+      if (c.edge && c.parent === '1') for (const p of [...(c.geo.points || []), c.geo.sourcePoint, c.geo.targetPoint]) if (p) p.y += M + headH - bb.y0;
+    }
+    const width = Math.max(cw, card.W);
+    const pageW = up10(M * 2 + width), pageH = up10(M + headH + (bb.y1 - bb.y0) + M);
+    const attrs = { pageWidth: String(pageW), pageHeight: String(pageH), dx: String(pageW), dy: String(pageH) };
+    if (d.ink.canvas && d.ink.canvas !== '#ffffff') attrs.background = d.ink.canvas;
+    return { id: opts.id || d.uid('page'), name: opts.name || d.name, attrs, cells: [{ id: '0' }, { id: '1', parent: '0' }, ...d.cells], warnings: d.warnings.slice(), brand: d.palette.name };
+  }
   if (header === 'banner') headH = spec.subtitle ? 90 : 70;
   else if (header) {
     titleW = Math.max(cw, 360);

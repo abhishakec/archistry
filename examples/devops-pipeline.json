@@ -9,16 +9,68 @@
     { "id": "gate", "label": "Approvals", "kind": "warning" }
   ],
   "nodes": [
-    { "id": "start", "kind": "start", "label": "User story ready", "lane": "dev" },
-    { "id": "build", "kind": "user", "label": "Build in dev sandbox", "sub": "sf project retrieve", "lane": "dev" },
+    {
+      "id": "start",
+      "kind": "start",
+      "label": "User story ready",
+      "lane": "dev"
+    },
+    {
+      "id": "build",
+      "kind": "user",
+      "label": "Build in dev sandbox",
+      "sub": "sf project retrieve",
+      "lane": "dev"
+    },
     { "id": "pr", "kind": "user", "label": "Open pull request", "lane": "dev" },
-    { "id": "static", "kind": "system", "label": "Static analysis", "sub": "Code Analyzer, PMD", "lane": "ci" },
-    { "id": "validate", "kind": "system", "label": "Validate deploy", "sub": "Scratch org + Apex tests", "lane": "ci" },
-    { "id": "review", "kind": "gateway", "label": "Peer review passed?", "lane": "gate" },
-    { "id": "sit", "kind": "system", "label": "Deploy to SIT", "sub": "On merge to develop", "lane": "env" },
-    { "id": "uat", "kind": "system", "label": "Deploy to UAT", "sub": "Release branch", "lane": "env" },
-    { "id": "signoff", "kind": "gateway", "label": "UAT sign-off?", "lane": "gate" },
-    { "id": "prod", "kind": "system", "label": "Deploy to Production", "sub": "Quick deploy of validated package", "lane": "env", "color": "success" },
+    {
+      "id": "static",
+      "kind": "system",
+      "label": "Static analysis",
+      "sub": "Code Analyzer, PMD",
+      "lane": "ci"
+    },
+    {
+      "id": "validate",
+      "kind": "system",
+      "label": "Validate deploy",
+      "sub": "Scratch org + Apex tests",
+      "lane": "ci"
+    },
+    {
+      "id": "review",
+      "kind": "gateway",
+      "label": "Peer review passed?",
+      "lane": "gate"
+    },
+    {
+      "id": "sit",
+      "kind": "system",
+      "label": "Deploy to SIT",
+      "sub": "On merge to develop",
+      "lane": "env"
+    },
+    {
+      "id": "uat",
+      "kind": "system",
+      "label": "Deploy to UAT",
+      "sub": "Release branch",
+      "lane": "env"
+    },
+    {
+      "id": "signoff",
+      "kind": "gateway",
+      "label": "UAT sign-off?",
+      "lane": "gate"
+    },
+    {
+      "id": "prod",
+      "kind": "system",
+      "label": "Deploy to Production",
+      "sub": "Quick deploy of validated package",
+      "lane": "env",
+      "color": "success"
+    },
     { "id": "end", "kind": "end", "label": "Released", "lane": "env" }
   ],
   "edges": [
@@ -28,7 +80,12 @@
     { "from": "static", "to": "validate" },
     { "from": "validate", "to": "review" },
     { "from": "review", "to": "sit", "label": "Yes" },
-    { "from": "review", "to": "build", "label": "Changes requested", "kind": "exception" },
+    {
+      "from": "review",
+      "to": "build",
+      "label": "Changes requested",
+      "kind": "exception"
+    },
     { "from": "sit", "to": "uat" },
     { "from": "uat", "to": "signoff" },
     { "from": "signoff", "to": "prod", "label": "Yes" },

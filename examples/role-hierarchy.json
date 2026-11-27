@@ -4,21 +4,49 @@
   "subtitle": "Record visibility rolls up the tree; Account OWD is Private",
   "compactLeaves": true,
   "root": {
-    "label": "CEO", "kind": "salesforce",
+    "label": "CEO",
+    "kind": "salesforce",
     "children": [
-      { "label": "VP Global Sales", "children": [
-        { "label": "Sales Director EMEA", "children": [
-          { "label": "Sales Manager UK&I" }, { "label": "Sales Manager DACH" }, { "label": "Sales Manager Nordics" }, { "label": "Sales Manager France" }
-        ] },
-        { "label": "Sales Director Americas", "children": [
-          { "label": "Sales Manager US East" }, { "label": "Sales Manager US West" }, { "label": "Sales Manager LATAM" }
-        ] },
-        { "label": "Channel Director", "children": [ { "label": "Partner Manager" } ] }
-      ] },
-      { "label": "VP Customer Service", "kind": "integration", "children": [
-        { "label": "Service Manager Tier 1", "children": [ { "label": "Service Agent" } ] },
-        { "label": "Service Manager Tier 2", "children": [ { "label": "Product Specialist" } ] }
-      ] }
+      {
+        "label": "VP Global Sales",
+        "children": [
+          {
+            "label": "Sales Director EMEA",
+            "children": [
+              { "label": "Sales Manager UK&I" },
+              { "label": "Sales Manager DACH" },
+              { "label": "Sales Manager Nordics" },
+              { "label": "Sales Manager France" }
+            ]
+          },
+          {
+            "label": "Sales Director Americas",
+            "children": [
+              { "label": "Sales Manager US East" },
+              { "label": "Sales Manager US West" },
+              { "label": "Sales Manager LATAM" }
+            ]
+          },
+          {
+            "label": "Channel Director",
+            "children": [{ "label": "Partner Manager" }]
+          }
+        ]
+      },
+      {
+        "label": "VP Customer Service",
+        "kind": "integration",
+        "children": [
+          {
+            "label": "Service Manager Tier 1",
+            "children": [{ "label": "Service Agent" }]
+          },
+          {
+            "label": "Service Manager Tier 2",
+            "children": [{ "label": "Product Specialist" }]
+          }
+        ]
+      }
     ]
   }
 }

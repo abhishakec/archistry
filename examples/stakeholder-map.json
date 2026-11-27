@@ -2,18 +2,43 @@
   "type": "stakeholder-map",
   "title": "Service Transformation — Stakeholder Map",
   "subtitle": "Power / interest grid used to plan engagement before discovery workshops",
-  "xAxis": { "label": "Interest in the programme", "low": "Low", "high": "High" },
-  "yAxis": { "label": "Influence over the outcome", "low": "Low", "high": "High" },
+  "xAxis": {
+    "label": "Interest in the programme",
+    "low": "Low",
+    "high": "High"
+  },
+  "yAxis": {
+    "label": "Influence over the outcome",
+    "low": "Low",
+    "high": "High"
+  },
   "quadrants": [
-    { "label": "Keep satisfied", "sub": "Brief monthly, no surprises", "kind": "warning" },
-    { "label": "Manage closely", "sub": "Weekly, co-design decisions", "kind": "success" },
+    {
+      "label": "Keep satisfied",
+      "sub": "Brief monthly, no surprises",
+      "kind": "warning"
+    },
+    {
+      "label": "Manage closely",
+      "sub": "Weekly, co-design decisions",
+      "kind": "success"
+    },
     { "label": "Monitor", "sub": "Newsletter only", "kind": "muted" },
-    { "label": "Keep informed", "sub": "Demos and show-and-tells", "kind": "salesforce" }
+    {
+      "label": "Keep informed",
+      "sub": "Demos and show-and-tells",
+      "kind": "salesforce"
+    }
   ],
   "items": [
     { "label": "CFO", "x": 0.2, "y": 0.9 },
     { "label": "CISO", "x": 0.3, "y": 0.72 },
-    { "label": "Chief Customer Officer", "x": 0.85, "y": 0.92, "kind": "success" },
+    {
+      "label": "Chief Customer Officer",
+      "x": 0.85,
+      "y": 0.92,
+      "kind": "success"
+    },
     { "label": "Head of Service Ops", "x": 0.75, "y": 0.75, "kind": "success" },
     { "label": "IT Architecture Board", "x": 0.6, "y": 0.62 },
     { "label": "Contact centre agents", "x": 0.88, "y": 0.3 },

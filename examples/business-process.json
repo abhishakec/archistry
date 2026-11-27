@@ -10,16 +10,72 @@
     { "id": "erp", "label": "ERP", "kind": "external" }
   ],
   "nodes": [
-    { "id": "start", "kind": "start", "label": "Opportunity at Proposal", "lane": "rep" },
-    { "id": "quote", "kind": "user", "label": "Build quote", "sub": "Products, discounts", "lane": "rep", "icon": "utility/user" },
-    { "id": "check", "kind": "gateway", "label": "Discount > 15%?", "lane": "sf" },
-    { "id": "submit", "kind": "system", "label": "Submit for approval", "sub": "Approval Process", "lane": "sf", "icon": "standard/flow" },
-    { "id": "review", "kind": "user", "label": "Review quote", "lane": "mgr", "icon": "utility/user" },
+    {
+      "id": "start",
+      "kind": "start",
+      "label": "Opportunity at Proposal",
+      "lane": "rep"
+    },
+    {
+      "id": "quote",
+      "kind": "user",
+      "label": "Build quote",
+      "sub": "Products, discounts",
+      "lane": "rep",
+      "icon": "utility/user"
+    },
+    {
+      "id": "check",
+      "kind": "gateway",
+      "label": "Discount > 15%?",
+      "lane": "sf"
+    },
+    {
+      "id": "submit",
+      "kind": "system",
+      "label": "Submit for approval",
+      "sub": "Approval Process",
+      "lane": "sf",
+      "icon": "standard/flow"
+    },
+    {
+      "id": "review",
+      "kind": "user",
+      "label": "Review quote",
+      "lane": "mgr",
+      "icon": "utility/user"
+    },
     { "id": "ok", "kind": "gateway", "label": "Approved?", "lane": "mgr" },
-    { "id": "rework", "kind": "user", "label": "Revise quote", "lane": "rep", "icon": "utility/user" },
-    { "id": "send", "kind": "system", "label": "Generate & send quote PDF", "sub": "Flow + email template", "lane": "sf", "icon": "standard/flow" },
-    { "id": "order", "kind": "system", "label": "Create order", "sub": "Record-triggered Flow", "lane": "sf", "icon": "standard/flow" },
-    { "id": "fulfil", "kind": "task", "label": "Fulfil & invoice", "lane": "erp", "color": "external" },
+    {
+      "id": "rework",
+      "kind": "user",
+      "label": "Revise quote",
+      "lane": "rep",
+      "icon": "utility/user"
+    },
+    {
+      "id": "send",
+      "kind": "system",
+      "label": "Generate & send quote PDF",
+      "sub": "Flow + email template",
+      "lane": "sf",
+      "icon": "standard/flow"
+    },
+    {
+      "id": "order",
+      "kind": "system",
+      "label": "Create order",
+      "sub": "Record-triggered Flow",
+      "lane": "sf",
+      "icon": "standard/flow"
+    },
+    {
+      "id": "fulfil",
+      "kind": "task",
+      "label": "Fulfil & invoice",
+      "lane": "erp",
+      "color": "external"
+    },
     { "id": "end", "kind": "end", "label": "Closed Won", "lane": "rep" }
   ],
   "edges": [
@@ -33,7 +89,12 @@
     { "from": "ok", "to": "rework", "label": "No", "kind": "exception" },
     { "from": "rework", "to": "check" },
     { "from": "send", "to": "order", "label": "Customer accepts" },
-    { "from": "order", "to": "fulfil", "label": "Platform Event", "kind": "message" },
+    {
+      "from": "order",
+      "to": "fulfil",
+      "label": "Platform Event",
+      "kind": "message"
+    },
     { "from": "order", "to": "end" }
   ]
 }

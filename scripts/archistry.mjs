@@ -13,6 +13,7 @@ import { unknownFieldNotes } from './lib/spec-fields.mjs';
 import { buildHtml, extractModel } from './lib/html.mjs';
 import { rasterize, findBrowser, findDrawioCli } from './lib/raster.mjs';
 import { erdFromSfdx, mappingFromCsv, flowFromMetadata } from './lib/generators.mjs';
+import { HARNESSES, detectHarnesses, setupProject } from './lib/setup.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const VERSION = JSON.parse(fs.readFileSync(path.join(SKILL_ROOT, 'package.json'), 'utf8')).version;
@@ -217,7 +218,9 @@ const commands = {
     if (!t) fail(`unknown type "${pos[0] || ''}". Run "archistry types".`);
     const ex = path.join(SKILL_ROOT, 'examples', t.name + '.json');
     if (!fs.existsSync(ex)) fail(`no starter spec for ${t.name}`);
-    const text = fs.readFileSync(ex, 'utf8');
+    let text = fs.readFileSync(ex, 'utf8');
+    // Starters always use the default Salesforce header card, whatever header the example shows.
+    try { const s = JSON.parse(text); if (s.header !== undefined && s.header !== 'card') { delete s.header; text = JSON.stringify(s, null, 2) + '\n'; } } catch { /* leave as is */ }
     if (opt.out) { if (fs.existsSync(opt.out) && !opt.force) fail(`${opt.out} already exists (use --force to overwrite)`); fs.writeFileSync(opt.out, text); console.log(`wrote ${rel(opt.out)}  ·  engine: ${t.engine}  ·  reference: references/${t.engine}.md`); }
     else process.stdout.write(text);
   },
@@ -277,6 +280,25 @@ const commands = {
     process.exit(okAll ? 0 : 1);
   },
 
+  setup(pos, opt) {
+    const project = path.resolve(pos[0] || '.');
+    if (!fs.existsSync(project) || !fs.statSync(project).isDirectory()) fail(`project folder not found: ${project}`);
+    // the skill as the user reached it (keeps a junction/symlink path inside the project), else its real folder
+    const invoked = process.argv[1] && /archistry\.mjs$/.test(process.argv[1]) ? path.resolve(path.dirname(process.argv[1]), '..') : SKILL_ROOT;
+    const all = Object.keys(HARNESSES);
+    let list;
+    if (!opt.harness || opt.harness === 'auto') {
+      list = detectHarnesses(project);
+      if (!list.length) list = ['agents'];
+    } else list = opt.harness === 'all' ? all : String(opt.harness).split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
+    let res;
+    try { res = setupProject(project, invoked, { harnesses: list, remove: !!opt.remove, dryRun: !!opt.dryRun }); } catch (e) { fail(e.message); }
+    if (opt.json) { console.log(JSON.stringify(res, null, 2)); return; }
+    for (const r of res) console.log(`${opt.dryRun ? 'would be ' : ''}${r.action.padEnd(18)} ${HARNESSES[r.harness].label.padEnd(48)} ${rel(r.file)}`);
+    if (!opt.remove && !res.portable) console.log(`\nNOTE  the skill is outside this project and your home folder, so the block points at ${res.skill}: that path only works on this machine. Install the skill inside the project (or under your home folder) before committing these files.`);
+    if (!opt.dryRun && !opt.remove) console.log(`\nDiagram requests in this project now go to Archistry. Re-run to refresh, --remove to undo. Harnesses: ${all.join(', ')} (--harness a,b | all | auto).`);
+  },
+
   help() {
     console.log(`archistry ${VERSION} — Salesforce diagrams as draw.io + interactive HTML + images
 
@@ -291,6 +313,8 @@ const commands = {
   archistry mapping-from-csv <mappings.csv> -o spec.json
   archistry flow-from-metadata <X.flow-meta.xml> -o spec.json
   archistry doctor
+  archistry setup [project-dir] [--harness auto|all|claude,copilot,agents,gemini,cursor,windsurf] [--dry-run] [--remove]
+                                                       add an "always use Archistry for diagrams" block to the project's agent instructions
 
 Exit codes: 0 ok · 2 failed (invalid spec or validation errors) · 3 warnings with --strict`);
   },
@@ -301,7 +325,7 @@ function emitSpec(spec, opt) {
   else process.stdout.write(text);
 }
 
-const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+const isMain = process.argv[1] && fs.realpathSync(process.argv[1]) === fs.realpathSync(fileURLToPath(import.meta.url)); // realpath: skill may be installed as a symlink/junction
 if (isMain) {
   const [cmd, ...rest] = process.argv.slice(2);
   const { pos, opt } = parseArgs(rest);

@@ -1,0 +1,234 @@
+{
+ "ranAt": "2026-11-27T15:11:38.998Z",
+ "cases": [
+  {
+   "id": 1,
+   "name": "solution-architecture",
+   "pass": true,
+   "checks": [
+    {
+     "text": "type solution-architecture",
+     "pass": true
+    },
+    {
+     "text": "names all six systems",
+     "pass": true
+    },
+    {
+     "text": "drawio + html written",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "data-model",
+   "pass": false,
+   "checks": [
+    {
+     "text": "type data-model",
+     "pass": false
+    },
+    {
+     "text": "Promotion_Line__c → Promotion__c master-detail",
+     "pass": false
+    },
+    {
+     "text": "image for the BA team (png/svg)",
+     "pass": false
+    },
+    {
+     "text": "fields marked illustrative",
+     "pass": false
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "name": "oauth-png",
+   "pass": true,
+   "checks": [
+    {
+     "text": "type oauth-flow",
+     "pass": true
+    },
+    {
+     "text": "PKCE present",
+     "pass": true
+    },
+    {
+     "text": "a PNG",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "name": "erd-from-sfdx",
+   "pass": false,
+   "checks": [
+    {
+     "text": "uses erd-from-sfdx (spec says \"From SFDX\")",
+     "pass": false
+    },
+    {
+     "text": "title \"Promotions data model\"",
+     "pass": true
+    },
+    {
+     "text": "only built objects + Account",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "name": "lead-process",
+   "pass": false,
+   "checks": [
+    {
+     "text": "business-process spec",
+     "pass": true
+    },
+    {
+     "text": "state-lifecycle spec",
+     "pass": false
+    },
+    {
+     "text": "recycle + disqualify paths",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "name": "agentforce",
+   "pass": true,
+   "checks": [
+    {
+     "text": "type agent-interaction-map",
+     "pass": true
+    },
+    {
+     "text": "steps on Returns topic",
+     "pass": true
+    },
+    {
+     "text": "refund guardrail",
+     "pass": true
+    },
+    {
+     "text": "both channels",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "name": "discovery-personas-hierarchy",
+   "pass": false,
+   "checks": [
+    {
+     "text": "persona-map",
+     "pass": true
+    },
+    {
+     "text": "process-hierarchy",
+     "pass": true
+    },
+    {
+     "text": "L0 and L1 shown",
+     "pass": true
+    },
+    {
+     "text": "scope marked",
+     "pass": false
+    },
+    {
+     "text": "illustrative flagged",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "name": "discovery-current-future",
+   "pass": true,
+   "checks": [
+    {
+     "text": "current-future-state",
+     "pass": true
+    },
+    {
+     "text": "links labelled replaces/retired",
+     "pass": true
+    },
+    {
+     "text": "drawio + html",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "name": "territory-model",
+   "pass": false,
+   "checks": [
+    {
+     "text": "territory-model",
+     "pass": true
+    },
+    {
+     "text": "global→segment hierarchy",
+     "pass": true
+    },
+    {
+     "text": "phase 2 marked",
+     "pass": true
+    },
+    {
+     "text": "illustrative flagged",
+     "pass": false
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "name": "omni-channel-routing",
+   "pass": true,
+   "checks": [
+    {
+     "text": "omni-channel-routing",
+     "pass": true
+    },
+    {
+     "text": "skills on edges/cards",
+     "pass": true
+    },
+    {
+     "text": "overflow as exception",
+     "pass": true
+    },
+    {
+     "text": "drawio + html",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "name": "experience-site-map",
+   "pass": true,
+   "checks": [
+    {
+     "text": "experience-site-map spec",
+     "pass": true
+    },
+    {
+     "text": "build produced drawio",
+     "pass": true
+    }
+   ]
+  }
+ ]
+}

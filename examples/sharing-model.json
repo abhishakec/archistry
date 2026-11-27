@@ -5,32 +5,74 @@
   "layout": "column",
   "legend": false,
   "children": [
-    { "zone": "0 · Object and field access", "sub": "Profiles and permission sets decide which objects and fields a user can touch at all", "kind": "security", "layout": "row", "children": [
-      { "label": "Profiles", "sub": "Minimum access baseline" },
-      { "label": "Permission Sets", "sub": "Additive, task-based" },
-      { "label": "Permission Set Groups", "sub": "Persona bundles + muting" },
-      { "label": "Field-Level Security", "sub": "Read / edit per field" }
-    ] },
-    { "zone": "1 · Organization-wide defaults", "sub": "The baseline for records a user does not own", "kind": "danger", "layout": "row", "children": [
-      { "label": "Account", "sub": "Private" },
-      { "label": "Opportunity", "sub": "Private" },
-      { "label": "Case", "sub": "Private" },
-      { "label": "Contact", "sub": "Controlled by Parent" },
-      { "label": "Knowledge", "sub": "Public Read Only" }
-    ] },
-    { "zone": "2 · Role hierarchy", "sub": "Managers inherit access to records owned by their subordinates", "kind": "warning", "layout": "row", "children": [
-      { "label": "Grant access using hierarchies", "sub": "On for standard objects" },
-      { "label": "Territory hierarchy", "sub": "Account access by territory" }
-    ] },
-    { "zone": "3 · Sharing rules", "sub": "Automatic exceptions for groups of users", "kind": "salesforce", "layout": "row", "children": [
-      { "label": "Owner-based rules", "sub": "Share EMEA accounts with EMEA Service" },
-      { "label": "Criteria-based rules", "sub": "Share cases where Type = Escalation" },
-      { "label": "Restriction rules", "sub": "Narrow access again" }
-    ] },
-    { "zone": "4 · Teams and manual sharing", "sub": "Record-by-record exceptions", "kind": "success", "layout": "row", "children": [
-      { "label": "Account & opportunity teams", "sub": "Collaborators per record" },
-      { "label": "Manual sharing", "sub": "Owner shares one record" },
-      { "label": "Apex managed sharing", "sub": "Programmatic share rows" }
-    ] }
+    {
+      "zone": "0 · Object and field access",
+      "sub": "Profiles and permission sets decide which objects and fields a user can touch at all",
+      "kind": "security",
+      "layout": "row",
+      "children": [
+        { "label": "Profiles", "sub": "Minimum access baseline" },
+        { "label": "Permission Sets", "sub": "Additive, task-based" },
+        { "label": "Permission Set Groups", "sub": "Persona bundles + muting" },
+        { "label": "Field-Level Security", "sub": "Read / edit per field" }
+      ]
+    },
+    {
+      "zone": "1 · Organization-wide defaults",
+      "sub": "The baseline for records a user does not own",
+      "kind": "danger",
+      "layout": "row",
+      "children": [
+        { "label": "Account", "sub": "Private" },
+        { "label": "Opportunity", "sub": "Private" },
+        { "label": "Case", "sub": "Private" },
+        { "label": "Contact", "sub": "Controlled by Parent" },
+        { "label": "Knowledge", "sub": "Public Read Only" }
+      ]
+    },
+    {
+      "zone": "2 · Role hierarchy",
+      "sub": "Managers inherit access to records owned by their subordinates",
+      "kind": "warning",
+      "layout": "row",
+      "children": [
+        {
+          "label": "Grant access using hierarchies",
+          "sub": "On for standard objects"
+        },
+        { "label": "Territory hierarchy", "sub": "Account access by territory" }
+      ]
+    },
+    {
+      "zone": "3 · Sharing rules",
+      "sub": "Automatic exceptions for groups of users",
+      "kind": "salesforce",
+      "layout": "row",
+      "children": [
+        {
+          "label": "Owner-based rules",
+          "sub": "Share EMEA accounts with EMEA Service"
+        },
+        {
+          "label": "Criteria-based rules",
+          "sub": "Share cases where Type = Escalation"
+        },
+        { "label": "Restriction rules", "sub": "Narrow access again" }
+      ]
+    },
+    {
+      "zone": "4 · Teams and manual sharing",
+      "sub": "Record-by-record exceptions",
+      "kind": "success",
+      "layout": "row",
+      "children": [
+        {
+          "label": "Account & opportunity teams",
+          "sub": "Collaborators per record"
+        },
+        { "label": "Manual sharing", "sub": "Owner shares one record" },
+        { "label": "Apex managed sharing", "sub": "Programmatic share rows" }
+      ]
+    }
   ]
 }

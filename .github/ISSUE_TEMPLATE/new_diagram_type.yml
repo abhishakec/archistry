@@ -1,5 +1,6 @@
 name: New diagram type
-description: A diagram you draw on Salesforce projects that Archistry does not have yet.
+description:
+  A diagram you draw on Salesforce projects that Archistry does not have yet.
 labels: [enhancement, new-type]
 body:
   - type: input
@@ -20,14 +21,18 @@ body:
     id: question
     attributes:
       label: The question it answers
-      description: One sentence, for example "Which releases carry which features, and who signs each off?"
+      description:
+        One sentence, for example "Which releases carry which features, and who
+        signs each off?"
     validations:
       required: true
   - type: textarea
     id: shape
     attributes:
       label: What it looks like
-      description: Sketch it in words or attach a photo of a whiteboard. Which existing diagram is closest?
+      description:
+        Sketch it in words or attach a photo of a whiteboard. Which existing
+        diagram is closest?
   - type: checkboxes
     id: help
     attributes:

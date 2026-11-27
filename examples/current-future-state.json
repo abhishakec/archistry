@@ -4,20 +4,83 @@
   "subtitle": "What exists today, what the Salesforce target looks like and what replaces what (illustrative)",
   "layout": "row",
   "children": [
-    { "zone": "Current state", "sub": "Pain points in red", "kind": "external", "layout": "column", "children": [
-      { "id": "c1", "label": "Legacy CRM", "sub": "Customer and case records", "kind": "external" },
-      { "id": "c2", "label": "Shared mailbox", "sub": "No SLA tracking, 2 day lag", "kind": "danger" },
-      { "id": "c3", "label": "Excel dispatch sheet", "sub": "Manual job allocation", "kind": "danger" },
-      { "id": "c4", "label": "Intranet FAQ", "sub": "Out of date", "kind": "warning" },
-      { "id": "c5", "label": "Billing system", "sub": "Oracle, stays", "kind": "external" }
-    ] },
-    { "zone": "Future state", "sub": "Salesforce-based target", "kind": "salesforce", "layout": "column", "children": [
-      { "id": "f1", "label": "Service Cloud", "sub": "Cases, Omni-Channel, entitlements", "icon": "product/service_cloud" },
-      { "id": "f2", "label": "Email-to-Case", "sub": "Routed by skill, SLA clock", "icon": "standard/case" },
-      { "id": "f3", "label": "Field Service", "sub": "Scheduling and mobile app", "icon": "cloud/field_service" },
-      { "id": "f4", "label": "Knowledge", "sub": "Single source of answers", "icon": "standard/knowledge" },
-      { "id": "f5", "label": "MuleSoft", "sub": "Billing integration", "icon": "product/mulesoft", "kind": "data" }
-    ] }
+    {
+      "zone": "Current state",
+      "sub": "Pain points in red",
+      "kind": "external",
+      "layout": "column",
+      "children": [
+        {
+          "id": "c1",
+          "label": "Legacy CRM",
+          "sub": "Customer and case records",
+          "kind": "external"
+        },
+        {
+          "id": "c2",
+          "label": "Shared mailbox",
+          "sub": "No SLA tracking, 2 day lag",
+          "kind": "danger"
+        },
+        {
+          "id": "c3",
+          "label": "Excel dispatch sheet",
+          "sub": "Manual job allocation",
+          "kind": "danger"
+        },
+        {
+          "id": "c4",
+          "label": "Intranet FAQ",
+          "sub": "Out of date",
+          "kind": "warning"
+        },
+        {
+          "id": "c5",
+          "label": "Billing system",
+          "sub": "Oracle, stays",
+          "kind": "external"
+        }
+      ]
+    },
+    {
+      "zone": "Future state",
+      "sub": "Salesforce-based target",
+      "kind": "salesforce",
+      "layout": "column",
+      "children": [
+        {
+          "id": "f1",
+          "label": "Service Cloud",
+          "sub": "Cases, Omni-Channel, entitlements",
+          "icon": "product/service_cloud"
+        },
+        {
+          "id": "f2",
+          "label": "Email-to-Case",
+          "sub": "Routed by skill, SLA clock",
+          "icon": "standard/case"
+        },
+        {
+          "id": "f3",
+          "label": "Field Service",
+          "sub": "Scheduling and mobile app",
+          "icon": "cloud/field_service"
+        },
+        {
+          "id": "f4",
+          "label": "Knowledge",
+          "sub": "Single source of answers",
+          "icon": "standard/knowledge"
+        },
+        {
+          "id": "f5",
+          "label": "MuleSoft",
+          "sub": "Billing integration",
+          "icon": "product/mulesoft",
+          "kind": "data"
+        }
+      ]
+    }
   ],
   "links": [
     { "from": "c1", "to": "f1", "label": "replaces" },

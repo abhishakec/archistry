@@ -4,31 +4,49 @@
   "subtitle": "What the service organisation must be able to do, coloured by delivery status",
   "layout": "column",
   "children": [
-    { "zone": "Engage", "kind": "salesforce", "layout": "grid", "columns": 5, "children": [
-      { "label": "Self-service portal", "status": "live" },
-      { "label": "Web chat", "status": "live" },
-      { "label": "Messaging (WhatsApp)", "status": "in scope" },
-      { "label": "Voice", "status": "planned" },
-      { "label": "Proactive notifications", "status": "gap" }
-    ] },
-    { "zone": "Resolve", "kind": "salesforce", "layout": "grid", "columns": 5, "children": [
-      { "label": "Case management", "status": "live" },
-      { "label": "Omni-Channel routing", "status": "in scope" },
-      { "label": "Knowledge management", "status": "in scope" },
-      { "label": "AI agent deflection", "status": "in scope" },
-      { "label": "Field service dispatch", "status": "planned" },
-      { "label": "Entitlements and SLAs", "status": "live" },
-      { "label": "Escalation management", "status": "in scope" },
-      { "label": "Returns and refunds", "status": "gap" },
-      { "label": "Complaints handling", "status": "planned" },
-      { "label": "Swarming", "status": "future" }
-    ] },
-    { "zone": "Improve", "kind": "salesforce", "layout": "grid", "columns": 5, "children": [
-      { "label": "Service analytics", "status": "live" },
-      { "label": "Customer feedback", "status": "in scope" },
-      { "label": "Quality monitoring", "status": "planned" },
-      { "label": "Workforce planning", "status": "future" },
-      { "label": "Unified customer profile", "status": "planned" }
-    ] }
+    {
+      "zone": "Engage",
+      "kind": "salesforce",
+      "layout": "grid",
+      "columns": 5,
+      "children": [
+        { "label": "Self-service portal", "status": "live" },
+        { "label": "Web chat", "status": "live" },
+        { "label": "Messaging (WhatsApp)", "status": "in scope" },
+        { "label": "Voice", "status": "planned" },
+        { "label": "Proactive notifications", "status": "gap" }
+      ]
+    },
+    {
+      "zone": "Resolve",
+      "kind": "salesforce",
+      "layout": "grid",
+      "columns": 5,
+      "children": [
+        { "label": "Case management", "status": "live" },
+        { "label": "Omni-Channel routing", "status": "in scope" },
+        { "label": "Knowledge management", "status": "in scope" },
+        { "label": "AI agent deflection", "status": "in scope" },
+        { "label": "Field service dispatch", "status": "planned" },
+        { "label": "Entitlements and SLAs", "status": "live" },
+        { "label": "Escalation management", "status": "in scope" },
+        { "label": "Returns and refunds", "status": "gap" },
+        { "label": "Complaints handling", "status": "planned" },
+        { "label": "Swarming", "status": "future" }
+      ]
+    },
+    {
+      "zone": "Improve",
+      "kind": "salesforce",
+      "layout": "grid",
+      "columns": 5,
+      "children": [
+        { "label": "Service analytics", "status": "live" },
+        { "label": "Customer feedback", "status": "in scope" },
+        { "label": "Quality monitoring", "status": "planned" },
+        { "label": "Workforce planning", "status": "future" },
+        { "label": "Unified customer profile", "status": "planned" }
+      ]
+    }
   ]
 }

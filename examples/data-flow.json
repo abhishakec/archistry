@@ -4,28 +4,106 @@
   "subtitle": "Extract, cleanse, transform and load customer data into Salesforce, with reconciliation",
   "layout": "row",
   "children": [
-    { "zone": "Sources", "kind": "external", "children": [
-      { "id": "legacy", "label": "Legacy CRM", "sub": "SQL Server · 2.1M accounts", "icon": "utility/database" },
-      { "id": "sheets", "label": "Regional spreadsheets", "sub": "Contacts, preferences", "icon": "doctype/excel" }
-    ] },
-    { "zone": "Staging", "kind": "integration", "children": [
-      { "id": "extract", "label": "Extract", "sub": "Full + delta extracts", "icon": "utility/sync" },
-      { "id": "stage", "label": "Staging database", "sub": "Raw landing tables", "icon": "utility/database" }
-    ] },
-    { "zone": "Transform", "kind": "data", "children": [
-      { "id": "cleanse", "label": "Cleanse & dedupe", "sub": "Address standardisation, match rules", "icon": "utility/settings" },
-      { "id": "map", "label": "Map & transform", "sub": "Field mapping, picklist translation", "icon": "utility/integration" },
-      { "id": "keys", "label": "Key cross-reference", "sub": "Legacy Id to External Id", "icon": "utility/key" }
-    ] },
-    { "zone": "Salesforce", "kind": "salesforce", "children": [
-      { "id": "load", "label": "Load", "sub": "Bulk API 2.0 · parents first", "icon": "utility/database" },
-      { "id": "org", "label": "Production org", "sub": "Account, Contact, Case", "icon": "product/sales_cloud" },
-      { "id": "recon", "label": "Reconcile", "sub": "Counts, checksums, sample audit", "icon": "standard/report", "kind": "success" }
-    ] }
+    {
+      "zone": "Sources",
+      "kind": "external",
+      "children": [
+        {
+          "id": "legacy",
+          "label": "Legacy CRM",
+          "sub": "SQL Server · 2.1M accounts",
+          "icon": "utility/database"
+        },
+        {
+          "id": "sheets",
+          "label": "Regional spreadsheets",
+          "sub": "Contacts, preferences",
+          "icon": "doctype/excel"
+        }
+      ]
+    },
+    {
+      "zone": "Staging",
+      "kind": "integration",
+      "children": [
+        {
+          "id": "extract",
+          "label": "Extract",
+          "sub": "Full + delta extracts",
+          "icon": "utility/sync"
+        },
+        {
+          "id": "stage",
+          "label": "Staging database",
+          "sub": "Raw landing tables",
+          "icon": "utility/database"
+        }
+      ]
+    },
+    {
+      "zone": "Transform",
+      "kind": "data",
+      "children": [
+        {
+          "id": "cleanse",
+          "label": "Cleanse & dedupe",
+          "sub": "Address standardisation, match rules",
+          "icon": "utility/settings"
+        },
+        {
+          "id": "map",
+          "label": "Map & transform",
+          "sub": "Field mapping, picklist translation",
+          "icon": "utility/integration"
+        },
+        {
+          "id": "keys",
+          "label": "Key cross-reference",
+          "sub": "Legacy Id to External Id",
+          "icon": "utility/key"
+        }
+      ]
+    },
+    {
+      "zone": "Salesforce",
+      "kind": "salesforce",
+      "children": [
+        {
+          "id": "load",
+          "label": "Load",
+          "sub": "Bulk API 2.0 · parents first",
+          "icon": "utility/database"
+        },
+        {
+          "id": "org",
+          "label": "Production org",
+          "sub": "Account, Contact, Case",
+          "icon": "product/sales_cloud"
+        },
+        {
+          "id": "recon",
+          "label": "Reconcile",
+          "sub": "Counts, checksums, sample audit",
+          "icon": "standard/report",
+          "kind": "success"
+        }
+      ]
+    }
   ],
   "links": [
-    { "from": "legacy", "to": "extract", "label": "Nightly", "style": "batch", "step": 1 },
-    { "from": "sheets", "to": "extract", "label": "Manual upload", "style": "manual" },
+    {
+      "from": "legacy",
+      "to": "extract",
+      "label": "Nightly",
+      "style": "batch",
+      "step": 1
+    },
+    {
+      "from": "sheets",
+      "to": "extract",
+      "label": "Manual upload",
+      "style": "manual"
+    },
     { "from": "extract", "to": "stage", "step": 2 },
     { "from": "stage", "to": "cleanse", "step": 3 },
     { "from": "cleanse", "to": "map", "step": 4 },
@@ -33,6 +111,11 @@
     { "from": "map", "to": "load", "label": "CSV batches", "step": 5 },
     { "from": "load", "to": "org", "step": 6 },
     { "from": "org", "to": "recon", "step": 7 },
-    { "from": "recon", "to": "stage", "label": "Rejects for rework", "style": "reference" }
+    {
+      "from": "recon",
+      "to": "stage",
+      "label": "Rejects for rework",
+      "style": "reference"
+    }
   ]
 }
